@@ -1,0 +1,145 @@
+*
+* Visual Studio Code Server
+*
+* By using the software, you agree to
+* the Visual Studio Code Server License Terms (https://aka.ms/vscode-server-license) and
+* the Microsoft Privacy Statement (https://privacy.microsoft.com/en-US/privacystatement).
+*
+Server bound to 127.0.0.1:42027 (IPv4)
+Extension host agent listening on 42027
+
+[11:08:03] 
+
+
+
+
+[11:08:03] Extension host agent started.
+[11:08:05] [127.0.0.1][436fa825][ManagementConnection] New connection established.
+[11:08:05] [127.0.0.1][3f712b6b][ExtensionHostConnection] New connection established.
+[11:08:05] [127.0.0.1][3f712b6b][ExtensionHostConnection] <732> Launched Extension Host Process.
+[11:08:10] No ptyHost heartbeat after 6 seconds
+[IPC Library: Pty Host]  WARN Shell integration cannot be enabled for executable "/bin/sh" and args [
+  '-c',
+  'wget --version > /dev/null\n' +
+    'if [ $? -eq 0 ]\n' +
+    'then\n' +
+    "\twget --connect-timeout=7 --tries=1 --dns-timeout=7 -q --header='Metadata:true' -O - http://169.254.169.254/metadata/instance?api-version=2019-03-11\n" +
+    'else\n' +
+    '\tcurl --version > /dev/null\n' +
+    '\tif [ $? -eq 0 ]\n' +
+    '\tthen\n' +
+    "\t\tcurl --connect-timeout 7 -s --header='Metadata:true' http://169.254.169.254/metadata/instance?api-version=2019-03-11\n" +
+    '\tfi\n' +
+    'fi\n' +
+    'exit 0'
+]
+[IPC Library: Pty Host]  WARN Shell integration cannot be enabled for executable "/bin/sh" and args [
+  '-c',
+  'wget --version > /dev/null\n' +
+    'if [ $? -eq 0 ]\n' +
+    'then\n' +
+    '\twget --connect-timeout=7 --tries=1 --dns-timeout=7 -q  -O - http://169.254.169.254/latest/meta-data/instance-id\n' +
+    'else\n' +
+    '\tcurl --version > /dev/null\n' +
+    '\tif [ $? -eq 0 ]\n' +
+    '\tthen\n' +
+    '\t\tcurl --connect-timeout 7 -s  http://169.254.169.254/latest/meta-data/instance-id\n' +
+    '\tfi\n' +
+    'fi\n' +
+    'exit 0'
+]
+[IPC Library: Pty Host]  WARN Shell integration cannot be enabled for executable "/bin/sh" and args [
+  '-c',
+  'wget --version > /dev/null\n' +
+    'if [ $? -eq 0 ]\n' +
+    'then\n' +
+    '\twget --connect-timeout=7 --tries=1 --dns-timeout=7 -q  -O - http://169.254.169.254/metadata/v1/id\n' +
+    'else\n' +
+    '\tcurl --version > /dev/null\n' +
+    '\tif [ $? -eq 0 ]\n' +
+    '\tthen\n' +
+    '\t\tcurl --connect-timeout 7 -s  http://169.254.169.254/metadata/v1/id\n' +
+    '\tfi\n' +
+    'fi\n' +
+    'exit 0'
+]
+[IPC Library: Pty Host]  WARN Shell integration cannot be enabled for executable "/bin/sh" and args [
+  '-c',
+  'wget --version > /dev/null\n' +
+    'if [ $? -eq 0 ]\n' +
+    'then\n' +
+    "\twget --connect-timeout=7 --tries=1 --dns-timeout=7 -q --header='Metadata-Flavor:Google' -O - http://metadata.google.internal/computeMetadata/v1/instance/id\n" +
+    'else\n' +
+    '\tcurl --version > /dev/null\n' +
+    '\tif [ $? -eq 0 ]\n' +
+    '\tthen\n' +
+    "\t\tcurl --connect-timeout 7 -s --header='Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/id\n" +
+    '\tfi\n' +
+    'fi\n' +
+    'exit 0'
+]
+rejected promise not handled within 1 second: CodeExpectedError: Could not find pty on pty host
+stack trace: CodeExpectedError: Could not find pty on pty host
+    at S.L (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:27:6849)
+    at S.updateTitle (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:27:2630)
+    at Object.call (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:17:5043)
+    at l.s (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:5412)
+    at l.q (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:4915)
+    at /home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:4326
+    at n.invoke (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:145)
+    at E.deliver (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:2070)
+    at c.fire (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:1708)
+    at process.T (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:9:20949)
+    at process.emit (node:events:526:28)
+    at emit (node:internal/child_process:938:14)
+    at processTicksAndRejections (node:internal/process/task_queues:84:21)
+[11:08:25] Error [CodeExpectedError]: Could not find pty on pty host
+    at S.L (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:27:6849)
+    at S.updateTitle (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:27:2630)
+    at Object.call (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:17:5043)
+    at l.s (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:5412)
+    at l.q (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:4915)
+    at /home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:4326
+    at n.invoke (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:145)
+    at E.deliver (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:2070)
+    at c.fire (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:1708)
+    at process.T (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:9:20949)
+    at process.emit (node:events:526:28)
+    at emit (node:internal/child_process:938:14)
+    at processTicksAndRejections (node:internal/process/task_queues:84:21)
+rejected promise not handled within 1 second: CodeExpectedError: Could not find pty on pty host
+stack trace: CodeExpectedError: Could not find pty on pty host
+    at S.L (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:27:6849)
+    at S.updateIcon (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:27:2680)
+    at Object.call (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:17:5043)
+    at l.s (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:5412)
+    at l.q (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:4915)
+    at /home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:4326
+    at n.invoke (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:145)
+    at E.deliver (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:2070)
+    at c.fire (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:1708)
+    at process.T (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:9:20949)
+    at process.emit (node:events:526:28)
+    at emit (node:internal/child_process:938:14)
+    at processTicksAndRejections (node:internal/process/task_queues:84:21)
+[11:08:25] Error [CodeExpectedError]: Could not find pty on pty host
+    at S.L (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:27:6849)
+    at S.updateIcon (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:27:2680)
+    at Object.call (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:17:5043)
+    at l.s (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:5412)
+    at l.q (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:4915)
+    at /home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:15:4326
+    at n.invoke (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:145)
+    at E.deliver (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:2070)
+    at c.fire (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:11:1708)
+    at process.T (/home/dfm/team_test/team_test/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/out/vs/platform/terminal/node/ptyHostMain.js:9:20949)
+    at process.emit (node:events:526:28)
+    at emit (node:internal/child_process:938:14)
+    at processTicksAndRejections (node:internal/process/task_queues:84:21)
+[IPC Library: Pty Host]  WARN Shell integration cannot be enabled for executable "/bin/sh" and args []
+New EH opened, aborting shutdown
+[11:13:03] New EH opened, aborting shutdown
+[13:20:10] No ptyHost heartbeat after 6 seconds
+[13:39:20] No ptyHost heartbeat after 6 seconds
+[13:39:36] No ptyHost heartbeat after 6 seconds
+[13:40:36] No ptyHost heartbeat after 6 seconds

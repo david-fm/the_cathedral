@@ -1,0 +1,6 @@
+<h1>{{ article.name }}</h1>
+<ul>
+{% for field in article.field_set.all %}
+    <li>{{ field.id }}</li>
+{% endfor %}
+</ul>
