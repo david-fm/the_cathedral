@@ -1,2 +1,4 @@
 # Private #
 .pgpass
+.idea
+.vscode-server
