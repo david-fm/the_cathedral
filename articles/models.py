@@ -18,9 +18,8 @@ class Publication(models.Model):
     pdf_version = models.FileField(upload_to=user_directory_path, null=True, blank=True)
     html_version = models.FileField(upload_to=user_directory_path)
     publisher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='publications')
-    checks = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='checked_publications', null=True, blank=True)
-    rates = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True,
-                              related_name='rated_publications')
+    checks = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    rates = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
 
 class Keywords(models.Model):
