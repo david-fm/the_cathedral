@@ -2,3 +2,7 @@
 .pgpass
 .idea
 .vscode-server
+
+migrations/*
+__pycache__/*
+files/*

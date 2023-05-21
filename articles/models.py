@@ -1,4 +1,3 @@
-import os.path
 
 from django.db import models
 from django.conf import settings
@@ -6,8 +5,9 @@ from django.conf import settings
 
 # Create your models here.
 
-def path(type_file: str):
-    return os.path.join(settings.LOCAL_FILE_DIR, type_file)
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
+    return 'user_{0}/{1}'.format(instance.publisher.id, filename)
 
 
 class Publication(models.Model):
@@ -15,11 +15,11 @@ class Publication(models.Model):
     category = models.CharField(max_length=50)
     pub_date = models.DateTimeField('date and time when the publication was published')
     max_size = models.IntegerField()
-    pdf_version = models.FilePathField(path=path('pdf'))
-    html_version = models.FilePathField(path=path('html'))
+    pdf_version = models.FileField(upload_to=user_directory_path, null=True, blank=True)
+    html_version = models.FileField(upload_to=user_directory_path)
     publisher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='publications')
-    checks = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='checked_publications')
-    rates = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
+    checks = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='checked_publications', null=True, blank=True)
+    rates = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True,
                               related_name='rated_publications')
 
 
@@ -42,7 +42,8 @@ class Block(models.Model):
 
 class Font(models.Model):
     name = models.CharField(max_length=50)
-    font_path = models.FilePathField(path=path('font'))
+    font_path = models.FileField(upload_to=user_directory_path)
+
 class BlockTitle(Block):
     title = models.CharField(max_length=255)
     font_size = models.FloatField()
@@ -57,7 +58,7 @@ class BlockText(Block):
 
 
 class BlockImage(Block):
-    file_path = models.FilePathField(path=path('image'))
+    file_path = models.FileField(upload_to=user_directory_path)
     name = models.TextField(max_length=255)
     width = models.FloatField()
     height = models.FloatField()
