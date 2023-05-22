@@ -68,7 +68,6 @@ def save(request, article_id):
             print(form)
             id_block = form.cleaned_data['block_id']
             text_block = BlockText.objects.get(id=id_block)
-            print(form.cleaned_data['text'])
             text_block.text = form.cleaned_data['text']
             text_block.save()
     return redirect('articles:edit', article_id=article_id)

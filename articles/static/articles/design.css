@@ -180,12 +180,19 @@ input[type=number] {
 }    
 
 .text_container{
-    display: flex;
-    flex-direction: column;
+    padding: 10px;
     margin-left: 10px;
 
     width: 100%;
-    min-height: 80%;
+    border: none;
+    overflow: auto;
+    outline: none;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    resize: none;
 }
 
 .dropdown{

@@ -94,7 +94,10 @@
                 <div class="block" id="{{block.id}}">
                     <button class="plus" @click="show_blocks">+</button> 
                     <button class="option"> </button>
-                    <div class="text_container block_content" contenteditable="true">{% if block.text %}{{block.text}}{% endif%}</div>
+                    <textarea class="text_container block_content" x-data="{ resize: () => { $el.style.height = '5px'; $el.style.height = $el.scrollHeight + 'px' } }"
+                        x-init="resize()"
+                        @input="resize()">{% if block.text %}{{block.text}}{% endif%}</textarea>
+                    <!--textarea is important to mantain the \n-->
                 </div>
                 {% endfor %}
             </div>

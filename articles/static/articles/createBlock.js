@@ -79,24 +79,24 @@ document.addEventListener('alpine:init', () => {
             // retrieve all the blocks of the article
             let blocks = Array.from(document.querySelectorAll('.block_content'));
             let content_of_blocks = blocks.map((block) => {
-                return block.innerText;
+                return block.value;
             });
             let ids = blocks.map((block) => {
                 return block.parentElement.id;
             });
-            let text_inputs = document.querySelectorAll('#publication_form input[type="text"]');
+            let text_inputs = document.querySelectorAll('#publication_form textarea');
             let block_ids = document.querySelectorAll('#publication_form input[type="number"]');
             // separate block_inputs into 2 groups the inputs with name form-x-block_id and form-x-text being x the number of the block
             for(let i=0; i<block_ids.length; i++){
                 // if text is <br> then it is empty
-                if(content_of_blocks[i] == '<br>' || content_of_blocks[i] == ''){
+                /*if(content_of_blocks[i] == '<br>' || content_of_blocks[i] == ''){
                     content_of_blocks[i] = '';
-                }
-                text_inputs[i].value = content_of_blocks[i];
+                }*/
+                text_inputs[i].innerHTML = content_of_blocks[i];
                 block_ids[i].value = ids[i];
             }
             document.querySelector('#publication_form').submit();
-        }
+        },
     }))
 });
 

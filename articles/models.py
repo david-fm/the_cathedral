@@ -51,9 +51,9 @@ class BlockTitle(Block):
 
 
 class BlockText(Block):
-    text = models.CharField(max_length=3500, blank=True, null=True)
+    text = models.TextField(max_length=3500, blank=True, null=True)
     font_size = models.FloatField(blank=True, null=True)
-    font = models.ManyToManyField(Font, blank=True)
+    font = models.ForeignKey(Font, blank=True, null=True, on_delete=models.SET_NULL)
 # to do
 
 
