@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cathedral</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'normalize.css' %} ">
+    <link rel="stylesheet" href="{% static '/articles/design.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body x-data="createBlocks">
+    <script src="{% static '/articles/createBlock.js' %}"></script>
+    
+    <header>
+        <div>
+            <nav class="navtop">
+                <ul class="ultop">
+                    <button type="button" class="menu" @click="retrieve_blocks">Save</button>
+                    <button type="button" class="menu" @click="retrieve_blocks">Publish</button>
+                    <button type="button" class="menu">Home</button>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="rightcol">
+            <p class="texto">Texto</p>
+
+            <section class="tools">
+                <div class="col">
+
+                    <div class="font_div">
+                        <select class="font">
+                            <option value="1">Arial</option>
+                            <option value="2">Calibri</option>
+                            <option value="3">Impact</option>
+                        </select>    
+                    </div>
+
+
+                    <div class="box">
+                        <input id="font-size" type="number" value="16" min="1" max="100">
+                    </div>
+
+                    <div class="box">
+                        <button type="button" class="bton">
+                            <i class="fa-solid fa-bold"></i>
+                        </button>
+                        <button type="button" class="bton">
+                            <i class="fa-solid fa-italic"></i>
+                        </button>
+                        <button type="button" class="bton">
+                            <i class="fa-solid fa-underline"></i>
+                        </button>
+                    </div>
+
+
+                    <div class="box">
+                        <button type="button" class="bton"> 
+                            <i class="fa-solid fa-align-left"></i>
+                        </button>
+                        <button type="button" class="bton">
+                            <i class="fa-solid fa-align-center"></i>
+                        </button>
+                        <button type="button" class="bton">
+                            <i class="fa-solid fa-align-right"></i>
+                        </button>
+                    </div>
+
+
+                    <div class="box">
+                        <button type="button" class="bton">aA</button>
+                        <button type="button" class="bton">
+                            <i class="fa-solid fa-text-slash"></i>
+                        </button>
+                        <input type="color">
+                    </div>
+                    
+                </div>
+
+            </section>
+        </div>
+
+        <div class="area">
+            <div class="blocks-container">
+                {% for block in text_blocks %}
+                <div class="block" id="{{block.id}}">
+                    <button class="plus" @click="show_blocks">+</button> 
+                    <button class="option"> </button>
+                    <div class="text_container block_content" contenteditable="true">{% if block.text %}{{block.text}}{% endif%}</div>
+                </div>
+                {% endfor %}
+            </div>
+            
+        </div>
+
+    </main>
+    <form id="publication_form" action="{% url 'articles:save' article_id %}" method="POST">
+        {% csrf_token %}
+        {{forms}}
+    </form>
+    <form id="create_block_form" action="{% url 'articles:create_block' article_id 0%}" method="POST">
+        {% csrf_token %}
+    </form>
+
+</body>
+
+</html>

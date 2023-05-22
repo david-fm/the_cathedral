@@ -33,7 +33,7 @@ class Keywords(models.Model):
 
 class Block(models.Model):
     publication_id = models.ForeignKey(Publication, on_delete=models.CASCADE, null=False)
-    next_block_id = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
+    next_block_id = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
     is_formal = models.BooleanField(default=True)
     size = models.FloatField(default=0.0)
 
@@ -51,8 +51,8 @@ class BlockTitle(Block):
 
 
 class BlockText(Block):
-    text = models.CharField(max_length=3500)
-    font_size = models.FloatField()
+    text = models.CharField(max_length=3500, blank=True, null=True)
+    font_size = models.FloatField(blank=True, null=True)
     font = models.ManyToManyField(Font, blank=True)
 # to do
 
