@@ -18,7 +18,7 @@ class Publication(models.Model):
     pdf_version = models.FileField(upload_to=user_directory_path, null=True, blank=True)
     html_version = models.FileField(upload_to=user_directory_path)
     publisher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='publications')
-    checks = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    checks = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='checks')
     rates = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
 
@@ -46,7 +46,7 @@ class Font(models.Model):
 class BlockTitle(Block):
     title = models.CharField(max_length=255)
     font_size = models.FloatField()
-    font = models.ManyToManyField(Font, blank=True)
+    font = models.ForeignKey(Font, blank=True, null=True, on_delete=models.SET_NULL)
 
 
 class BlockText(Block):

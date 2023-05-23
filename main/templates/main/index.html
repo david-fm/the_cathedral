@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cathedral</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'main/design.css' %}">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+{%if login_error_message%}
+<body x-data="{ show_aside:false, show_login:true, show_register:false }" :class=" show_aside ? 'not-overflow' : ''">
+{% elif register_error_message%}
+<body x-data="{ show_aside:false, show_login:false, show_register:true }" :class=" show_aside ? 'not-overflow' : ''">
+{% else %}
+<body x-data="{ show_aside:false, show_login:false, show_register:false }" :class=" show_aside ? 'not-overflow' : ''">
+{% endif %}
+    <header>
+        <div>
+            <h1>Cathedral</h1>
+
+            <nav >
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li class="subject" @click="show_aside=!show_aside">
+                        Subjects
+                        <img src="{% static 'main/img/triangle.svg'%}">
+                    </li>
+                    
+                    <li>
+                            <form action="hola" class="search-bar" x-data="{ search : false }">
+                                <input type="text" placeholder="Search..." name="q" x-show="search" x-transition.duration.700ms>
+                                <button type="button" @click="search = !search"><img src="{% static 'main/img/search.png'%}" ></button>
+                            </form>
+                    </li>
+                    {% if not user.is_authenticated %}
+                    <li><button class="register" @click="show_register=!show_register">Sign Up</button></li>
+                    <li><button class="login" @click="show_login=!show_login">Login</button></li>
+                    {% endif %}
+
+                </ul>
+                <ul class="aside" x-show="show_aside" x-transition.duration.700ms @click="show_aside=!show_aside">
+                    <li class="aside__cathegory"><a href="#">Category 1</a></li>
+                    <li class="aside__cathegory"><a href="#">Category 2</a></li>
+                    <li class="aside__cathegory"><a href="#">Category 3</a></li>
+                    <li class="aside__cathegory"><a href="#">Category 4</a></li>
+                    <li class="aside__cathegory"><a href="#">Category 5</a></li>
+                    <li class="aside__cathegory"><a href="#">Category 6</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="top">
+            <div class="box">
+                <p class="quote">
+                    “Lo que todos tenemos que hacer es asegurarnos de que estamos usando la IA de una manera que sea en beneficio de la humanidad, no en detrimento de la humanidad”
+                </p>
+                <p class="author">~ Tim Cook</p>
+            </div>
+        </section>
+
+        <section class="middle">
+            <div class="back">
+                <div class="back_flex">
+                    <div class="card">
+                        <a href="#" class="link"><img src="{% static 'main/img/background1.jpg'%} " class="trio"></a>
+                        <p><a href="#" class="link">Titre numéro 1 à remplir lors de la création de l'article</a></p>
+                    </div>
+                    <div class="card">
+                        <a href="#" class="link"><img src="{% static 'main/img/background1.jpg'%} " class="trio"></a>
+                        <p><a href="#" class="link">Titre numéro 2 à remplir lors de la création de l'article</a></p>
+                    </div>
+                    <div class="card">
+                        <a href="#" class="link"><img src="{% static 'main/img/background1.jpg'%} " class="trio"></a>
+                        <p><a href="#" class="link">Titre numéro 3 à remplir lors de la création de l'article</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bottom">
+
+           <h2 class="subtitle">Last Articles</h2>
+            <div class="six">
+                <a href="#" class="card__parent link">
+                    <div class="img-container"><img src="{% static 'main/img/background3.jpg'%}" ></div>
+                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
+                </a>
+                <a href="#" class="card__parent link">
+                    <div class="img-container"><img src="{% static 'main/img/background1.jpg'%}" ></div>
+                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
+                </a>
+                <a href="#" class="card__parent link">
+                    <div class="img-container"><img src="{% static 'main/img/background3.jpg'%}" ></div>
+                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
+                </a>
+                <a href="#" class="card__parent link">
+                    <div class="img-container"><img src="{% static 'main/img/background2.jpg'%}" ></div>
+                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
+                </a>
+                <a href="#" class="card__parent link">
+                    <div class="img-container"><img src="{% static 'main/img/background3.jpg'%}" ></div>
+                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
+                </a>
+                <a href="#" class="card__parent link">
+                    <div class="img-container"><img src="{% static 'main/img/background1.jpg'%}" ></div>
+                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
+                </a>
+            </div>
+            <form action="" class="more-posts">
+                <button type="submit">Load More Posts</button>
+            </form>
+        </section>
+    </main>
+    {% if not user.is_authenticated %}
+    <div class="login_container" x-show="show_login">
+        <form action="" method="post"  class="login_form" @mousedown.outside="show_login=!show_login">
+            {% csrf_token %}
+            <p>Welcome to the Cathedral</p>
+            <div class="login_form-container">
+                {{ login_form }}
+                {% if login_error_message %} <p class="error_message">{{ login_error_message }}</p> {% endif %}
+                <div class="center_submit"><input type="submit" name="submit_login" value="Log in"></div>
+            </div>
+            
+        </form>
+    </div>
+    <div class="register_container" x-show="show_register">
+        <form action="" method="post"  class="register_form" @mousedown.outside="show_register=!show_register">
+            {% csrf_token %}
+            <p>Welcome to the Cathedral</p>
+            <div class="register_form-container">
+                {{ register_form }}
+                {% if register_error_message %} <p class="error_message">{{ register_error_message }}</p> {% endif %}
+                <div class="center_submit"><input type="submit" name="submit_register" value="Continue"></div>
+            </div>
+            
+        </form>
+    </div>
+    {% endif %}
+</body>
+
+</html>
