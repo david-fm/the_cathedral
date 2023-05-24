@@ -1,7 +1,7 @@
 
 from django.db import models
 from django.conf import settings
-
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
@@ -9,7 +9,17 @@ def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
     return 'user_{0}/{1}'.format(instance.publisher.id, filename)
 
+def user_directory_path_User(instance, filename):
+    # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
+    return 'files/user_{0}/{1}'.format(instance.id, filename)
 
+class UserPersonalized(AbstractUser):
+    biography= models.TextField(max_length=500, null=True, blank=True)
+    image = models.ImageField(upload_to=user_directory_path_User, null=True, blank=True)
+    website = models.TextField(max_length=255, null=True, blank=True)
+    gender = models.CharField(max_length=50, null=True, blank=True)
+    country = models.CharField(max_length=100, null=True, blank=True)
+    language = models.CharField(max_length=50, null=True, blank=True)
 class Publication(models.Model):
     title = models.CharField(max_length=255)
     category = models.CharField(max_length=50)
@@ -18,8 +28,8 @@ class Publication(models.Model):
     pdf_version = models.FileField(upload_to=user_directory_path, null=True, blank=True)
     html_version = models.FileField(upload_to=user_directory_path)
     publisher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='publications')
-    checks = models.ManyToManyField(settings.AUTH_USER_MODEL)
-    rates = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    checks = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='checks')
+    rates = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='rates')
 
 
 class Keywords(models.Model):
@@ -46,7 +56,7 @@ class Font(models.Model):
 class BlockTitle(Block):
     title = models.CharField(max_length=255)
     font_size = models.FloatField()
-    font = models.ManyToManyField(Font, blank=True)
+    font = models.ForeignKey(Font, on_delete=models.SET_NULL, null=True, blank=True)
 
 
 class BlockText(Block):
@@ -104,7 +114,7 @@ class Author(models.Model):
 class BlockTable(Block):
     text = models.TextField(max_length=3500)
     font_size = models.FloatField()
-    font = models.ManyToManyField(Font, blank=True)
+    font = models.ForeignKey(Font, on_delete=models.SET_NULL, blank=True, null=True)
 
 
 
