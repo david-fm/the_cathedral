@@ -5,8 +5,16 @@ from .models import Publication
 from .models import Publication, Font, BlockAuthors, BlockImage, BlockText, BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, Questions, Answer, Keywords
 from .forms import UpdateTextBlock
 from django.forms import formset_factory
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
+from django.http import HttpResponse, HttpResponseForbidden
+@login_required  # Requiere que el usuario inicie sesión
+#@permission_required('articles.is_checker', raise_exception=True)
+def my_view(request):
+    if not request.user.has_perm('articles.is_checker'):
+        return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
 
-
+    return HttpResponse("¡Hola, usuario con permiso!")
 
 def detail(request, article_id):
     return HttpResponse("You're looking at article %s." % article_id)

@@ -77,12 +77,14 @@ WSGI_APPLICATION = 'team_test.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-        'default': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'OPTIONS': {
-            'service': 'db_service',
-            'passfile': '.pgpass',
-        },
+        'HOST': 'localhost',
+        'PORT': 5432,
+        'NAME': 'db_cathedral33',
+        'USER': 'user_cathedral',
+        'PASSWORD': '1234',
+
     }
 }
 

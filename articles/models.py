@@ -27,9 +27,9 @@ class Publication(models.Model):
     max_size = models.IntegerField()
     pdf_version = models.FileField(upload_to=user_directory_path, null=True, blank=True)
     html_version = models.FileField(upload_to=user_directory_path)
-    publisher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='publications')
-    checks = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='checks')
-    rates = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='rates')
+    publisher = models.ForeignKey(UserPersonalized, on_delete=models.CASCADE, related_name='publications')
+    checks = models.ManyToManyField(UserPersonalized, related_name='checks')
+    rates = models.ManyToManyField(UserPersonalized, related_name='rates')
 
 
 class Keywords(models.Model):
@@ -108,7 +108,7 @@ class BlockAuthors(Block):
 
 class Author(models.Model):
     authors = models.ForeignKey(BlockAuthors, on_delete=models.CASCADE, null=False)
-    publisher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
+    publisher = models.ForeignKey(UserPersonalized, on_delete=models.CASCADE, null=False)
 # to do
 
 class BlockTable(Block):
@@ -120,7 +120,7 @@ class BlockTable(Block):
 
 class BlockReferences(Block):
     title = models.CharField(max_length=255)
-    authors = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    authors = models.ManyToManyField(UserPersonalized)
 
 
 

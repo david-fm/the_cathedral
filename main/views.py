@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .forms import RegisterForm, LoginForm
 # Import the User object
+from django.contrib.auth.models import Group
+from articles.models import UserPersonalized
 from django.contrib.auth import authenticate, login
 
 # Create your views here.
@@ -41,6 +43,11 @@ def index(request):
                 print('Form is valid as a register form')
                 user = register_form.save()
                 user.refresh_from_db()
+                #
+                group_name = 'Publishers'
+                group = Group.objects.get(name=group_name)
+                user.groups.add(group)
+                #
                 login(request, user)
                 
                 # redirect to a new URL:
