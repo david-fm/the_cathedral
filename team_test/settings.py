@@ -32,6 +32,8 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
+
+    'user_system.apps.UserSystemConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,7 +43,7 @@ INSTALLED_APPS = [
     'articles.apps.ArticlesConfig',
     'main.apps.MainConfig',
 ]
-AUTH_USER_MODEL = 'articles.UserPersonalized'
+AUTH_USER_MODEL = 'user_system.UserPersonalized'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -79,11 +81,10 @@ WSGI_APPLICATION = 'team_test.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'localhost',
-        'PORT': 5432,
-        'NAME': 'db_cathedral33',
-        'USER': 'user_cathedral',
-        'PASSWORD': '1234',
+        'OPTIONS': {
+            'service': 'db_service',
+            'passfile': '.pgpass',
+        },
 
     }
 }
