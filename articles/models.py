@@ -11,14 +11,14 @@ def user_directory_path(instance, filename):
 
 class Publication(models.Model):
     title = models.CharField(max_length=255)
-    category = models.CharField(max_length=50)
-    pub_date = models.DateTimeField('date and time when the publication was published')
-    max_size = models.IntegerField()
+    category = models.CharField(max_length=50, null=True, blank=True)
+    pub_date = models.DateTimeField('date and time when the publication was published', null=True, blank=True)
+    max_size = models.IntegerField(null=True, blank=True)
     pdf_version = models.FileField(upload_to=user_directory_path, null=True, blank=True)
-    html_version = models.FileField(upload_to=user_directory_path)
+    html_version = models.FileField(upload_to=user_directory_path, null=True, blank=True)
     publisher = models.ForeignKey(UserPersonalized, on_delete=models.CASCADE, related_name='publications')
-    checks = models.ManyToManyField(UserPersonalized, related_name='checks')
-    rates = models.ManyToManyField(UserPersonalized, related_name='rates')
+    checks = models.ManyToManyField(UserPersonalized, related_name='checks', null=True, blank=True)
+    rates = models.ManyToManyField(UserPersonalized, related_name='rates', null=True, blank=True)
 
 
 class Keywords(models.Model):

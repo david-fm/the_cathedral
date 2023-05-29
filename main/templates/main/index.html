@@ -1,61 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cathedral</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'normalize.css' %}">
-    <link rel="stylesheet" href="{% static 'main/design.css' %}">
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-</head>
-
-{%if login_error_message%}
-<body x-data="{ show_aside:false, show_login:true, show_register:false }" :class=" show_aside ? 'not-overflow' : ''">
-{% elif register_error_message%}
-<body x-data="{ show_aside:false, show_login:false, show_register:true }" :class=" show_aside ? 'not-overflow' : ''">
-{% else %}
-<body x-data="{ show_aside:false, show_login:false, show_register:false }" :class=" show_aside ? 'not-overflow' : ''">
-{% endif %}
-    <header>
-        <div>
-            <h1>Cathedral</h1>
-
-            <nav >
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li class="subject" @click="show_aside=!show_aside">
-                        Subjects
-                        <img src="{% static 'main/img/triangle.svg'%}">
-                    </li>
-                    
-                    <li>
-                            <form action="hola" class="search-bar" x-data="{ search : false }">
-                                <input type="text" placeholder="Search..." name="q" x-show="search" x-transition.duration.700ms>
-                                <button type="button" @click="search = !search"><img src="{% static 'main/img/search.png'%}" ></button>
-                            </form>
-                    </li>
-                    {% if not user.is_authenticated %}
-                    <li><button class="register" @click="show_register=!show_register">Sign Up</button></li>
-                    <li><button class="login" @click="show_login=!show_login">Login</button></li>
-                    {% endif %}
-
-                </ul>
-                <ul class="aside" x-show="show_aside" x-transition.duration.700ms @click="show_aside=!show_aside">
-                    <li class="aside__cathegory"><a href="#">Category 1</a></li>
-                    <li class="aside__cathegory"><a href="#">Category 2</a></li>
-                    <li class="aside__cathegory"><a href="#">Category 3</a></li>
-                    <li class="aside__cathegory"><a href="#">Category 4</a></li>
-                    <li class="aside__cathegory"><a href="#">Category 5</a></li>
-                    <li class="aside__cathegory"><a href="#">Category 6</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
+{% extends 'base.html' %}
+{% load static %}
+{% block statics %}
+<link rel="stylesheet" href="{% static 'main/design.css' %}">
+{% endblock %}
+{% block content %}
     <main>
         <section class="top">
             <div class="box">
@@ -119,32 +67,5 @@
             </form>
         </section>
     </main>
-    {% if not user.is_authenticated %}
-    <div class="login_container" x-show="show_login">
-        <form action="" method="post"  class="login_form" @mousedown.outside="show_login=!show_login">
-            {% csrf_token %}
-            <p>Welcome to the Cathedral</p>
-            <div class="login_form-container">
-                {{ login_form }}
-                {% if login_error_message %} <p class="error_message">{{ login_error_message }}</p> {% endif %}
-                <div class="center_submit"><input type="submit" name="submit_login" value="Log in"></div>
-            </div>
-            
-        </form>
-    </div>
-    <div class="register_container" x-show="show_register">
-        <form action="" method="post"  class="register_form" @mousedown.outside="show_register=!show_register">
-            {% csrf_token %}
-            <p>Welcome to the Cathedral</p>
-            <div class="register_form-container">
-                {{ register_form }}
-                {% if register_error_message %} <p class="error_message">{{ register_error_message }}</p> {% endif %}
-                <div class="center_submit"><input type="submit" name="submit_register" value="Continue"></div>
-            </div>
-            
-        </form>
-    </div>
-    {% endif %}
-</body>
-
-</html>
+{% endblock %}
+{% block scripts %}{% endblock  %}

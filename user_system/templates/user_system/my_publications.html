@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{%load static%}
+{% block statics %}
+<link rel="stylesheet" href="{% static 'user_system/my_publications.css' %}">
+{% endblock  %}
+
+
+{% block content %}
+    <div class="container" x-data="{ show_saved:true }">
+        <div class="middle1">
+            {% if user.image %}
+            <img src="{{user.image.url}}" class="profile">
+            {% else %}
+            <img src="{% static 'img/user_default.png' %}" class="profile">
+            {% endif %}
+            <p class="usernumber">{{user.username}}</p>
+            <p class="mail">{{user.email}}</p>
+        </div>
+
+        <div class="middle2">
+            <button type="button" class="bton">Compartir</button>
+            <button type="button" class="bton">Editar Perfil</button>
+        </div>
+
+        <div class="middle3">
+            <button type="button" class="choice" :class="show_saved ? 'active':''" @click="show_saved=true">Saved</button>
+            <button type="button" class="choice" :class="show_saved ? '':'active'" @click="show_saved=false">Created</button>
+        </div>
+
+        <div class="middle4" x-show="show_saved">
+            <p class="publish">Saved publications</p>
+            <div class="box"> 
+                <div class="titles">
+                    <a href="link" class="more">
+                        <h2>Lorem ipsum dolor</h2>
+                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
+                    </a>
+                </div>
+                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
+            </div>
+
+            <div class="box"> 
+                <div class="titles">
+                    <a href="link" class="more">
+                        <h2>Lorem ipsum dolor</h2>
+                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
+                    </a>
+                </div>
+                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
+            </div>
+
+            <div class="box"> 
+                <div class="titles">
+                    <a href="link" class="more">
+                        <h2>Lorem ipsum dolor</h2>
+                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
+                    </a>
+                </div>
+                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
+            </div>
+
+            <div class="bottom">
+                <p class="new">Aún no hay nada para mostrar. Los papers que crees se almacenarán aqui.</p>
+
+                <form action="" class="more-posts">
+                    <button type="submit">Load More Posts</button>
+                </form>
+            </div>
+
+
+        </div>
+        <div class="middle4" x-show="!show_saved">
+            <p class="publish">My publications</p>
+            <div class="box"> 
+                <div class="titles">
+                    <a href="link" class="more">
+                        <h2>Lorem ipsum dolor</h2>
+                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
+                    </a>
+                </div>
+                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
+            </div>
+
+            <div class="box"> 
+                <div class="titles">
+                    <a href="link" class="more">
+                        <h2>Lorem ipsum dolor</h2>
+                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
+                    </a>
+                </div>
+                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
+            </div>
+
+            <div class="box"> 
+                <div class="titles">
+                    <a href="link" class="more">
+                        <h2>Lorem ipsum dolor</h2>
+                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
+                    </a>
+                </div>
+                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
+            </div>
+
+
+
+            <div class="bottom">
+                <p class="new">Aún no hay nada para mostrar. Los papers que crees se almacenarán aqui.</p>
+
+                <form action="" class="more-posts">
+                    <button type="submit">Load More Posts</button>
+                </form>
+            </div>
+
+            
+        </div>
+        <div class="placement" x-data="{ show_add:false }">
+            <div class="add-button" @click="show_add=!show_add" :class="show_add ? '':'no-add'">
+                +
+            </div>
+            <div class="add" x-show="show_add" x-transition.duration.500ms>
+                <p class="create">Create</p>
+                <form action="" class="entry" x-ref="new_publication" method="post">
+                    {% csrf_token %}
+                    {{form}}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock  %}
