@@ -15,6 +15,7 @@ h1{
     color:#ffffff;
 
     flex-grow: 1;
+    cursor:pointer;
 }
 
 nav {
@@ -247,6 +248,11 @@ nav a{
     color: #707070;
     text-decoration: none;
     font-size: 15px;
+}
+.user-options__options p{
+    color: #707070;
+    font-size: 15px;
+    cursor: pointer;
 }
 body{
     margin: 0;

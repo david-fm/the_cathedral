@@ -24,19 +24,19 @@
 {% endif %}
     <header {% if user.is_authenticated %}x-data="{ show_uopt:false }"{% endif %} >
         <div class="header_container">
-            <h1>Cathedral</h1>
+            <h1 @click="$refs.home.click()">Cathedral</h1>
 
             <nav >
                 <ul>
-                    <li><a href="#">Home</a></li>
+                    <li><a href="{% url 'main:index' %}" x-ref="home">Home</a></li>
                     <li class="subject" @click="show_aside=!show_aside">
                         Subjects
                         <img src="{% static 'main/img/triangle.svg'%}">
                     </li>
                     
                     <li>
-                            <form action="hola" class="search-bar" x-data="{ search : false }">
-                                <input type="text" placeholder="Search..." name="q" x-show="search" x-transition.duration.700ms :class="search ? 'search-placeholder-tobig':'search-placeholder-tosmall'">
+                            <form action="{% url 'main:search' %}" class="search-bar" x-data="{ search : false }" x-ref="search_form" method="get">
+                                <input type="text" placeholder="Search..." name="search" x-show="search" x-transition.duration.700ms :class="search ? 'search-placeholder-tobig':'search-placeholder-tosmall'" @keyup.enter="$refs.search_form.submit()">
                                 <button type="button" @click="search = !search"><img src="{% static 'main/img/search.png'%}" ></button>
                             </form>
                     </li>
@@ -99,7 +99,7 @@
                     <h2>More options</h2>
                     <a href="">Privacy policy</a>
                     <a href="">Be an evaluator</a>
-                    <a href="">Logout</a>
+                    <p @click="$refs.logout_form.submit()">Logout</p>
                 </section>
             </aside>
         </div>
@@ -110,7 +110,12 @@
     <main>
         {% block content %}{% endblock %}
     </main>
-    {% if not user.is_authenticated %}
+    {% if user.is_authenticated %}
+    <form action="" method="post" id="logout_form" x-ref="logout_form" >
+        {% csrf_token %}
+        <input type="hidden" name="submit_logout" value="Log in">
+    </form>
+    {% else %}
     <div class="login_container" x-show="show_login">
         <form action="" method="post"  class="login_form" @mousedown.outside="show_login=!show_login">
             {% csrf_token %}

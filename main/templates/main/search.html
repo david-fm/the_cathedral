@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <p>{{ result }}</p>
+    <ul>
+        {% for pub in pubs %}
+          <li>
+            {{ pub.title }}, {{ pub.pub_date }}
+          </li>
+        {% endfor %}
+      </ul>
+{% endblock %}
