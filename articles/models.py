@@ -2,12 +2,20 @@
 from django.db import models
 from django.conf import settings
 from user_system.models import UserPersonalized
+# import MEDIA_ROOT
+from django.conf import settings
 
 # Create your models here.
 
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
     return 'user_{0}/{1}'.format(instance.publisher.id, filename)
+
+def directory_for_blocks(instance, filename):
+    # file will be uploaded to MEDIA_ROOT / user_<id>/<publication_title>/<filename>
+    return 'user_{0}/{1}/{2}'.format(instance.block.publication.publisher.id, instance.block.publication.title, filename)
+
+
 
 class Publication(models.Model):
     title = models.CharField(max_length=255)
@@ -38,7 +46,7 @@ class Block(models.Model):
 
 class Font(models.Model):
     name = models.CharField(max_length=50)
-    font_path = models.FileField(upload_to=user_directory_path)
+    font_path = models.FileField(upload_to='fonts/')
 
 class BlockTitle(models.Model):
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
@@ -57,10 +65,7 @@ class BlockText(models.Model):
 
 class BlockImage(models.Model):
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
-    file_path = models.FileField(upload_to=user_directory_path)
-    name = models.TextField(max_length=255)
-    width = models.FloatField()
-    height = models.FloatField()
+    file_path = models.FileField(upload_to=directory_for_blocks)
 
 
 class BlockVideo(models.Model):
@@ -111,6 +116,7 @@ class BlockTable(models.Model):
 
 
 class BlockReferences(models.Model):
+    block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
     title = models.CharField(max_length=255)
     authors = models.ManyToManyField(UserPersonalized)
 

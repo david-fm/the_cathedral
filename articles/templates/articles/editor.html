@@ -98,6 +98,8 @@
                     <textarea class="text_container block_content" x-data="{ resize: () => { $el.style.height = '5px'; $el.style.height = $el.scrollHeight + 'px' } }"
                         x-init="resize()"
                         @input="resize(); modified=true;">{% if block.blocktext.text %}{{block.blocktext.text}}{% endif%}</textarea>
+                    {% elif block.blockimage %}
+                    <img class="image_container block_content" src="{{ MEDIA_URL }}{{block.blockimage.file_path.url}}" alt="image">
                     {% endif %}
                     
                     <!--textarea is important to mantain the \n-->
@@ -108,9 +110,10 @@
         </div>
 
     </main>
-    <form id="publication_form" action="{% url 'articles:save' article_id %}" method="POST" class="hidden" x-ref="save_form">
+    <form id="publication_form" action="{% url 'articles:save' article_id %}" method="POST" class="hidden" x-ref="save_form" enctype="multipart/form-data">
         {% csrf_token %}
-        {{forms}}
+        {{text_formset}}
+        {{image_formset}}
     </form>
 </body>
 

@@ -63,7 +63,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('createBlocks', () => ({
         show_blocks() {
             // TODO WHEN THIS IS ACTIVATED THE SAME TEXTAREA NOT TAKEN INTO ACCOUNT
-            
+
             // search for a dropdown if there is one delete it
             if(document.querySelector('.dropdown') != null){
                 if (document.querySelector('.dropdown').parentElement == this.$el.parentElement)
@@ -91,10 +91,10 @@ document.addEventListener('alpine:init', () => {
         create_block(){
             let block = this.$el.parentNode.parentNode;
             let forms = this.$refs.save_form;
-            let totalForms = forms.querySelector('#id_form-TOTAL_FORMS')
+            let totalForms = forms.querySelector('#id_text-TOTAL_FORMS')
             let lastFormIdx = parseInt(totalForms.value)-1;
-            let statusInput = forms.querySelector('#id_form-'+lastFormIdx+'-status');
-            let blockIdInput = forms.querySelector('#id_form-'+lastFormIdx+'-block_id');
+            let statusInput = forms.querySelector('#id_text-'+lastFormIdx+'-status');
+            let blockIdInput = forms.querySelector('#id_text-'+lastFormIdx+'-block_id');
 
             statusInput.value = 'C';
             blockIdInput.value = block.id;
@@ -103,7 +103,7 @@ document.addEventListener('alpine:init', () => {
         },
         retrieve_blocks(){
             // retrieve all the blocks of the article
-            console.log('retrieving blocks');
+            //console.log('retrieving blocks');
             let blocks = Array.from(document.querySelectorAll('.block_content'));
             let content_of_blocks = blocks.map((block) => {
                 return block.value;
@@ -118,16 +118,19 @@ document.addEventListener('alpine:init', () => {
             let block_ids = document.querySelectorAll('#publication_form input[type="number"]');
             let statusInput = document.querySelectorAll('#publication_form input[name*="status"]');
             // separate block_inputs into 2 groups the inputs with name form-x-block_id and form-x-text being x the number of the block
-            for(let i=0; i<block_ids.length-1; i++){
-                console.log(blocks[i]);
+            for(let i=0; i<text_inputs.length-1; i++){
+                //console.log(blocks[i]);
                 text_inputs[i].innerHTML = content_of_blocks[i];
                 block_ids[i].value = ids[i];
 
                 statusInput[i].setAttribute('value',status[i]);
             }
             // check if the last status is empty in such a case put it to U
-            if(statusInput[statusInput.length-1].value == ''){
-                statusInput[statusInput.length-1].value = 'U';
+            for (let i=0; i<statusInput.length; i++){
+                if(statusInput[i].value == ''){
+                    statusInput[i].value = 'U';
+                }
+                console.log(statusInput[i].value);
             }
             // submit the form
             this.$refs.save_form.submit();
@@ -135,14 +138,14 @@ document.addEventListener('alpine:init', () => {
         delete_blocks(){
             let block = this.$el.parentNode;
             let forms = this.$refs.save_form;
-            let totalForms = forms.querySelector('#id_form-TOTAL_FORMS')
+            let totalForms = forms.querySelector('#id_text-TOTAL_FORMS')
             let lastFormIdx = parseInt(totalForms.value)-1;
-            let statusInput = forms.querySelector('#id_form-'+lastFormIdx+'-status');
-            let blockIdInput = forms.querySelector('#id_form-'+lastFormIdx+'-block_id');
+            let statusInput = forms.querySelector('#id_text-'+lastFormIdx+'-status');
+            let blockIdInput = forms.querySelector('#id_text-'+lastFormIdx+'-block_id');
 
             statusInput.value = 'D';
             blockIdInput.value = block.id;
-            console.log(blockIdInput.value);
+            //console.log(blockIdInput.value);
             this.retrieve_blocks();
         }
     }))

@@ -3,7 +3,7 @@ from django.http import HttpResponse
 #from .models import Article
 from .models import Publication
 from .models import Publication, Font, Block, BlockAuthors, BlockImage, BlockText, BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, Questions, Answer, Keywords
-from .forms import UpdateTextBlock
+from .forms import UpdateTextBlock, UpdateImageBlock
 from django.forms import formset_factory
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
@@ -40,24 +40,59 @@ def order_blocks(blocks):
     ordered_blocks.reverse()
     return ordered_blocks
 
+
+@login_required
 def edit_view(request, article_id):
     # take all the Block related to the publication and pass them to the template
     blocks = Block.objects.filter(publication=article_id)
     blocks = order_blocks(blocks)
-    # add a form per each block
+    # get which how many blocks of each type there are
+    num_titles = BlockTitle.objects.filter(block__in=blocks).count()
+    num_texts = BlockText.objects.filter(block__in=blocks).count()
+    num_images = BlockImage.objects.filter(block__in=blocks).count()
+    num_dois = BlockDoi.objects.filter(block__in=blocks).count()
+    num_videos = BlockVideo.objects.filter(block__in=blocks).count()
+    num_quizzes = BlockQuiz.objects.filter(block__in=blocks).count()
+    num_references = BlockReferences.objects.filter(block__in=blocks).count()
+    num_tables = BlockTable.objects.filter(block__in=blocks).count()
+    num_authors = BlockAuthors.objects.filter(block__in=blocks).count()
+    # TODO Implement keywords
+    # create a formset for each type of block
+
+    UpdateImageBlockSet = formset_factory(UpdateImageBlock, extra=num_images+1)
     UpdateTextBlockSet = formset_factory(UpdateTextBlock, extra=len(blocks)+1)
-    formset = UpdateTextBlockSet()
-    context = {'article_id': article_id, 'blocks': blocks, 'forms': formset}
+    text_formset = UpdateTextBlockSet(prefix='text')
+    image_formset = UpdateImageBlockSet(prefix='image')
+
+
+    context = {'article_id': article_id, 'blocks': blocks, 'text_formset': text_formset, 'image_formset':image_formset}
     return render(request, 'articles/editor.html', context=context)
 
-def save(request, article_id):
+def are_formsets_valids(*formsets):
+    for formset in formsets:
+        if not formset.is_valid():
+            return False
+    return True
 
-    forms = formset_factory(UpdateTextBlock)
-    forms = forms(request.POST)
+def print_data_of_error_formsets(*formsets):
+    for formset in formsets:
+        if not formset.is_valid():
+            print('error')
+            print(formset.errors)
+            print('Printing the formset')
+            print(formset.as_table())
+
+@login_required
+def save(request, article_id):
+    print('save')
+    text_formset = formset_factory(UpdateTextBlock)
+    text_formset = text_formset(request.POST, prefix='text')
+    image_formset = formset_factory(UpdateImageBlock)
+    image_formset = image_formset(request.POST, request.FILES, prefix='image')
     # print forms as html
-    print(forms.as_table())
-    if forms.is_valid():
-        for form in forms:
+    #print(forms.as_table())
+    if are_formsets_valids(text_formset, image_formset):
+        for form in text_formset:
             status = form.cleaned_data['status']
             if status == 'D':
                 # delete the block
@@ -83,7 +118,7 @@ def save(request, article_id):
                 block.save()
                 block.blocktext.save()
     else:
-        print(forms.errors)
+        print_data_of_error_formsets(text_formset, image_formset)
     return redirect('articles:edit', article_id=article_id)
 
 def text_block(publication_id, prev_block_id):
@@ -103,7 +138,22 @@ def text_block(publication_id, prev_block_id):
     prev_block.save()
     new_block.save()
 
-
+def image_block(publication_id, prev_block_id):
+    '''Create a new block of type image and insert it after the block with id prev_block_id'''
+    # get publication
+    publication = Publication.objects.get(id=publication_id)
+    # Create the new block
+    new_block = Block.objects.create(publication=publication)
+    new_block.save()
+    # Create the new image block
+    new_image_block = BlockImage.objects.create(block=new_block)
+    new_image_block.save()
+    # Update the previous block
+    prev_block = Block.objects.get(id=prev_block_id)
+    new_block.next_block = prev_block.next_block
+    prev_block.next_block = new_block
+    prev_block.save()
+    new_block.save()
 
 
 # TODO Make that create_block also saves the data of the form

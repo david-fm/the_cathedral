@@ -15,3 +15,8 @@ class UpdateTextBlock(forms.Form):
     # TODO
     #font_size = forms.FloatField()
     #font = forms.ManyToManyField(Font, blank=True)
+
+class UpdateImageBlock(forms.Form):
+    image = forms.ImageField(label='', required=False)
+    block_id = forms.IntegerField(label='', required=False)
+    status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
