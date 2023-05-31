@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .forms import Publicate
-from articles.models import Publication, BlockText
+from articles.models import Publication, BlockText, Block
 from django.shortcuts import redirect
 
 # Create your views here.
@@ -14,8 +14,12 @@ def my_publications(request):
             title = form.cleaned_data['title']
             post = Publication(title=title, publisher=request.user)
             post.save()
-            block = BlockText(publication_id=post, size=0.0)
+            # create block
+            block = Block(publication=post)
+            # create text block
+            text_block = BlockText(block=block)
             block.save()
+            text_block.save()
             # 
             # ...
             # redirect to a new URL:

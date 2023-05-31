@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from articles.models import UserPersonalized
 
+# exec(open('user_system/groups_and_permissions.py').read())
 # Obtain the ContentType Object correspondent to the desired model
 content_type = ContentType.objects.get_for_model(UserPersonalized)
 

@@ -90,13 +90,16 @@
 
         <div class="area">
             <div class="blocks-container">
-                {% for block in text_blocks %}
-                <div class="block" id="{{block.id}}">
+                {% for block in blocks %}
+                <div class="block" id="{{block.id}}" x-data="{modified:false}" :status="modified ? 'M' : 'U'">
                     <button class="plus" @click="show_blocks">+</button> 
-                    <button class="option"> </button>
+                    <button class="option" @click="delete_blocks"> </button>
+                    {% if block.blocktext %}
                     <textarea class="text_container block_content" x-data="{ resize: () => { $el.style.height = '5px'; $el.style.height = $el.scrollHeight + 'px' } }"
                         x-init="resize()"
-                        @input="resize()">{% if block.text %}{{block.text}}{% endif%}</textarea>
+                        @input="resize(); modified=true;">{% if block.blocktext.text %}{{block.blocktext.text}}{% endif%}</textarea>
+                    {% endif %}
+                    
                     <!--textarea is important to mantain the \n-->
                 </div>
                 {% endfor %}
@@ -105,14 +108,10 @@
         </div>
 
     </main>
-    <form id="publication_form" action="{% url 'articles:save' article_id %}" method="POST">
+    <form id="publication_form" action="{% url 'articles:save' article_id %}" method="POST" class="hidden" x-ref="save_form">
         {% csrf_token %}
         {{forms}}
     </form>
-    <form id="create_block_form" action="{% url 'articles:create_block' article_id 0%}" method="POST">
-        {% csrf_token %}
-    </form>
-
 </body>
 
 </html>

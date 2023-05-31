@@ -255,7 +255,7 @@ input[type=number] {
     letter-spacing: 0px;
     color: #9f9f9f;
 }
-#create_block_form, #publication_form{
+.hidden{
     display: none;
 }
 

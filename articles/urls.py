@@ -11,6 +11,5 @@ urlpatterns = [
 
     path('<int:article_id>/save/', views.save, name='save'),
     path('my-view/', my_view, name='my-view'),
-    path('<int:publication_id>/create_block/<int:prev_block_id>/', views.create_block, name='create_block')
 
 ]

@@ -8,8 +8,9 @@ class BlockText(Block):
 '''
 
 class UpdateTextBlock(forms.Form):
-    text = forms.CharField(max_length=3500, required=False, empty_value='', widget=forms.Textarea())
-    block_id = forms.IntegerField()
+    text = forms.CharField(max_length=3500, required=False, empty_value='', widget=forms.Textarea(), label='')
+    block_id = forms.IntegerField(label='', required=False)
+    status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
 
     # TODO
     #font_size = forms.FloatField()

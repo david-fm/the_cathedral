@@ -30,53 +30,56 @@ class Keywords(models.Model):
 
 
 class Block(models.Model):
-    publication_id = models.ForeignKey(Publication, on_delete=models.CASCADE, null=False)
-    next_block_id = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    publication = models.ForeignKey(Publication, on_delete=models.CASCADE, null=False)
+    next_block = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
     is_formal = models.BooleanField(default=True)
     size = models.FloatField(default=0.0)
 
-    class Meta:
-        abstract = True
 
 class Font(models.Model):
     name = models.CharField(max_length=50)
     font_path = models.FileField(upload_to=user_directory_path)
 
-class BlockTitle(Block):
+class BlockTitle(models.Model):
+    block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
     title = models.CharField(max_length=255)
-    font_size = models.FloatField()
+    title_type = models.CharField(max_length=2, default='1', blank=True)
     font = models.ForeignKey(Font, blank=True, null=True, on_delete=models.SET_NULL)
 
 
-class BlockText(Block):
+class BlockText(models.Model):
+    block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
     text = models.TextField(max_length=3500, blank=True, null=True)
     font_size = models.FloatField(blank=True, null=True)
     font = models.ForeignKey(Font, blank=True, null=True, on_delete=models.SET_NULL)
 # to do
 
 
-class BlockImage(Block):
+class BlockImage(models.Model):
+    block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
     file_path = models.FileField(upload_to=user_directory_path)
     name = models.TextField(max_length=255)
     width = models.FloatField()
     height = models.FloatField()
 
 
-class BlockVideo(Block):
+class BlockVideo(models.Model):
+    block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
     name = models.CharField(max_length=50)
     duration = models.IntegerField()
     url = models.TextField(max_length=250)
     is_formal = models.BooleanField(default=False)
 
 
-class BlockQuiz(Block):
+class BlockQuiz(models.Model):
+    block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
     name = models.TextField(max_length=250)
     is_formal = models.BooleanField(default=False)
 
 
 class Questions(models.Model):
     question = models.TextField(max_length=350)
-    quiz_block_id = models.ForeignKey(BlockQuiz, on_delete=models.CASCADE, null=False)
+    quiz_block = models.ForeignKey(BlockQuiz, on_delete=models.CASCADE, null=False)
 
 
 class Answer(models.Model):
@@ -87,27 +90,27 @@ class Answer(models.Model):
 
 
 
-class BlockDoi(Block):
+class BlockDoi(models.Model):
+    block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
     doi = models.CharField(max_length=255)
 
 
-class BlockAuthors(Block):
-    url_authors = models.TextField(max_length=250)
+class BlockAuthors(models.Model):
+    block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
+    authors = models.ManyToManyField(UserPersonalized)
 
 
-class Author(models.Model):
-    authors = models.ForeignKey(BlockAuthors, on_delete=models.CASCADE, null=False)
-    publisher = models.ForeignKey(UserPersonalized, on_delete=models.CASCADE, null=False)
 # to do
 
-class BlockTable(Block):
+class BlockTable(models.Model):
+    block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
     text = models.TextField(max_length=3500)
     font_size = models.FloatField()
     font = models.ForeignKey(Font, on_delete=models.SET_NULL, blank=True, null=True)
 
 
 
-class BlockReferences(Block):
+class BlockReferences(models.Model):
     title = models.CharField(max_length=255)
     authors = models.ManyToManyField(UserPersonalized)
 
