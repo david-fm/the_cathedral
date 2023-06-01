@@ -1,11 +1,5 @@
 from django import forms
 
-'''
-class BlockText(Block):
-    text = models.CharField(max_length=3500)
-    font_size = models.FloatField()
-    font = models.ManyToManyField(Font, blank=True)
-'''
 
 class UpdateTextBlock(forms.Form):
     text = forms.CharField(max_length=3500, required=False, empty_value='', widget=forms.Textarea(), label='')
@@ -17,6 +11,6 @@ class UpdateTextBlock(forms.Form):
     #font = forms.ManyToManyField(Font, blank=True)
 
 class UpdateImageBlock(forms.Form):
-    image = forms.ImageField(label='', required=False)
+    file = forms.ImageField(label='', required=False)
     block_id = forms.IntegerField(label='', required=False)
     status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')

@@ -93,13 +93,21 @@
                 {% for block in blocks %}
                 <div class="block" id="{{block.id}}" x-data="{modified:false}" :status="modified ? 'M' : 'U'">
                     <button class="plus" @click="show_blocks">+</button> 
-                    <button class="option" @click="delete_blocks"> </button>
                     {% if block.blocktext %}
-                    <textarea class="text_container block_content" x-data="{ resize: () => { $el.style.height = '5px'; $el.style.height = $el.scrollHeight + 'px' } }"
+                    <button class="option" @click="delete_blocks; type='text'"> </button>
+                    <textarea class="text_container text_block_content" x-data="{ resize: () => { $el.style.height = '5px'; $el.style.height = $el.scrollHeight + 'px' } }"
                         x-init="resize()"
                         @input="resize(); modified=true;">{% if block.blocktext.text %}{{block.blocktext.text}}{% endif%}</textarea>
                     {% elif block.blockimage %}
+                    {% if block.blockimage.file_path %}
+                    <button class="option" @click="delete_blocks; type='image'"> </button>
                     <img class="image_container block_content" src="{{ MEDIA_URL }}{{block.blockimage.file_path.url}}" alt="image">
+                    <input type="file" class="image_container image_block_content" accept="image/*" @change="modified=true;">
+                    {% else %}
+                    <button class="option" @click="delete_blocks; type='image'"> </button>
+                    <input type="file" class="image_container image_block_content" accept="image/*" @change="modified=true;">
+                    {% endif %}
+                    
                     {% endif %}
                     
                     <!--textarea is important to mantain the \n-->

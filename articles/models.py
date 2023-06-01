@@ -65,7 +65,7 @@ class BlockText(models.Model):
 
 class BlockImage(models.Model):
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
-    file_path = models.FileField(upload_to=directory_for_blocks)
+    file_path = models.FileField(upload_to=directory_for_blocks, null=True, blank=True)
 
 
 class BlockVideo(models.Model):

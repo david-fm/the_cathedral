@@ -11,12 +11,6 @@ from django.http import HttpResponse, HttpResponseForbidden
 
 @login_required  # Requiere que el usuario inicie sesión
 #@permission_required('articles.is_checker', raise_exception=True)
-def my_view(request):
-    if not request.user.has_perm('articles.is_checker'):
-        return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
-
-    return HttpResponse("¡Hola, usuario con permiso!")
-
 def detail(request, article_id):
     return HttpResponse("You're looking at article %s." % article_id)
 
@@ -82,47 +76,37 @@ def print_data_of_error_formsets(*formsets):
             print('Printing the formset')
             print(formset.as_table())
 
-@login_required
-def save(request, article_id):
-    print('save')
-    text_formset = formset_factory(UpdateTextBlock)
-    text_formset = text_formset(request.POST, prefix='text')
-    image_formset = formset_factory(UpdateImageBlock)
-    image_formset = image_formset(request.POST, request.FILES, prefix='image')
-    # print forms as html
-    #print(forms.as_table())
-    if are_formsets_valids(text_formset, image_formset):
-        for form in text_formset:
-            status = form.cleaned_data['status']
-            if status == 'D':
-                # delete the block
-                id_block = form.cleaned_data['block_id']
-                block = Block.objects.get(id=id_block)
-                try:
-                    prev_block = Block.objects.get(next_block=block)
-                    prev_block.next_block = block.next_block
-                    prev_block.save()
-                except:
-                    pass
-                finally:
-                    block.delete()
+def del_text_block(form):
+    print('del_text_block')
+    print(form.cleaned_data)
+    id_block = form.cleaned_data['block_id']
+    block = Block.objects.get(id=id_block)
+    text_block = BlockText.objects.get(block=block)
+    try:
+        prev_block = Block.objects.get(next_block=block)
+        prev_block.next_block = block.next_block
+        prev_block.save()
+    except:
+        pass
+    finally:
+        text_block.delete()
+        block.delete()
 
-            elif status == 'C':
-                # create a new block
-                text_block(article_id, form.cleaned_data['block_id'])
-            elif status == 'M':
-                # modify the block
-                id_block = form.cleaned_data['block_id']
-                block = Block.objects.get(id=id_block)
-                block.blocktext.text = form.cleaned_data['text']
-                block.save()
-                block.blocktext.save()
-    else:
-        print_data_of_error_formsets(text_formset, image_formset)
-    return redirect('articles:edit', article_id=article_id)
+def mod_text_block(form, files):
 
-def text_block(publication_id, prev_block_id):
+    print(form.cleaned_data)
+    id_block = form.cleaned_data['block_id']
+    print(f'mod_text_block {id_block}')
+
+    text = form.cleaned_data['text']
+    block = Block.objects.get(id=id_block)
+    block.blocktext.text = text
+    block.save()
+    block.blocktext.save()
+
+def create_text_block(publication_id, form):
     '''Create a new block of type text and insert it after the block with id prev_block_id'''
+    prev_block_id = form.cleaned_data['block_id']
     # get publication
     publication = Publication.objects.get(id=publication_id)
     # Create the new block
@@ -138,8 +122,11 @@ def text_block(publication_id, prev_block_id):
     prev_block.save()
     new_block.save()
 
-def image_block(publication_id, prev_block_id):
+def create_image_block(publication_id, form):
     '''Create a new block of type image and insert it after the block with id prev_block_id'''
+    prev_block_id = form.cleaned_data['block_id']
+    print(prev_block_id)
+    prev_block = Block.objects.get(id=prev_block_id)
     # get publication
     publication = Publication.objects.get(id=publication_id)
     # Create the new block
@@ -149,11 +136,86 @@ def image_block(publication_id, prev_block_id):
     new_image_block = BlockImage.objects.create(block=new_block)
     new_image_block.save()
     # Update the previous block
-    prev_block = Block.objects.get(id=prev_block_id)
+    
+    
     new_block.next_block = prev_block.next_block
     prev_block.next_block = new_block
     prev_block.save()
     new_block.save()
+
+def del_image_block(form):
+    print(form.cleaned_data)
+    id_block = form.cleaned_data['block_id']
+    block = Block.objects.get(id=id_block)
+    block.blockimage.delete()
+    try:
+        prev_block = Block.objects.get(next_block=block)
+        prev_block.next_block = block.next_block
+        prev_block.save()
+    except:
+        pass
+    finally:
+        block.delete()
+
+def mod_image_block(form, files):
+    
+    id_block = form.cleaned_data['block_id']
+    image = form.cleaned_data['file']
+    block = Block.objects.get(id=id_block)
+    block.blockimage.file_path = image
+    block.save()
+    block.blockimage.save()
+    
+
+
+dict_block_type_to_functions = {
+    'T': {'create': create_text_block, 'delete': del_text_block, 'modify': mod_text_block},
+    'I': {'create': create_image_block, 'delete': del_image_block, 'modify': mod_image_block},
+    #'D': {'create': create_doi_block, 'delete': del_doi_block, 'modify': mod_doi_block},
+    #'V': {'create': create_video_block, 'delete': del_video_block, 'modify': mod_video_block},
+    #'Q': {'create': create_quiz_block, 'delete': del_quiz_block, 'modify': mod_quiz_block},
+    #'R': {'create': create_references_block, 'delete': del_references_block, 'modify': mod_references_block},
+    #'A': {'create': create_authors_block, 'delete': del_authors_block, 'modify': mod_authors_block},
+    #'K': {'create': create_keywords_block, 'delete': del_keywords_block, 'modify': mod_keywords_block},
+    #'B': {'create': create_table_block, 'delete': del_table_block, 'modify': mod_table_block},
+}
+
+@login_required
+def save(request, article_id):
+    print('save')
+    text_formset = formset_factory(UpdateTextBlock)
+    text_formset = text_formset(request.POST, prefix='text')
+    image_formset = formset_factory(UpdateImageBlock)
+    image_formset = image_formset(request.POST, request.FILES, prefix='image')
+
+    # print forms as html
+    #print(forms.as_table())
+    if are_formsets_valids(text_formset, image_formset):
+        list_of_forms_and_types = [
+            (text_formset, 'T'),
+            (image_formset, 'I'),
+            #...
+        ]
+        for formset, block_type in list_of_forms_and_types:
+            for form in formset:
+                status = form.cleaned_data['status']
+                if status == 'D':
+                    # delete the block
+                    dict_block_type_to_functions[block_type]['delete'](form)
+
+                elif status == 'C':
+                    # create a new block
+                    dict_block_type_to_functions[block_type]['create'](article_id, form)
+                elif status == 'M':
+                    # modify the block
+                    dict_block_type_to_functions[block_type]['modify'](form, request.FILES)
+    else:
+        print_data_of_error_formsets(text_formset, image_formset)
+    return redirect('articles:edit', article_id=article_id)
+
+
+
+
 
 
 # TODO Make that create_block also saves the data of the form
