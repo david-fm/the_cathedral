@@ -14,7 +14,7 @@ def user_directory_path_User(instance, filename):
 class UserPersonalized(AbstractUser):
     biography= models.TextField(max_length=500, null=True, blank=True)
     image = models.ImageField(upload_to=user_directory_path_User, null=True, blank=True)
-    website = models.TextField(max_length=255, null=True, blank=True)
+    website = models.TextField(max_length=255, null=True, blank=True, default='')
     gender = models.CharField(max_length=50, null=True, blank=True)
     country = models.CharField(max_length=100, null=True, blank=True)
     language = models.CharField(max_length=50, null=True, blank=True)

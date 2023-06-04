@@ -1,0 +1,26 @@
+{% extends 'user_system/user_conf.html' %}
+
+{% block right_section %}
+    <h2 class="titre"> Personal information </h2>
+    <p class="instructions">Edit your basic information to improve recommendations.<br>
+    This information is private and will not be displayed on your public profile.</p>
+    <form class="form" action="" method="POST" class="hidden" x-ref="save_form">
+        {% csrf_token %}
+        <div class="basic">
+            <label for="gender" class="nom">Gender</label>
+            {{form.gender}}
+        </div>
+        <div class="basic">
+            <label for="country" class="nom">Country</label>
+            {{form.country}}
+        </div>
+        <div class="basic">
+            <label for="language" class="nom">Language</label>
+            {{form.language}}
+        </div>
+        <div class="duo duo-button">
+            <button type="submit" class="end">Save</button>
+            <button class="end" @click="location.reload()">Reset</button>
+        </div>
+    </form>
+{% endblock  %}

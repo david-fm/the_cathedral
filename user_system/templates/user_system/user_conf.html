@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{%load static%}
+{% block statics %}
+<link rel="stylesheet" href="{% static 'user_system/public_profile.css' %}">
+{% block substatics %}{% endblock %}
+{% endblock  %}
+
+
+{% block content %}
+        <div class="all">
+            <div class="left">
+                <div class="choice">
+                    <a href="{% url 'user_system:user_config' %}" class="bton">Public profile</a>
+                    <a href="{% url 'user_system:user_config_private_data' %}" class="bton">Personal information</a>
+                    <a href="{% url 'user_system:manage_account' %}" class="bton">Manage your account</a>
+                    <a href="{% url 'user_system:privacy_and_data' %}" class="bton">Privacy and data</a>
+                </div>
+            </div>
+
+            <div class="right" x-data="{show_image:false, showModal:false}">
+                {% block right_section %}{% endblock  %}
+            </div>
+
+        </div>
+        
+{% endblock  %}
