@@ -49,7 +49,7 @@
                         {% else %}
                             <img src="{% static 'img/user_default.png'%}" class="user_img" >
                         {% endif %}
-                        <svg class="user-options-button" xmlns="http://www.w3.org/2000/svg" width="21.385" height="17.986" viewBox="0 0 21.385 17.986" @click="show_uopt=!show_uopt">
+                        <svg class="user-options-button" xmlns="http://www.w3.org/2000/svg" width="21.385" height="17.986" viewBox="0 0 21.385 17.986" @click="show_uopt=!show_uopt" @mousedown.outside="show_uopt=false">
                             <g id="TRIÁNGULO" transform="translate(-4480.434 -272.971)">
                               <path d="M0,0,8.391,12.306" transform="translate(4482.5 274.5)" fill="none" stroke="#fff" stroke-width="5"/>
                               <line id="Línea_14" data-name="Línea 14" x2="8.391" y2="11.39" transform="translate(4482.5 274.5)" fill="none" stroke="#fff" stroke-width="5"/>
@@ -93,11 +93,11 @@
                     <h2>Your account</h2>
                     <a href="{% url 'user_system:my_publications' %}">My publications</a>
                     <a href="">Review publications</a>
-                    <a href="">Profile</a>
+                    <a href="{% url 'user_system:user_config' %}">Profile</a>
                 </section>
                 <section class="user-options__options">
                     <h2>More options</h2>
-                    <a href="">Privacy policy</a>
+                    <a href="{% url 'user_system:privacy_and_data' %}">Privacy policy</a>
                     <a href="">Be an evaluator</a>
                     <p @click="$refs.logout_form.submit()">Logout</p>
                 </section>
@@ -111,7 +111,7 @@
         {% block content %}{% endblock %}
     </main>
     {% if user.is_authenticated %}
-    <form action="" method="post" id="logout_form" x-ref="logout_form" >
+    <form action="main:index" method="post" id="logout_form" x-ref="logout_form" >
         {% csrf_token %}
         <input type="hidden" name="submit_logout" value="Log in">
     </form>

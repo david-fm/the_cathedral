@@ -1,0 +1,55 @@
+{% extends 'user_system/user_conf.html' %}
+
+{% block substatics %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'user_system/manage_account.css' %}">
+{% endblock  %}
+
+{% block right_section %}
+    <h2 class="titre"> Manage your account </h2>
+    <p class="instructions">This information is private and will not be displayed on your public profile.</p>
+    <form class="form" action="" method="POST" class="hidden" x-ref="save_form">
+        {% csrf_token %}
+        <div class="basic">
+            <label for="password" class="nom">Password</label>
+            {{form.password}}
+            {{form.password.errors}}
+        </div>
+        <div class="basic">
+            <label for="password" class="nom">Confirm Password</label>
+            {{form.password_confirm}}
+            {{form.password_confirm.errors}}
+        </div>
+        
+        <div class="duo duo-button">
+            <button type="submit" class="end">Save</button>
+            <button class="end" @click="location.reload()">Reset</button>
+        </div>
+    </form>
+    <div class="basic">
+        <label class="nom">Account changes</label>
+        <div class="del-account-container">
+                <div>
+                    <p class="text-container__title">Delete account</p>
+                    <p class="text-container__subtitle">Delete your account and associated data</p>
+                </div>
+                <button class="del-account__button" type="button" @click="showModal = true">Delete</button>
+        </div>
+        <div>
+        </div>
+    </div>
+    <div class="delete_confirmation" x-show="showModal">
+        <div class="delete_confirmation__container" @mousedown.outside="showModal=false">
+                <p class="delete_confirmation__container__title">Are you sure you want to delete your account?</p>
+                <p class="delete_confirmation__container__subtitle">All data associated with your account will be deleted.</p>
+                <div class="delete_confirmation__container__buttons">
+                    <button id="cancel" class="delete_confirmation__container__buttons__button" @click="showModal = false">Cancel</button>
+                    <button id="delete" class="delete_confirmation__container__buttons__button" @click="$refs.delete_account.submit()">Delete</button>
+                </div>
+        </div>
+    </div>
+    <form class="hidden" action="{% url 'user_system:delete_account' %}" method="POST" class="hidden" x-ref="delete_account">
+        {% csrf_token %}
+    </form>
+
+{% endblock  %}
