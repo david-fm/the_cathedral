@@ -9,3 +9,4 @@ files/*
 
 settings.py
 team_test/settings.py
+media/*
