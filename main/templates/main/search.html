@@ -1,12 +1,56 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <p>{{ result }}</p>
-    <ul>
-        {% for pub in pubs %}
-          <li>
-            {{ pub.title }}, {{ pub.pub_date }}
-          </li>
-        {% endfor %}
-      </ul>
+    <h1>Search Results</h1>
+
+<p>Search: {{ result }}</p>
+
+<form method="GET">
+  <input type="hidden" name="search" value="{{ result }}">
+
+  <select name="filter_by">
+    <option value="_">Filter</option>
+    <option value="no_filter">No filter</option>
+    <option value="title">Title</option>
+    <option value="keyword">Keyword</option>
+    <option value="publisher">Publisher</option>
+  </select>
+
+  <input type="text" name="filter_value" placeholder="Filter Value">
+
+  <select name="filter_by_category" multiple>
+    <option value="_">Category</option>
+    <option value="no_category">No category</option>
+    <option value="artificial-intelligence">Artificial Intelligence</option>
+    <option value="computer-networks">Computer Networks</option>
+    <option value="computer-networks">Operating systems</option>
+    <option value="cybersecurity">Cybersecurity</option>
+    <option value="data-science">Data Science</option>
+  </select>
+  <button type="submit">Apply Filters</button>
+</form>
+
+
+<form method="GET">
+  <input type="hidden" name="search" value="{{ result }}">
+  <button type="submit" name="order_by" value="relevance">Relevance</button>
+  <button type="submit" name="order_by" value="new">New</button>
+  <button type="submit" name="order_by" value="old">Old</button>
+</form>
+
+<br>
+{% if filtered_pubs %}
+  <ul>
+    {% for pub in filtered_pubs %}
+      <li>
+        <strong>Title:</strong> {{ pub.title }}<br>
+        <strong>Publication Date:</strong> {{ pub.pub_date }}<br>
+      </li>
+      <br>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No results found.</p>
+{% endif %}
+
 {% endblock %}

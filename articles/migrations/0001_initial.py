@@ -2,6 +2,7 @@
 
 import articles.models
 from django.conf import settings
+import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
 
@@ -41,26 +42,15 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name="Font",
+            name='Font',
             fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("name", models.CharField(max_length=50)),
-                (
-                    "font_path",
-                    models.FileField(upload_to=articles.models.user_directory_path),
-                ),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=50)),
+                ('font_path', models.FileField(upload_to=articles.models.user_directory_path)),
             ],
         ),
         migrations.CreateModel(
-            name="Questions",
+            name='Publication',
             fields=[
                 (
                     "id",
@@ -145,7 +135,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name="Publication",
+            name='Rate',
             fields=[
                 (
                     "id",
@@ -212,19 +202,24 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name="Keywords",
+            name='Questions',
             fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("keyword", models.TextField(max_length=255)),
-                ("publications", models.ManyToManyField(to="articles.publication")),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('question', models.TextField(max_length=350)),
+                ('quiz_block_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='articles.blockquiz')),
+            ],
+        ),
+        migrations.AddField(
+            model_name='publication',
+            name='rates',
+            field=models.ManyToManyField(blank=True, null=True, related_name='rates', through='articles.Rate', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.CreateModel(
+            name='Keywords',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('keyword', models.TextField(max_length=255)),
+                ('publications', models.ManyToManyField(to='articles.publication')),
             ],
         ),
         migrations.CreateModel(
@@ -253,24 +248,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Answer",
             fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("answer", models.TextField(max_length=255)),
-                ("is_correct", models.BooleanField(default=False)),
-                (
-                    "question",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="articles.questions",
-                    ),
-                ),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('answer', models.TextField(max_length=255)),
+                ('is_correct', models.BooleanField(default=False)),
+                ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='articles.questions')),
             ],
         ),
         migrations.AddField(

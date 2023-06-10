@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import importlib.util
 from pathlib import Path
 import os
 
@@ -88,6 +88,15 @@ DATABASES = {
 
     }
 }
+
+db_settings_path = os.path.join(os.path.dirname(__file__), 'db_settings.py')
+if os.path.exists(db_settings_path):
+    spec = importlib.util.spec_from_file_location('db_settings', db_settings_path)
+    db_settings = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(db_settings)
+    DATABASES = getattr(db_settings, 'DATABASES', DATABASES)
+
+
 
 
 # Password validation

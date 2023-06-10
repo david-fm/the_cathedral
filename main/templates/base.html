@@ -65,12 +65,11 @@
 
                 </ul>
                 <ul class="aside" x-show="show_aside" x-transition.duration.700ms @click="show_aside=!show_aside" >
-                    <li class="aside__cathegory"><a href="#">Category 1</a></li>
-                    <li class="aside__cathegory"><a href="#">Category 2</a></li>
-                    <li class="aside__cathegory"><a href="#">Category 3</a></li>
-                    <li class="aside__cathegory"><a href="#">Category 4</a></li>
-                    <li class="aside__cathegory"><a href="#">Category 5</a></li>
-                    <li class="aside__cathegory"><a href="#">Category 6</a></li>
+                    <li class="aside__cathegory"><a href="{% url 'main:search' %}?category=artificial-intelligence">Artificial Intelligence</a></li>
+                    <li class="aside__cathegory"><a href="{% url 'main:search' %}?category=computer-networks">Computer Networks</a></li>
+                    <li class="aside__cathegory"><a href="{% url 'main:search' %}?category=operating-systems">Operating systems</a></li>
+                    <li class="aside__cathegory"><a href="{% url 'main:search' %}?category=cybersecurity">Cybersecurity</a></li>
+                    <li class="aside__cathegory"><a href="{% url 'main:search' %}?category=data-science">Data Science</a></li>
                 </ul>
             </nav>
         </div>
