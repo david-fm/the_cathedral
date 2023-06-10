@@ -90,6 +90,8 @@
 
         <div class="area">
             <div class="blocks-container">
+                <p x-data="{modified:false}" :status="modified ? 'M' : 'U'" class="keywords_p"><span>Keywords:</span><span contenteditable @input="modified=true;"class="keywords_container keywords_block_content">{{keywords.keyword}}</span></p>
+
                 {% for block in blocks %}
                 <div class="block" id="{{block.id}}" x-data="{modified:false}" :status="modified ? 'M' : 'U'">
                     <button class="plus" @click="show_blocks">+</button> 
@@ -99,15 +101,63 @@
                         x-init="resize()"
                         @input="resize(); modified=true;">{% if block.blocktext.text %}{{block.blocktext.text}}{% endif%}</textarea>
                     {% elif block.blockimage %}
-                    {% if block.blockimage.file_path %}
-                    <button class="option" @click="delete_blocks; type='image'"> </button>
-                    <img class="image_container block_content" src="{{ MEDIA_URL }}{{block.blockimage.file_path.url}}" alt="image">
-                    <input type="file" class="image_container image_block_content" accept="image/*" @change="modified=true;">
-                    {% else %}
-                    <button class="option" @click="delete_blocks; type='image'"> </button>
-                    <input type="file" class="image_container image_block_content" accept="image/*" @change="modified=true;">
-                    {% endif %}
-                    
+                        {% if block.blockimage.file_path %}
+                        <button class="option" @click="delete_blocks; type='image'"> </button>
+                        <img class="image_container block_content" src="{{ MEDIA_URL }}{{block.blockimage.file_path.url}}" alt="image">
+                        <input type="file" class="image_container image_block_content" accept="image/*" @change="modified=true;">
+                        {% else %}
+                        <button class="option" @click="delete_blocks; type='image'"> </button>
+                        <input type="file" class="image_container image_block_content" accept="image/*" @change="modified=true;">
+                        {% endif %}
+                    {% elif block.blockvideo %}
+                        {% if block.blockvideo.url %}
+                        <button class="option" @click="delete_blocks; type='video'"> </button>
+                        
+                        <iframe width="420" height="315" src="{{block.blockvideo.url}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        <input type="text" class="video_container video_block_content" placeholder="Paste the video url here" @change="modified=true;">
+                        {% else %}
+                        <button class="option" @click="delete_blocks; type='video'"> </button>
+                        <input type="text" class="video_container video_block_content" maxlength="250" placeholder="Paste the video url here" @change="modified=true;">
+                        
+                        {% endif %}
+                    {% elif block.blockauthors%}
+                        {% if  block.blockauthors.authors %}
+                        <button class="option" @click="delete_blocks; type='authors'"> </button>
+                        <div class="authors-container">
+                            {% for author in block.blockauthors.authors.all %}
+                                <p>{{author.username}}</p>
+                            {% endfor %}
+                        </div>
+                        <input type="text" class="authors_container authors_block_content" maxlength="250" placeholder="Write the username here" @change="modified=true;">
+                        {% else %}
+                        <button class="option" @click="delete_blocks; type='authors'"> </button>
+                        <input type="text" class="authors_container authors_block_content" maxlength="250" placeholder="Write the username here" @change="modified=true;">
+                        {% endif %}
+                    {% elif block.blockreferences %}
+                        <button class="option" @click="delete_blocks; type='references'"> </button>
+                        <div class="references-container">
+                        <h3 contenteditable class="references_container references_block_content" @input="modified=true;">
+                            {% if block.blockreferences.title %}
+                            {{block.blockreferences.title}}
+                            {% else %}
+                            Write the title here
+                            {% endif %}
+                        </h3>
+                        {% if block.blockreferences.url %}
+                        <a contenteditable href="{{block.blockreferences.url}}">Link to article</a>
+                        {% else %}
+                        <a contenteditable href="#" class="references_container references_block_content" @input="modified=true;">Paste the url here</a>
+                        {% endif %}
+                        </div>
+                    {% elif block.blocktitle %}
+                        <button class="option" @click="delete_blocks; type='title'"> </button>
+                        <h2 contenteditable class="title_container title_block_content" @input="modified=true;">
+                            {% if block.blocktitle.title %}
+                            {{block.blocktitle.title}}
+                            {% else %}
+                            Write the title here
+                            {% endif %}
+                        </h1>
                     {% endif %}
                     
                     <!--textarea is important to mantain the \n-->
@@ -122,6 +172,11 @@
         {% csrf_token %}
         {{text_formset}}
         {{image_formset}}
+        {{video_formset}}
+        {{authors_formset}}
+        {{references_formset}}
+        {{title_formset}}
+        {{keywords_formset}}
     </form>
 </body>
 

@@ -1,10 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .forms import Publicate
-from articles.models import Publication, BlockText, Block
-from articles.models import Publication, BlockText
+from articles.models import Publication, BlockText, Block, Keywords
 from .forms import Publicate, UserConfig, UserConfigPrivateData, UserConfigPassword
-from articles.models import Publication, BlockText, Block
 from django.shortcuts import redirect
 
 # Create your views here.
@@ -17,6 +14,9 @@ def my_publications(request):
             title = form.cleaned_data['title']
             post = Publication(title=title, publisher=request.user)
             post.save()
+            # create keywords
+            keywords = Keywords(publications=post)
+            keywords.save()
             # create block
             block = Block(publication=post)
             # create text block

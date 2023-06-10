@@ -255,6 +255,34 @@ input[type=number] {
     letter-spacing: 0px;
     color: #9f9f9f;
 }
+.authors-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.references-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.title_container{
+    width: 100%;
+    text-align: center;
+}
+.keywords_container{
+    font-size: 10px;
+    flex-grow: 1;
+    padding-top: 5px;
+}
+.keywords_p{
+    display: flex;
+    width: 100%;
+    gap: 5px;
+
+}
+
 .hidden{
     display: none;
 }
