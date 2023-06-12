@@ -2,6 +2,11 @@
 //const TYPES_OF_BLOCKS = ['authors', 'image', 'text', 'title', 'doi', 'video', 'quiz', 'references', 'table', 'keywords']
 const TYPES_OF_BLOCKS = ["image", "text"];
 dropdown = (parts) => {
+  /*
+    dropdown is a function that returns a string that represents a dropdown
+    parts: string
+    returns a string that represents a dropdown in html
+  */
   return (
     '<div class="dropdown" @mousedown.outside="$el.remove()">' +
     parts +
@@ -10,6 +15,14 @@ dropdown = (parts) => {
 };
 
 var block_type = (title, subtitle, img, type) => {
+  /*
+    block_type is a function that returns a string that represents a block_type
+    title: string
+    subtitle: string
+    img: string
+    type: string
+    returns a string that represents a block_type in html
+  */
   return (
     '<div class="block_type" id="block_type-' +
     title +'" @click="create_block; type=\''+type+'\'">'+
@@ -29,22 +42,49 @@ var block_type = (title, subtitle, img, type) => {
 };
 
 dropdown_title = (title) => {
+  /*
+    dropdown_title is a function that returns a string that represents a dropdown_title
+    title: string
+    returns a string that represents a dropdown_title in html
+  */
   return '<p class="dropdown-title">' + title + "</p>";
 };
 
 function insertAfter(newNode, referenceNode) {
+  /*
+    insertAfter is a function that inserts a node after another node
+    newNode: node
+    referenceNode: node
+  */
   referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
 
 function updateTextBlockInput(form, block, type, j) {
+  /*
+    updateTextBlockInput is a function that updates the text input of a text block
+    form: node
+    block: node
+    type: string
+    j: int
+
+  */
   let textInput = form.querySelector("#id_" + type + "-" + j + "-text");
   textInput.innerHTML = block.value;
 }
 function updateFileBlockInput(form, block, type, j) {
+  /*
+    updateFileBlockInput is a function that updates the file input of a file block
+    form: node
+    block: node
+    type: string
+    j: int
+
+  */
   let fileInput = form.querySelector("#id_" + type + "-" + j + "-file");
   fileInput.files = block.files;
 }
 document.addEventListener("alpine:init", () => {
+
   Alpine.data("createBlocks", () => ({
     type: "text",
     show_blocks() {
