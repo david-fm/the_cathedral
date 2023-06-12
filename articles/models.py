@@ -64,8 +64,8 @@ class Rate(models.Model):
 
 
 class Keywords(models.Model):
-    keyword = models.TextField(max_length=255)
-    publications = models.ManyToManyField(Publication)
+    keyword = models.TextField(max_length=255, null=True, blank=True)
+    publications = models.OneToOneField(Publication, on_delete=models.CASCADE, primary_key=True)
 
 
 class Block(models.Model):
@@ -82,8 +82,8 @@ class Font(models.Model):
 
 class BlockTitle(models.Model):
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
-    title = models.CharField(max_length=255)
-    title_type = models.CharField(max_length=2, default='1', blank=True)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    title_type = models.CharField(max_length=2, default='1', blank=True, null=True)
     font = models.ForeignKey(Font, blank=True, null=True, on_delete=models.SET_NULL)
 
 
@@ -104,9 +104,7 @@ class BlockImage(models.Model):
 
 class BlockVideo(models.Model):
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
-    name = models.CharField(max_length=50)
-    duration = models.IntegerField()
-    url = models.TextField(max_length=250)
+    url = models.TextField(max_length=250, null=True, blank=True)
     is_formal = models.BooleanField(default=False)
 
 
@@ -136,7 +134,7 @@ class BlockDoi(models.Model):
 
 class BlockAuthors(models.Model):
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
-    authors = models.ManyToManyField(UserPersonalized)
+    authors = models.ManyToManyField(UserPersonalized, blank=True)
 
 
 # to do
@@ -151,5 +149,5 @@ class BlockTable(models.Model):
 
 class BlockReferences(models.Model):
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
-    title = models.CharField(max_length=255)
-    authors = models.ManyToManyField(UserPersonalized)
+    title = models.CharField(max_length=255, null=True, blank=True)
+    url = models.TextField(max_length=250, null=True, blank=True)

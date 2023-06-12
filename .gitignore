@@ -9,3 +9,4 @@ files/*
 
 
 media/*
+db_settings.py
