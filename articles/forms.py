@@ -1,5 +1,5 @@
 from django import forms
-from .models import BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, BlockAuthors
+from .models import BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, BlockAuthors, Questions, Answer
 
 
 class UpdateTextBlock(forms.Form):
@@ -61,6 +61,48 @@ class UpdateReferencesBlock(forms.ModelForm):
         }
         widgets = {
             'url': forms.TextInput(attrs={'placeholder': 'URL'}),
+        }
+
+class UpdateQuizBlock(forms.ModelForm):
+    block_id = forms.IntegerField(label='', required=False)
+    status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
+    class Meta:
+        model = BlockQuiz
+        fields = ['name']
+        labels = {
+            'name': '',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'NAME'}),
+        }
+
+class UpdateQuestion(forms.ModelForm):
+    block_id = forms.IntegerField(label='', required=False)
+    status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
+    class Meta:
+        model = Questions
+        fields = ['question']
+        labels = {
+            'question': '',
+        }
+        widgets = {
+            'question': forms.TextInput(attrs={'placeholder': 'QUESTION'}),
+        }
+
+class UpdateAnswer(forms.ModelForm):
+    block_id = forms.IntegerField(label='', required=False)
+    status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
+    class Meta:
+        model = Answer
+        fields = ['answer', 'is_correct']
+        labels = {
+            'answer': '',
+            'is_correct': '',
+        }
+        widgets = {
+            'answer': forms.TextInput(attrs={'placeholder': 'ANSWER'}),
+            'is_correct': forms.CheckboxInput(),
+            
         }
 
 """

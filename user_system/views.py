@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from articles.models import Publication, BlockText, Block, Keywords
+from articles.models import Publication, BlockText, Block, Keywords, BlockImage
 from .forms import Publicate, UserConfig, UserConfigPrivateData, UserConfigPassword
 from django.shortcuts import redirect
 
@@ -29,7 +29,17 @@ def my_publications(request):
             return redirect('articles:edit', article_id=post.id)
     else:
         form = Publicate()
-    return render(request, 'user_system/my_publications.html', {'form': form})
+        # Get the publications from the user
+        my_publications = Publication.objects.filter(publisher=request.user)
+        publications = {}
+        for publication in my_publications:
+            # Get the first image, the first title and the first text block
+            # image are blocks referenced by the model BlockImage
+            image = BlockImage.objects.filter(block__publication=publication.id).first()
+            # text are blocks referenced by the model BlockText
+            text = BlockText.objects.filter(block__publication=publication.id).first()
+            publications[publication] = (image, text)
+    return render(request, 'user_system/my_publications.html', {'form': form, 'publications':publications})
 
 @login_required
 def user_config(request):

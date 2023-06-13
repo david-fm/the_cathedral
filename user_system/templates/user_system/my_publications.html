@@ -6,15 +6,17 @@
 
 
 {% block content %}
-    <div class="container" x-data="{ show_saved:true }">
+    <div class="container" x-data="{ show_saved:false }">
         <div class="middle1">
             {% if user.image %}
             <img src="{{user.image.url}}" class="profile">
             {% else %}
             <img src="{% static 'img/user_default.png' %}" class="profile">
             {% endif %}
-            <p class="usernumber">{{user.username}}</p>
-            <p class="mail">{{user.email}}</p>
+            <div class="user-info-container">
+                <p class="usernumber">{{user.username}}</p>
+                <p class="mail">{{user.email}}</p>
+            </div>
         </div>
 
         <div class="middle2">
@@ -22,42 +24,18 @@
             <button type="button" class="bton">Editar Perfil</button>
         </div>
 
+        <!-- FUTURE IMPROVEMENTS -->
+        <!--
         <div class="middle3">
             <button type="button" class="choice" :class="show_saved ? 'active':''" @click="show_saved=true">Saved</button>
             <button type="button" class="choice" :class="show_saved ? '':'active'" @click="show_saved=false">Created</button>
         </div>
-
-        <div class="middle4" x-show="show_saved">
+        -->
+        <!--
+        <div class="middle4" x-show="show_saved" >
             <p class="publish">Saved publications</p>
-            <div class="box"> 
-                <div class="titles">
-                    <a href="link" class="more">
-                        <h2>Lorem ipsum dolor</h2>
-                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
-                    </a>
-                </div>
-                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
-            </div>
-
-            <div class="box"> 
-                <div class="titles">
-                    <a href="link" class="more">
-                        <h2>Lorem ipsum dolor</h2>
-                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
-                    </a>
-                </div>
-                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
-            </div>
-
-            <div class="box"> 
-                <div class="titles">
-                    <a href="link" class="more">
-                        <h2>Lorem ipsum dolor</h2>
-                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
-                    </a>
-                </div>
-                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
-            </div>
+            
+            
 
             <div class="bottom">
                 <p class="new">Aún no hay nada para mostrar. Los papers que crees se almacenarán aqui.</p>
@@ -69,40 +47,29 @@
 
 
         </div>
+        -->
         <div class="middle4" x-show="!show_saved">
             <p class="publish">My publications</p>
-            <div class="box"> 
+            {% if publications %}
+            {% for publication, content in publications.items  %}
+            <div class="box" @click="window.location.replace('/articles/{{publication.id}}/edit')"> 
                 <div class="titles">
-                    <a href="link" class="more">
-                        <h2>Lorem ipsum dolor</h2>
-                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
-                    </a>
+                    <h2>{{publication.title}}</h2>
+                    {% if content.1.text %}
+                    <p class="description">{{content.1.text}}</p>
+                    {% else %}
+                    <p class="description">This is your first text</p>
+                    {% endif %}
+                    
                 </div>
+                {% if  content.0.file_path %}
+                <img src="{{content.0.file_path.url}}" class="thumbnail">
+                {% else %}
                 <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
+                {% endif %}
             </div>
-
-            <div class="box"> 
-                <div class="titles">
-                    <a href="link" class="more">
-                        <h2>Lorem ipsum dolor</h2>
-                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
-                    </a>
-                </div>
-                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
-            </div>
-
-            <div class="box"> 
-                <div class="titles">
-                    <a href="link" class="more">
-                        <h2>Lorem ipsum dolor</h2>
-                        <p class="description">Lorem ipsum dolor sit amet consectetur adipiscing elit, ut non aliquet phasellus montes natoque, dapibus nec quisque donec diam netus.</p>
-                    </a>
-                </div>
-                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
-            </div>
-
-
-
+            {% endfor %}
+            {% else %}
             <div class="bottom">
                 <p class="new">Aún no hay nada para mostrar. Los papers que crees se almacenarán aqui.</p>
 
@@ -110,6 +77,9 @@
                     <button type="submit">Load More Posts</button>
                 </form>
             </div>
+            {% endif %}
+        
+            
 
             
         </div>

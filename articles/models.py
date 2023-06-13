@@ -110,17 +110,17 @@ class BlockVideo(models.Model):
 
 class BlockQuiz(models.Model):
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
-    name = models.TextField(max_length=250)
+    name = models.TextField(max_length=250, blank=True, null=True)
     is_formal = models.BooleanField(default=False)
 
 
 class Questions(models.Model):
-    question = models.TextField(max_length=350)
+    question = models.TextField(max_length=350, blank=True)
     quiz_block = models.ForeignKey(BlockQuiz, on_delete=models.CASCADE, null=False)
 
 
 class Answer(models.Model):
-    answer = models.TextField(max_length=255)
+    answer = models.TextField(max_length=255, blank=True)
     is_correct = models.BooleanField(default=False)
 
     question = models.ForeignKey(Questions, on_delete=models.CASCADE, null=False)

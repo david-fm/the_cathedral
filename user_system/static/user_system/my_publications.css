@@ -5,28 +5,38 @@ body{
     padding: 0;
     background-color: rgba(229,229,229,255);
 }
-
+.container{
+    padding:40px;
+    display: grid;
+    grid-template-areas:
+    "header " 
+    "buttons" 
+    "content";
+    grid-template-rows: 250px 70px auto;
+      
+}
 
 .middle1{
+    grid-area: header;
     display: flex;
     align-items: center;
     flex-direction: column;
+    justify-content: space-evenly;
 }
 
 
 .profile{
-    margin-top: 100px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    width: 300px;
-    height: 300px;
     object-fit: cover;
 
-    border: 5px solid #aaaaaa;
+    border: 2px solid #aaaaaa;
 }
-
+.user-info-container{
+    text-align: center;
+}
 .usernumber{
-    margin: 0px;
-    margin-top: 30px;
     font-size: 50px;
     color: #7f7f7f;
     font-weight:400;
@@ -35,8 +45,6 @@ body{
 
 
 .mail{
-    margin: 0px;
-    margin-top: 10px;
     font-size: 30px;
     color: #7f7f7f;
     font-weight:400;
@@ -45,10 +53,10 @@ body{
 
 
 .middle2{
+    grid-area: buttons;
     display: flex;
     justify-content: center;
     flex-direction:row;
-    padding-top: 20px;
 }
 
 .bton{
@@ -92,10 +100,23 @@ body{
 }
 
 .middle4{
-    margin-left: 200px;
-    margin-right: 200px;
+    grid-area: content;
 }
 
+@media only screen and (min-width: 900px){
+	.middle4{
+        margin-left: 100px;
+        margin-right: 100px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .middle4{
+        margin-left: 200px;
+        margin-right: 200px;
+    }
+}
+    
 .publish{
     font-size: 30px;
     color: #7f7f7f;
@@ -108,42 +129,45 @@ body{
     justify-content:left;
     flex-direction:row;
     margin-bottom: 40px;
+    padding: 20px;
 }
 
 .titles{
-    width: 90%;
     display: flex;
     align-items:flex-start;
     flex-direction: column;
+    flex-grow: 2;
 }
 
-h2{
-    margin: 0px;
-    margin-left: 50px;
-    margin-top: 15px;
-    font-size: 30px;
+.titles h2{
     color: #7f7f7f;
     font-family:'Segoe UI';
+
+    text-align: center;
+    width: 100%;
+
+    margin-bottom: 5px;
 }
 
 .description{
-    margin: 0px;
-    margin-left: 50px;
-    margin-top: 15px;
-    margin-bottom: 15px;
     font-size: 20px;
     color: #000000;
     font-family:'Segoe UI';
     font-weight: bold;
-}
+    word-break: break-word;
 
+}
 .more{
     text-decoration: none;
 }
 
 .thumbnail{
+    flex-grow: 1;
     max-width: 200px;
+    max-height: 300px;
     margin: 10px;
+
+    object-fit: contain;
 }
 
 .new{

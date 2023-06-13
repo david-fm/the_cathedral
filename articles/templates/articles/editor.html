@@ -23,13 +23,14 @@
                 <ul class="ultop">
                     <button type="button" class="menu" @click="retrieve_blocks">Save</button>
                     <button type="button" class="menu" @click="retrieve_blocks">Publish</button>
-                    <button type="button" class="menu">Home</button>
+                    <button type="button" class="menu" @click="window.location.replace('{% url 'main:index' %}')">Home</button>
                 </ul>
             </nav>
         </div>
     </header>
-
+   
     <main>
+         <!--
         <div class="rightcol">
             <p class="texto">Texto</p>
 
@@ -87,10 +88,11 @@
 
             </section>
         </div>
-
+    -->
         <div class="area">
+            <p x-data="{modified:false}" :status="modified ? 'M' : 'U'" class="keywords_p"><span>Keywords:</span><span contenteditable @input="modified=true;"class="keywords_container keywords_block_content">{{keywords.keyword}}</span></p>
             <div class="blocks-container">
-                <p x-data="{modified:false}" :status="modified ? 'M' : 'U'" class="keywords_p"><span>Keywords:</span><span contenteditable @input="modified=true;"class="keywords_container keywords_block_content">{{keywords.keyword}}</span></p>
+                
 
                 {% for block in blocks %}
                 <div class="block" id="{{block.id}}" x-data="{modified:false}" :status="modified ? 'M' : 'U'">
@@ -101,24 +103,28 @@
                         x-init="resize()"
                         @input="resize(); modified=true;">{% if block.blocktext.text %}{{block.blocktext.text}}{% endif%}</textarea>
                     {% elif block.blockimage %}
+                        <button class="option" @click="delete_blocks; type='image'"> </button>
                         {% if block.blockimage.file_path %}
-                        <button class="option" @click="delete_blocks; type='image'"> </button>
-                        <img class="image_container block_content" src="{{ MEDIA_URL }}{{block.blockimage.file_path.url}}" alt="image">
-                        <input type="file" class="image_container image_block_content" accept="image/*" @change="modified=true;">
+                        <div class="image_div" >
+                            <img class="image_container block_content" src="{{ MEDIA_URL }}{{block.blockimage.file_path.url}}" alt="image">
+                            <input type="file" class="image_container image_block_content" accept="image/*" @change="modified=true;">
+                        </div>
                         {% else %}
-                        <button class="option" @click="delete_blocks; type='image'"> </button>
-                        <input type="file" class="image_container image_block_content" accept="image/*" @change="modified=true;">
+                        <div class="image_div">
+                            <input type="file" class="image_container image_block_content" accept="image/*" @change="modified=true;">
+                        </div>
                         {% endif %}
                     {% elif block.blockvideo %}
+                        <button class="option" @click="delete_blocks; type='video'"> </button>
                         {% if block.blockvideo.url %}
-                        <button class="option" @click="delete_blocks; type='video'"> </button>
-                        
-                        <iframe width="420" height="315" src="{{block.blockvideo.url}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                        <input type="text" class="video_container video_block_content" placeholder="Paste the video url here" @change="modified=true;">
+                        <div class="image_div">
+                            <iframe width="420" height="315" src="{{block.blockvideo.url}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                            <input type="text" class="video_container video_block_content" placeholder="Change url" @change="modified=true;">
+                        </div>
                         {% else %}
-                        <button class="option" @click="delete_blocks; type='video'"> </button>
-                        <input type="text" class="video_container video_block_content" maxlength="250" placeholder="Paste the video url here" @change="modified=true;">
-                        
+                        <div class="image_div">
+                            <input type="text" class="video_container video_block_content" maxlength="250" placeholder="Paste the video url here" @change="modified=true;">
+                        </div>
                         {% endif %}
                     {% elif block.blockauthors%}
                         {% if  block.blockauthors.authors %}
@@ -144,7 +150,7 @@
                             {% endif %}
                         </h3>
                         {% if block.blockreferences.url %}
-                        <a contenteditable href="{{block.blockreferences.url}}">Link to article</a>
+                        <a contenteditable href="{{block.blockreferences.url}}" class="references_container references_block_content" @input="modified=true;">Link to article</a>
                         {% else %}
                         <a contenteditable href="#" class="references_container references_block_content" @input="modified=true;">Paste the url here</a>
                         {% endif %}
@@ -158,6 +164,59 @@
                             Write the title here
                             {% endif %}
                         </h1>
+                    {% elif block.blockquiz %}
+                        <button class="option" @click="delete_blocks; type='quizzes'"> </button>
+                        <div class="quiz-container">
+                            <h3 contenteditable class="quiz_container quizzes_block_content" @input="modified=true;">
+                                {% if block.blockquiz.name %}
+                                {{block.blockquiz.name}}
+                                {% else %}
+                                Write the title here
+                                {% endif %}
+                            </h3>
+                            <div class="quiz-questions">
+                                {% for  question in  block.blockquiz.questions_set.all %}
+                                <div class="quiz-question" id="{{question.id}}" x-data="{modifiedQuestion:false}" :status="modifiedQuestion ? 'M' : 'U'">
+                                    
+                                    <p contenteditable class="quiz-question__title question_container question_block_content" @input="modifiedQuestion=true;">
+                                    {% if question.question %}
+                                        {{question.question}}
+                                    {% else %}
+                                        Write the question here
+                                    {% endif %}
+                                    </p>
+                                    
+                                    <div class="quiz-answers">
+
+                                        {% for answer in question.answer_set.all %}
+                                        <div class="quiz-answer" id ="{{answer.id}}" x-data="{modifiedAnswer:false}" :status="modifiedAnswer ? 'M' : 'U'">
+
+                                            <input type="radio" name="quiz" class="answer_container answer_block_content" @change="modifiedAnswer=true;" {% if answer.is_correct %}checked="true"{% endif %}>
+
+                                            <label for="quiz{{forloop.counter}}" contenteditable class="answer_container answer_block_content" @input="modifiedAnswer=true;">
+                                                {% if answer.answer %}
+                                                {{answer.answer}}
+                                                {% else %}
+                                                Write the answer here
+                                                {% endif %}
+                                            </label>
+                                            <div class="plus-container">
+                                                <button class="plus" @click="create_block;type='answer'">+</button>
+                                                <button class="plus answer_delete" @click="delete_blocks;">-</button>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                        
+                                    </div>
+                                    <div class="plus-container">
+                                        <button class="plus" @click="create_block;type='question'">+</button>
+                                        <button class="plus quiz_delete" @click="delete_blocks;">-</button>
+                                    </div>
+                                </div>
+                                
+                                {% endfor %}
+                            </div>
+                        </div>
                     {% endif %}
                     
                     <!--textarea is important to mantain the \n-->
@@ -177,6 +236,9 @@
         {{references_formset}}
         {{title_formset}}
         {{keywords_formset}}
+        {{quizzes_formset}}
+        {{question_formset}}
+        {{answer_formset}}
     </form>
 </body>
 

@@ -3,7 +3,7 @@ from django.http import HttpResponse
 #from .models import Article
 from .models import Publication
 from .models import Publication, Font, Block, BlockAuthors, BlockImage, BlockText, BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, Questions, Answer, Keywords
-from .forms import UpdateTextBlock, UpdateTitleBlock, UpdateImageBlock, UpdateVideoBlock, UpdateAuthorsBlock, UpdateReferencesBlock, UpdateKeywordsBlock
+from .forms import UpdateTextBlock, UpdateTitleBlock, UpdateImageBlock, UpdateVideoBlock, UpdateAuthorsBlock, UpdateReferencesBlock, UpdateQuizBlock, UpdateQuestion, UpdateAnswer,  UpdateKeywordsBlock
 from django.forms import formset_factory
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
@@ -47,7 +47,14 @@ def edit_view(request, article_id):
     num_images = BlockImage.objects.filter(block__in=blocks).count()
     num_dois = BlockDoi.objects.filter(block__in=blocks).count()
     num_videos = BlockVideo.objects.filter(block__in=blocks).count()
-    num_quizzes = BlockQuiz.objects.filter(block__in=blocks).count()
+    block_quizzes = BlockQuiz.objects.filter(block__in=blocks)
+    num_quizzes = block_quizzes.count()
+    
+    questions = Questions.objects.filter(quiz_block__in=block_quizzes)
+    num_questions = questions.count()
+    answers = Answer.objects.filter(question__in=questions)
+    num_answers = answers.count()
+
     num_references = BlockReferences.objects.filter(block__in=blocks).count()
     num_tables = BlockTable.objects.filter(block__in=blocks).count()
     num_authors = BlockAuthors.objects.filter(block__in=blocks).count()
@@ -60,6 +67,9 @@ def edit_view(request, article_id):
     UpdateVideoBlockSet = formset_factory(UpdateVideoBlock, extra=num_videos+1)
     UpdateAuthorsBlockSet = formset_factory(UpdateAuthorsBlock, extra=num_authors+1)
     UpdateReferencesBlockSet = formset_factory(UpdateReferencesBlock, extra=num_references+1)
+    UpdateQuizBlockSet = formset_factory(UpdateQuizBlock, extra=num_quizzes+1)
+    UpdateQuestionSet = formset_factory(UpdateQuestion, extra=num_questions+1)
+    UpdateAnswerSet = formset_factory(UpdateAnswer, extra=num_answers+1)
     UpdateKeywordsBlockSet = formset_factory(UpdateKeywordsBlock, extra=1)
     text_formset = UpdateTextBlockSet(prefix='text')
     title_formset = UpdateTitleBlockSet(prefix='title')
@@ -67,10 +77,13 @@ def edit_view(request, article_id):
     video_formset = UpdateVideoBlockSet(prefix='video')
     authors_formset = UpdateAuthorsBlockSet(prefix='authors')
     references_formset = UpdateReferencesBlockSet(prefix='references')
+    quizzes_formset = UpdateQuizBlockSet(prefix='quizzes')
+    question_formset = UpdateQuestionSet(prefix='question')
+    answer_formset = UpdateAnswerSet(prefix='answer')
     keywords_formset = UpdateKeywordsBlockSet(prefix='keywords')
 
 
-    context = {'article_id': article_id, 'blocks': blocks, 'keywords':keywords,'text_formset': text_formset, 'title_formset': title_formset, 'image_formset':image_formset, 'video_formset':video_formset, 'authors_formset':authors_formset, 'references_formset':references_formset, 'keywords_formset':keywords_formset}
+    context = {'article_id': article_id, 'blocks': blocks, 'keywords':keywords,'text_formset': text_formset, 'title_formset': title_formset, 'image_formset':image_formset, 'video_formset':video_formset, 'authors_formset':authors_formset, 'references_formset':references_formset, 'quizzes_formset':quizzes_formset, 'question_formset':question_formset, 'answer_formset':answer_formset, 'keywords_formset':keywords_formset}
     return render(request, 'articles/editor.html', context=context)
 
 def are_formsets_valids(*formsets):
@@ -351,10 +364,14 @@ def del_references_block(form):
 def mod_references_block(form, files):
     id_block = form.cleaned_data['block_id']
     title = form.cleaned_data['title']
+    title = title.replace('<br>', '')
     url = form.cleaned_data['url']
     block = Block.objects.get(id=id_block)
     block.blockreferences.title = title
-    block.blockreferences.url = url
+    print(url)
+    if url != 'Link to article':
+        print(url)
+        block.blockreferences.url = url
     block.save()
     block.blockreferences.save()
 
@@ -367,14 +384,151 @@ def mod_keywords_block(publication_id, form):
     print(actual_keywords.keyword)
     actual_keywords.save()
 
+def create_quiz_block(publication_id, form):
+    '''Create a new block of type quiz and insert it after the block with id prev_block_id'''
+    print(form.cleaned_data)
+    prev_block_id = form.cleaned_data['block_id']
+    # get publication
+    publication = Publication.objects.get(id=publication_id)
+    # Create the new block
+    new_block = Block.objects.create(publication=publication)
+    new_block.save()
+    # Create the new quizzes block
+    new_quiz_block = BlockQuiz.objects.create(block=new_block, name = "Write the name of the quiz")
+    new_quiz_block.save()
 
+
+    question = Questions.objects.create(quiz_block = new_quiz_block, question="Write here a question")
+    question.save()
+
+    answer = Answer.objects.create(question=question, answer="Write here an answer")
+    answer.save()
+    
+    # Update the previous block
+    prev_block = Block.objects.get(id=prev_block_id)
+    new_block.next_block = prev_block.next_block
+    prev_block.next_block = new_block
+    prev_block.save()
+    new_block.save()
+
+def del_quiz_block(form):
+    print(form.cleaned_data)
+    id_block = form.cleaned_data['block_id']
+    block = Block.objects.get(id=id_block)
+    block.blockquiz.delete()
+    # TODO: Delate all questions and asnwer from the block
+    try:
+        prev_block = Block.objects.get(next_block=block)
+        prev_block.next_block = block.next_block
+        prev_block.save()
+    except:
+        pass
+    finally:
+        block.delete()
+
+def mod_quiz_block(form, files):
+
+    print(form.cleaned_data)
+    id_block = form.cleaned_data['block_id']
+
+    name = form.cleaned_data['name']
+    block = Block.objects.get(id=id_block)
+    block.blockquiz.name = name
+
+    block.save()
+    block.blockquiz.save()
+
+def create_question(publication_id, form):
+    '''Create a new question and insert it in the quiz'''
+    print(form.cleaned_data)
+    
+    # get Quiz block
+
+    id_question = form.cleaned_data['block_id']
+    question = Questions.objects.get(id=id_question)
+
+    quiz_block = question.quiz_block
+
+    question = Questions.objects.create(quiz_block=quiz_block)
+    question.save()
+
+    answer = Answer.objects.create(question=question, answer="Write here an answer")
+    answer.save()
+
+    
+
+def del_question(form):
+    print(form.cleaned_data)
+    
+    id_question = form.cleaned_data['block_id']
+    
+    question = Questions.objects.get(id=id_question)
+   
+    question.delete()
+   
+
+def mod_question(form, files):
+
+    print(form.cleaned_data)
+    id_question = form.cleaned_data['block_id']
+
+    question = Questions.objects.get(id=id_question)
+
+    question_text = form.cleaned_data['question']
+
+    question.question = question_text
+    question.save()
+
+
+def create_answer(publication_id, form):
+    '''Create a new answer and insert it in the quiz'''
+    print(form.cleaned_data)
+    
+    # get Answer
+    id_answer = form.cleaned_data['block_id']
+    answer = Answer.objects.get(id=id_answer)
+
+    question = answer.question
+
+    answer = Answer.objects.create(question=question)
+    
+    answer.save()
+
+    
+def del_answer(form):
+    print(form.cleaned_data)
+    
+    id_answer = form.cleaned_data['block_id']
+    
+    answer = Answer.objects.get(id=id_answer)
+   
+    answer.delete()
+   
+
+def mod_answer(form, files):
+
+    print(form.cleaned_data)
+    id_answer = form.cleaned_data['block_id']
+
+    answer = Answer.objects.get(id=id_answer)
+
+    answer_text = form.cleaned_data['answer']
+    is_correct = form.cleaned_data['is_correct']
+
+    answer.answer = answer_text
+    answer.is_correct = is_correct
+    answer.save()
+
+    
 dict_block_type_to_functions = {
     'T': {'create': create_text_block, 'delete': del_text_block, 'modify': mod_text_block},
     'Ti': {'create': create_title_block, 'delete': del_title_block, 'modify':mod_title_block},
     'I': {'create': create_image_block, 'delete': del_image_block, 'modify': mod_image_block},
     #'D': {'create': create_doi_block, 'delete': del_doi_block, 'modify': mod_doi_block},
     'V': {'create': create_video_block, 'delete': del_video_block, 'modify': mod_video_block},
-    #'Q': {'create': create_quiz_block, 'delete': del_quiz_block, 'modify': mod_quiz_block},
+    'Q': {'create': create_quiz_block, 'delete': del_quiz_block, 'modify': mod_quiz_block},
+    'Qq': {'create': create_question, 'delete': del_question, 'modify': mod_question},
+    'Qa': {'create': create_answer, 'delete': del_answer, 'modify': mod_answer},
     'R': {'create': create_references_block, 'delete': del_references_block, 'modify': mod_references_block},
     'A': {'create': create_authors_block, 'delete': del_authors_block, 'modify': mod_authors_block},
     #'B': {'create': create_table_block, 'delete': del_table_block, 'modify': mod_table_block},
@@ -395,6 +549,14 @@ def save(request, article_id):
     authors_formset = authors_formset(request.POST, prefix='authors')
     references_formset = formset_factory(UpdateReferencesBlock)
     references_formset = references_formset(request.POST, prefix='references')
+    quizzes_formset = formset_factory(UpdateQuizBlock)
+    quizzes_formset = quizzes_formset(request.POST, prefix='quizzes')
+
+    question_formset = formset_factory(UpdateQuestion)
+    question_formset = question_formset(request.POST, prefix='question')
+    answer_formset = formset_factory(UpdateAnswer)
+    answer_formset = answer_formset(request.POST, prefix='answer')
+
     keywords_formset = formset_factory(UpdateKeywordsBlock)
     keywords_form = keywords_formset(request.POST, prefix='keywords')
 
@@ -416,7 +578,7 @@ def save(request, article_id):
     print(image_formset.as_table())
     print(video_formset.as_table())
     '''
-    if are_formsets_valids(text_formset, image_formset, video_formset, authors_formset, references_formset, title_formset):
+    if are_formsets_valids(text_formset, image_formset, video_formset, authors_formset, references_formset, title_formset, quizzes_formset, question_formset, answer_formset):
         print('valid')
         list_of_forms_and_types = [
             (text_formset, 'T'),
@@ -425,6 +587,9 @@ def save(request, article_id):
             (authors_formset, 'A'),
             (references_formset, 'R'),
             (title_formset, 'Ti'),
+            (quizzes_formset, 'Q'),
+            (question_formset, 'Qq'),
+            (answer_formset, 'Qa'),
             #...
         ]
         for formset, block_type in list_of_forms_and_types:
@@ -445,7 +610,7 @@ def save(request, article_id):
                     print('modify')
                     dict_block_type_to_functions[block_type]['modify'](form, request.FILES)
     else:
-        print_data_of_error_formsets(text_formset, image_formset, video_formset, authors_formset, references_formset, title_formset)
+        print_data_of_error_formsets(text_formset, image_formset, video_formset, authors_formset, references_formset, title_formset, quizzes_formset, question_formset, answer_formset)
     return redirect('articles:edit', article_id=article_id)
 
 
