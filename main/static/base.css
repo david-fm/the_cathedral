@@ -10,14 +10,16 @@ header{
     padding: 20px 30px;
 }
 h1{
-    margin: 0;
-    margin-right: auto;
-    color:#ffffff;
+    display: none;
 
+    
+}
+.logo{
     flex-grow: 1;
     cursor:pointer;
+    height: 30px;
+    align-self: center;
 }
-
 nav {
     flex-grow: 9;
     

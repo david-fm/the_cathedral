@@ -76,6 +76,8 @@ class Block(models.Model):
 
 
 
+
+
 class Font(models.Model):
     name = models.CharField(max_length=50)
     font_path = models.FileField(upload_to='fonts/')

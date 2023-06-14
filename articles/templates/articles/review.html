@@ -14,22 +14,21 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
-<body>
-    
+<body x-data="editComments">
+    <script src="{% static 'articles/editComments.js' %}"></script>
     <header>
         <div>
             <nav class="navtop">
                 <ul class="ultop">
-                    <button type="button" class="menu" @click="retrieve_blocks">Save</button>
-                    <button type="button" class="menu" @click="retrieve_blocks">Publish</button>
-                    <button type="button" class="menu" @click="window.location.replace('{% url 'main:index' %}')">Home</button>
+                    <button type="button" class="menu" @click="retrieve_blocks">Accept</button>
+                    <button type="button" class="menu" @click="retrieve_blocks">Reject</button>
                 </ul>
             </nav>
         </div>
     </header>
    
     <main>
-        <form class="area" method="POST" action="">
+        <div class="area" method="POST" action="">
             {% csrf_token %}    
             <p  class="keywords_p"><span>Keywords:</span><span  class="keywords_container keywords_block_content">{{keywords.keyword}}</span></p>
             <div class="blocks-container">
@@ -118,27 +117,34 @@
                         
                         <!--textarea is important to mantain the \n-->
                     </div>
-                    {%if block.comments%}
-                   
-                    <div class="comment">
-                        <div class="add">
-                            <form action="" class="entry">
-                                <input class="entry-input" type="text" placeholder="New entry" name="a">
+                    
+                    
+                    <div class="comment" x-data="{showComment:false}">
+                        <div class="show-comment-container" @click="showComment=true" x-show="!showComment">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Communication / Chat_Remove"> <path id="Vector" d="M9 11H15M7.12357 18.7012L5.59961 19.9203C4.76744 20.5861 4.35115 20.9191 4.00098 20.9195C3.69644 20.9198 3.40845 20.7813 3.21846 20.5433C3 20.2696 3 19.7369 3 18.6712V7.2002C3 6.08009 3 5.51962 3.21799 5.0918C3.40973 4.71547 3.71547 4.40973 4.0918 4.21799C4.51962 4 5.08009 4 6.2002 4H17.8002C18.9203 4 19.4796 4 19.9074 4.21799C20.2837 4.40973 20.5905 4.71547 20.7822 5.0918C21 5.5192 21 6.07899 21 7.19691V14.8036C21 15.9215 21 16.4805 20.7822 16.9079C20.5905 17.2842 20.2843 17.5905 19.908 17.7822C19.4806 18 18.921 18 17.8031 18H9.12207C8.70603 18 8.49877 18 8.2998 18.0408C8.12328 18.0771 7.95216 18.1368 7.79168 18.2188C7.61281 18.3101 7.45249 18.4384 7.13478 18.6926L7.12357 18.7012Z" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path> </g> </g></svg>
+                        </div>
+                        <div class="add" x-show="showComment" @mousedown.outside=" showComment=!showComment; $refs.submit{{block.id}}.click()">
+                            <form action="" x-ref="commentForm{{block.id}}" @submit.prevent="sendComment" class="entry">
+                                {% csrf_token %}
+                                <textarea class="entry-input" name="text" x-data="{ resize: () => { $el.style.height = '27px'; $el.style.height = parseInt($el.scrollHeight)+parseInt($el.style.height) + 'px' } }"
+                                    x-init="resize()"
+                                    @input="resize(); modified=true;" {% if not block.comments.text %}placeholder="Write here a comment..."{%else%}initialText="{{block.comments.text}}"{% endif %}>{%if block.comments.text%}{{block.comments.text}}{% endif %}</textarea>
+                                <input type="hidden" name="block_id" value="{{block.id}}">
                                 <div class="duo">
-                                        <button type="submit" class="two">Comment</button>
-                                        <button type="submit" class="two">Reject</button>
+                                        <button type="submit" class="two" x-ref="submit{{block.id}}" >Delete</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    {% endif %}
+                    
                 </div>
                 {% endfor %}
             </div>
             
-        </form>
+        </div>
 
     </main>
+    
 </body>
 
 </html>

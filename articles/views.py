@@ -11,6 +11,8 @@ from django.forms import formset_factory, modelformset_factory
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from user_system.models import UserPersonalized  # Requiere que el usuario inicie sesión
+from django.views.decorators.csrf import csrf_protect
+
 
 #@permission_required('articles.is_checker', raise_exception=True)
 def order_blocks(blocks):
@@ -57,19 +59,6 @@ class ArticleDetailView(DetailView):
         context['keywords'] = keywords
         return context
 
-def get_ordered_comments(ordered_blocks):
-    '''
-        Given a list of ordered blocks, return a list of comments ordered by the block they belong to
-    '''
-    comments = []
-    for block in ordered_blocks:
-        query = Comments.objects.filter(block=block)
-        if query:
-            comments.append(query[0])
-
-    return comments
-
-
 class ReviewView(DetailView):
     model = Publication
     template_name = 'articles/review.html'
@@ -82,32 +71,24 @@ class ReviewView(DetailView):
         blocks = Block.objects.filter(publication=self.object)
         blocks = order_blocks(blocks)
         keywords = Keywords.objects.get(publications=self.object)
-        comments = get_ordered_comments(blocks)
-        comments_formset = modelformset_factory(Comments, form=UpdateComments, extra=len(comments))
-        
-        #print(comments)
-        comments_formset = comments_formset(initial=comments)
-        print(comments_formset.as_table())
         
         context['blocks'] = blocks
         context['article_id'] = self.object.id
         context['keywords'] = keywords
-        context['comments_formset'] = comments_formset
         return context
-    
     def post(self, request, *args, **kwargs):
-        formset = modelformset_factory(Comments, form=UpdateComments)
-        formset = formset(request.POST)
-
-        if formset.is_valid():
-            formset.save()
-            
-        else:
-            print_data_of_error_formsets(formset)
+        # get the block
+        block_id = request.POST.get('block_id')
+        block = Block.objects.get(id=block_id)
+        # get the text
+        text = request.POST.get('text')
+        # modify the comment
+        comment = Comments.objects.get(block=block)
+        comment.text = text
+        comment.save()
         
-        
-        context=super().get_context_data(**kwargs)
-        return render(request, 'articles/review.html', context)
+        #context=super().get_context_data(**kwargs)
+        return HttpResponse('')
 
 
 @login_required

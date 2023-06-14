@@ -24,8 +24,15 @@
 {% endif %}
     <header {% if user.is_authenticated %}x-data="{ show_uopt:false }"{% endif %} >
         <div class="header_container">
-            <h1 @click="$refs.home.click()">Cathedral</h1>
-
+            <h1 >Cathedral</h1>
+            <svg class="logo" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 239 50.5" @click="$refs.home.click()">
+                <g id="LOGO" transform="translate(-95 -215)">
+                  <text id="Cathedral" transform="translate(95 215)" fill="#e5e5e5" font-size="40" font-family="Helvetica"><tspan x="0" y="31">Cathedral</tspan></text>
+                  <line id="Línea_1" data-name="Línea 1" x2="29" transform="translate(98.5 264.5)" fill="none" stroke="#fca311" stroke-width="2"/>
+                  <path id="Trazado_2" data-name="Trazado 2" d="M129,0H0" transform="translate(133.5 264.5)" fill="none" stroke="#fff" stroke-width="2"/>
+                </g>
+            </svg>
+              
             <nav >
                 <ul>
                     <li><a href="{% url 'main:index' %}" x-ref="home">Home</a></li>
