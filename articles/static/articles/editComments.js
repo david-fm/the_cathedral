@@ -1,5 +1,6 @@
 // AJAX for posting
 function sendForm(form) {
+    // https://stackoverflow.com/questions/70842319/vanilla-javascript-ajax-form-submit
     console.log("create post is working!") // sanity check
     fetch(form.action, {
         method: "POST",

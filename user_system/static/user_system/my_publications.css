@@ -130,13 +130,20 @@ body{
     flex-direction:row;
     margin-bottom: 40px;
     padding: 20px;
+
+    height: 200px;
+    cursor: pointer;
 }
 
 .titles{
     display: flex;
     align-items:flex-start;
     flex-direction: column;
-    flex-grow: 2;
+    flex-grow: 4;
+    width: 100%;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .titles h2{
@@ -156,16 +163,24 @@ body{
     font-weight: bold;
     word-break: break-word;
 
+    
+    max-height: 100%;
+
 }
 .more{
     text-decoration: none;
 }
 
-.thumbnail{
+.thumbnail-container{
     flex-grow: 1;
-    max-width: 200px;
-    max-height: 300px;
-    margin: 10px;
+    width: 50%;
+
+    display:grid;
+    place-items: center;
+}
+
+.thumbnail{
+    height: 100%;
 
     object-fit: contain;
 }

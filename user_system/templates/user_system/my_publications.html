@@ -62,11 +62,13 @@
                     {% endif %}
                     
                 </div>
-                {% if  content.0.file_path %}
-                <img src="{{content.0.file_path.url}}" class="thumbnail">
-                {% else %}
-                <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
-                {% endif %}
+                <div class="thumbnail-container">
+                    {% if  content.0.file_path %}
+                    <img src="{{content.0.file_path.url}}" class="thumbnail">
+                    {% else %}
+                    <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
+                    {% endif %}
+                </div>
             </div>
             {% endfor %}
             {% else %}
