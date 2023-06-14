@@ -9,8 +9,11 @@ from django.shortcuts import redirect
 def my_publications(request):
     """
     View for the publisher's publications.
+
     :param request: request
     :type request: HttpRequest
+    :return: render
+    :rtype: HttpResponse
     """
     if request.method == 'POST':
         form = Publicate(request.POST)
@@ -40,8 +43,11 @@ def my_publications(request):
 def user_config(request):
     """
     View for the user's configuration.
+
     :param request: request
     :type request: HttpRequest
+    :return: render
+    :rtype: HttpResponse
     """
     if request.method == 'POST':
         form = UserConfig(request.POST, request.FILES)
@@ -75,8 +81,11 @@ def user_config(request):
 def user_config_private_data(request):
     """
     function for the user's configuration of private data.
+
     :param request: request
     :type request: HttpRequest
+    :return: render
+    :rtype: HttpResponse
     """
     if request.method == 'POST':
         form = UserConfigPrivateData(request.POST)
@@ -93,8 +102,11 @@ def user_config_private_data(request):
 def user_config_manage_account(request):
     """
     function for the user's configuration managing their account.
+
     :param request: request
     :type request: HttpRequest
+    :return: render
+    :rtype: HttpResponse
     """
 
     if request.method == 'POST':
@@ -110,8 +122,11 @@ def user_config_manage_account(request):
 def user_config_delete_account(request):
     """
     function for the user's configuration deleting their account.
+
     :param request: request
     :type request: HttpRequest
+    :return: render
+    :rtype: HttpResponse
     """
     if request.method == 'POST':
         request.user.delete()
@@ -122,7 +137,10 @@ def user_config_delete_account(request):
 def privacy_and_data(request):
     """
     function for the privacy and data page.
+
     :param request: request
     :type request: HttpRequest
+    :return: render
+    :rtype: HttpResponse
     """
     return render(request, 'user_system/privacy_and_data.html')

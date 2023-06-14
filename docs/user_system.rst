@@ -37,10 +37,3 @@ user\_system.views module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: user_system
-   :members:
-   :undoc-members:
-   :show-inheritance:

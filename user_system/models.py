@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractUser
 def user_directory_path(instance, filename):
     """ 
     user_directory_path: This function is used to upload the image of the user to the correct folder.
+    
     :param instance: The instance of the model.
     :type instance: UserPersonalized
     :param filename: The name of the file.
@@ -17,6 +18,7 @@ def user_directory_path(instance, filename):
 def user_directory_path_User(instance, filename):
     """
     user_directory_path_User: This function is used to upload the image of the user to the correct folder.
+
     :param instance: The instance of the model.
     :type instance: UserPersonalized
     :param filename: The name of the file.

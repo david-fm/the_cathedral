@@ -17,10 +17,12 @@ from django.db.models import Avg
 def user_directory_path(instance, filename):
     """
     Function to obtain the path to the file of a publication
+
     :param instance: instance of the publication
     :type instance: Publication
     :param filename: name of the file
     :type filename: string
+
     """
     # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
     return 'user_{0}/{1}'.format(instance.publisher.id, filename)
@@ -28,6 +30,7 @@ def user_directory_path(instance, filename):
 def directory_for_blocks(instance, filename):
     """
     Function to obtain the path to the file of a block
+
     :param instance: instance of the block
     :type instance: Block
     :param filename: name of the file
@@ -41,6 +44,7 @@ def directory_for_blocks(instance, filename):
 class Publication(models.Model):
     """
     :class: Publication
+
     Publication is the class that represents a publication in the system.
     """
     title = models.CharField(max_length=255)
@@ -58,6 +62,7 @@ class Publication(models.Model):
     def rate_count(self):
         """
         function to obtain the number of rates of a publication
+
         :return: number of rates of a publication
         :rtype: int
         """
@@ -67,6 +72,7 @@ class Publication(models.Model):
     def rate_average(self):
         """
         function to obtain the average rate of a publication
+
         :return: average rate of a publication
         :rtype: float
         """
@@ -86,6 +92,7 @@ class Publication(models.Model):
     def rate_relevance(self):
         """
         function to obtain the relevance of a publication
+
         :return: relevance of a publication
         :rtype: float
         """
@@ -96,6 +103,7 @@ class Publication(models.Model):
 class Rate(models.Model):
     """
     :class: Rate
+
     Rate is the class that represents a rate in the system.
     """
     publication = models.ForeignKey(Publication, on_delete=models.CASCADE)
@@ -106,6 +114,7 @@ class Rate(models.Model):
 class Keywords(models.Model):
     """
     :class: Keywords
+
     Keywords is the class that represents the keywords of a publication in the system.
     """
     keyword = models.TextField(max_length=255, null=True, blank=True)
@@ -115,6 +124,7 @@ class Keywords(models.Model):
 class Block(models.Model):
     """
     :class: Block
+
     Block is the class that represents a block in the system.
     """
     publication = models.ForeignKey(Publication, on_delete=models.CASCADE, null=False)
@@ -127,6 +137,7 @@ class Block(models.Model):
 class Font(models.Model):
     """
     :class: Font
+
     Font is the class that represents a font in the system.
     """
     name = models.CharField(max_length=50)
@@ -135,6 +146,7 @@ class Font(models.Model):
 class BlockTitle(models.Model):
     """
     :class: BlockTitle
+
     BlockTitle is the class that represents a title of a block in the system.
     """
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
@@ -146,6 +158,7 @@ class BlockTitle(models.Model):
 class BlockText(models.Model):
     """
     :class: BlockText
+
     BlockText is the class that represents a text of a block in the system.
     """
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
@@ -160,6 +173,7 @@ class BlockText(models.Model):
 class BlockImage(models.Model):
     """
     :class: BlockImage
+
     BlockImage is the class that represents an image of a block in the system.
     """
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
@@ -169,6 +183,7 @@ class BlockImage(models.Model):
 class BlockVideo(models.Model):
     """
     :class: BlockVideo
+
     BlockVideo is the class that represents a video of a block in the system.
     """
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
@@ -179,6 +194,7 @@ class BlockVideo(models.Model):
 class BlockQuiz(models.Model):
     """
     :class: BlockQuiz
+
     BlockQuiz is the class that represents a quiz of a block in the system.
     """
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
@@ -189,6 +205,7 @@ class BlockQuiz(models.Model):
 class Questions(models.Model):
     """
     :class: Questions
+
     Questions is the class that represents a question of a quiz in the system.
     """
     question = models.TextField(max_length=350)
@@ -198,6 +215,7 @@ class Questions(models.Model):
 class Answer(models.Model):
     """
     :class: Answer
+
     Answer is the class that represents an answer of a question in the system.
     """
     answer = models.TextField(max_length=255)
@@ -210,6 +228,7 @@ class Answer(models.Model):
 class BlockDoi(models.Model):
     """
     :class: BlockDoi
+
     BlockDoi is the class that represents a doi of a block in the system.
     """
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
@@ -219,6 +238,7 @@ class BlockDoi(models.Model):
 class BlockAuthors(models.Model):
     """
     :class: BlockAuthors
+
     BlockAuthors is the class that represents the authors of a block in the system.
     """
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
@@ -230,6 +250,7 @@ class BlockAuthors(models.Model):
 class BlockTable(models.Model):
     """
     :class: BlockTable
+
     BlockTable is the class that represents a table of a block in the system.
     """
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
@@ -242,6 +263,7 @@ class BlockTable(models.Model):
 class BlockReferences(models.Model):
     """
     :class: BlockReferences
+    
     BlockReferences is the class that represents the references of a block in the system.
     """
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)

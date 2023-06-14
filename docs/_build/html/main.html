@@ -86,9 +86,6 @@
 </dd></dl>
 
 </section>
-<section id="module-main.models">
-<span id="main-models-module"></span><h2>main.models module<a class="headerlink" href="#module-main.models" title="Permalink to this heading">¶</a></h2>
-</section>
 <section id="module-main.views">
 <span id="main-views-module"></span><h2>main.views module<a class="headerlink" href="#module-main.views" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
@@ -96,11 +93,15 @@
 <span class="sig-prename descclassname"><span class="pre">main.views.</span></span><span class="sig-name descname"><span class="pre">decorator_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_render</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main/index.html'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.views.decorator_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorator for the user system.
 It checks if the user is logged in and if it is, it redirects to the main page.
-Otherwise, it redirects to the login page.
-:param func: function to be decorated
-:type func: function
-:param to_render: page to be rendered
-:type to_render: string</p>
+Otherwise, it redirects to the login page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>function</em>) – function to be decorated</p></li>
+<li><p><strong>to_render</strong> (<em>string</em>) – page to be rendered</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -108,35 +109,45 @@ Otherwise, it redirects to the login page.
 <span class="sig-prename descclassname"><span class="pre">main.views.</span></span><span class="sig-name descname"><span class="pre">decorator_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_render</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main/search.html'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.views.decorator_search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorator for the user system.
 It checks if the user is logged in and if it is, it redirects to the main page.
-Otherwise, it redirects to the login page.
-:param func: function to be decorated
-:type func: function
-:param to_render: page to be rendered
-:type to_render: string</p>
+Otherwise, it redirects to the login page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>function</em>) – function to be decorated</p></li>
+<li><p><strong>to_render</strong> (<em>string</em>) – page to be rendered</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="main.views.index">
 <span class="sig-prename descclassname"><span class="pre">main.views.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main/views.html#index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.views.index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper for the decorator.
-:param request: request
-:type request: HttpRequest
-:param args: arguments
-:type args: list
-:param kwargs: keyword arguments
-:type kwargs: dict</p>
+<dd><p>Wrapper for the decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>HttpRequest</em>) – request</p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – arguments</p></li>
+<li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – keyword arguments</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="main.views.search">
 <span class="sig-prename descclassname"><span class="pre">main.views.</span></span><span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main/views.html#search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.views.search" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper for the decorator.
-:param request: request
-:type request: HttpRequest
-:param args: arguments
-:type args: list
-:param kwargs: keyword arguments
-:type kwargs: dict</p>
+<dd><p>Wrapper for the decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>HttpRequest</em>) – request</p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – arguments</p></li>
+<li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – keyword arguments</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -144,16 +155,17 @@ Otherwise, it redirects to the login page.
 <span class="sig-prename descclassname"><span class="pre">main.views.</span></span><span class="sig-name descname"><span class="pre">user_system_decorator_partial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_render</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main/index.html'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main/views.html#user_system_decorator_partial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.views.user_system_decorator_partial" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorator for the user system.
 It checks if the user is logged in and if it is, it redirects to the main page.
-Otherwise, it redirects to the login page.
-:param func: function to be decorated
-:type func: function
-:param to_render: page to be rendered
-:type to_render: string</p>
+Otherwise, it redirects to the login page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>function</em>) – function to be decorated</p></li>
+<li><p><strong>to_render</strong> (<em>string</em>) – page to be rendered</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
-</section>
-<section id="module-main">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-main" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 

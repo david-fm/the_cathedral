@@ -48,10 +48,12 @@
 <div class="viewcode-block" id="user_directory_path"><a class="viewcode-back" href="../../articles.html#articles.models.user_directory_path">[docs]</a><span class="k">def</span> <span class="nf">user_directory_path</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to obtain the path to the file of a publication</span>
+
 <span class="sd">    :param instance: instance of the publication</span>
 <span class="sd">    :type instance: Publication</span>
 <span class="sd">    :param filename: name of the file</span>
 <span class="sd">    :type filename: string</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># file will be uploaded to MEDIA_ROOT / user_&lt;id&gt;/&lt;filename&gt;</span>
     <span class="k">return</span> <span class="s1">&#39;user_</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
@@ -59,6 +61,7 @@
 <div class="viewcode-block" id="directory_for_blocks"><a class="viewcode-back" href="../../articles.html#articles.models.directory_for_blocks">[docs]</a><span class="k">def</span> <span class="nf">directory_for_blocks</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to obtain the path to the file of a block</span>
+
 <span class="sd">    :param instance: instance of the block</span>
 <span class="sd">    :type instance: Block</span>
 <span class="sd">    :param filename: name of the file</span>
@@ -72,6 +75,7 @@
 <div class="viewcode-block" id="Publication"><a class="viewcode-back" href="../../articles.html#articles.models.Publication">[docs]</a><span class="k">class</span> <span class="nc">Publication</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: Publication</span>
+
 <span class="sd">    Publication is the class that represents a publication in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
@@ -89,6 +93,7 @@
 <div class="viewcode-block" id="Publication.rate_count"><a class="viewcode-back" href="../../articles.html#articles.models.Publication.rate_count">[docs]</a>    <span class="k">def</span> <span class="nf">rate_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        function to obtain the number of rates of a publication</span>
+
 <span class="sd">        :return: number of rates of a publication</span>
 <span class="sd">        :rtype: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -98,6 +103,7 @@
 <div class="viewcode-block" id="Publication.rate_average"><a class="viewcode-back" href="../../articles.html#articles.models.Publication.rate_average">[docs]</a>    <span class="k">def</span> <span class="nf">rate_average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        function to obtain the average rate of a publication</span>
+
 <span class="sd">        :return: average rate of a publication</span>
 <span class="sd">        :rtype: float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -117,6 +123,7 @@
 <div class="viewcode-block" id="Publication.rate_relevance"><a class="viewcode-back" href="../../articles.html#articles.models.Publication.rate_relevance">[docs]</a>    <span class="k">def</span> <span class="nf">rate_relevance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        function to obtain the relevance of a publication</span>
+
 <span class="sd">        :return: relevance of a publication</span>
 <span class="sd">        :rtype: float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -127,6 +134,7 @@
 <div class="viewcode-block" id="Rate"><a class="viewcode-back" href="../../articles.html#articles.models.Rate">[docs]</a><span class="k">class</span> <span class="nc">Rate</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: Rate</span>
+
 <span class="sd">    Rate is the class that represents a rate in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">publication</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Publication</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
@@ -137,6 +145,7 @@
 <div class="viewcode-block" id="Keywords"><a class="viewcode-back" href="../../articles.html#articles.models.Keywords">[docs]</a><span class="k">class</span> <span class="nc">Keywords</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: Keywords</span>
+
 <span class="sd">    Keywords is the class that represents the keywords of a publication in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">keyword</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -146,6 +155,7 @@
 <div class="viewcode-block" id="Block"><a class="viewcode-back" href="../../articles.html#articles.models.Block">[docs]</a><span class="k">class</span> <span class="nc">Block</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: Block</span>
+
 <span class="sd">    Block is the class that represents a block in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">publication</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Publication</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -158,6 +168,7 @@
 <div class="viewcode-block" id="Font"><a class="viewcode-back" href="../../articles.html#articles.models.Font">[docs]</a><span class="k">class</span> <span class="nc">Font</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: Font</span>
+
 <span class="sd">    Font is the class that represents a font in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
@@ -166,6 +177,7 @@
 <div class="viewcode-block" id="BlockTitle"><a class="viewcode-back" href="../../articles.html#articles.models.BlockTitle">[docs]</a><span class="k">class</span> <span class="nc">BlockTitle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: BlockTitle</span>
+
 <span class="sd">    BlockTitle is the class that represents a title of a block in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -177,6 +189,7 @@
 <div class="viewcode-block" id="BlockText"><a class="viewcode-back" href="../../articles.html#articles.models.BlockText">[docs]</a><span class="k">class</span> <span class="nc">BlockText</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: BlockText</span>
+
 <span class="sd">    BlockText is the class that represents a text of a block in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -191,6 +204,7 @@
 <div class="viewcode-block" id="BlockImage"><a class="viewcode-back" href="../../articles.html#articles.models.BlockImage">[docs]</a><span class="k">class</span> <span class="nc">BlockImage</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: BlockImage</span>
+
 <span class="sd">    BlockImage is the class that represents an image of a block in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -200,6 +214,7 @@
 <div class="viewcode-block" id="BlockVideo"><a class="viewcode-back" href="../../articles.html#articles.models.BlockVideo">[docs]</a><span class="k">class</span> <span class="nc">BlockVideo</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: BlockVideo</span>
+
 <span class="sd">    BlockVideo is the class that represents a video of a block in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -210,6 +225,7 @@
 <div class="viewcode-block" id="BlockQuiz"><a class="viewcode-back" href="../../articles.html#articles.models.BlockQuiz">[docs]</a><span class="k">class</span> <span class="nc">BlockQuiz</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: BlockQuiz</span>
+
 <span class="sd">    BlockQuiz is the class that represents a quiz of a block in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -220,6 +236,7 @@
 <div class="viewcode-block" id="Questions"><a class="viewcode-back" href="../../articles.html#articles.models.Questions">[docs]</a><span class="k">class</span> <span class="nc">Questions</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: Questions</span>
+
 <span class="sd">    Questions is the class that represents a question of a quiz in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">question</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">350</span><span class="p">)</span>
@@ -229,6 +246,7 @@
 <div class="viewcode-block" id="Answer"><a class="viewcode-back" href="../../articles.html#articles.models.Answer">[docs]</a><span class="k">class</span> <span class="nc">Answer</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: Answer</span>
+
 <span class="sd">    Answer is the class that represents an answer of a question in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">answer</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
@@ -241,6 +259,7 @@
 <div class="viewcode-block" id="BlockDoi"><a class="viewcode-back" href="../../articles.html#articles.models.BlockDoi">[docs]</a><span class="k">class</span> <span class="nc">BlockDoi</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: BlockDoi</span>
+
 <span class="sd">    BlockDoi is the class that represents a doi of a block in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -250,6 +269,7 @@
 <div class="viewcode-block" id="BlockAuthors"><a class="viewcode-back" href="../../articles.html#articles.models.BlockAuthors">[docs]</a><span class="k">class</span> <span class="nc">BlockAuthors</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: BlockAuthors</span>
+
 <span class="sd">    BlockAuthors is the class that represents the authors of a block in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -261,6 +281,7 @@
 <div class="viewcode-block" id="BlockTable"><a class="viewcode-back" href="../../articles.html#articles.models.BlockTable">[docs]</a><span class="k">class</span> <span class="nc">BlockTable</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: BlockTable</span>
+
 <span class="sd">    BlockTable is the class that represents a table of a block in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -273,6 +294,7 @@
 <div class="viewcode-block" id="BlockReferences"><a class="viewcode-back" href="../../articles.html#articles.models.BlockReferences">[docs]</a><span class="k">class</span> <span class="nc">BlockReferences</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class: BlockReferences</span>
+<span class="sd">    </span>
 <span class="sd">    BlockReferences is the class that represents the references of a block in the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

@@ -14,6 +14,7 @@ def user_system_decorator_partial(func, to_render='main/index.html'):
     Decorator for the user system.
     It checks if the user is logged in and if it is, it redirects to the main page.
     Otherwise, it redirects to the login page.
+
     :param func: function to be decorated
     :type func: function
     :param to_render: page to be rendered
@@ -22,6 +23,7 @@ def user_system_decorator_partial(func, to_render='main/index.html'):
     def wrapper(request, *args, **kwargs):
         """
         Wrapper for the decorator.
+
         :param request: request
         :type request: HttpRequest
         :param args: arguments
@@ -101,6 +103,13 @@ decorator_index = partial(user_system_decorator_partial, to_render='main/index.h
 # Create your views here.
 @decorator_index
 def index(request):
+    """
+    View for the index page.
+
+    :param request: request
+    :type request: HttpRequest  
+
+    """
     # if a GET (or any other method) we'll create a blank form
     login_form = LoginForm()
     register_form = RegisterForm()
@@ -112,6 +121,16 @@ decorator_search = partial(user_system_decorator_partial, to_render='main/search
 
 @decorator_search
 def search(request):
+    """
+    View for the search page.
+
+    :param request: request
+    :type request: HttpRequest
+    :return: render
+    :rtype: HttpResponse  
+
+    """
+
     login_form = LoginForm()
     register_form = RegisterForm()
 

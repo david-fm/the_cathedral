@@ -35,6 +35,7 @@
 <div class="viewcode-block" id="Publicate"><a class="viewcode-back" href="../../user_system.html#user_system.forms.Publicate">[docs]</a><span class="k">class</span> <span class="nc">Publicate</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class:`Publicate` is a form that allows the user to publicate a new entry.</span>
+
 <span class="sd">    It has a single field, the title of the entry.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -50,13 +51,14 @@
 <div class="viewcode-block" id="UserConfig"><a class="viewcode-back" href="../../user_system.html#user_system.forms.UserConfig">[docs]</a><span class="k">class</span> <span class="nc">UserConfig</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    :class:`UserConfig` is a form that allows the user to change its personal data.</span>
+
 <span class="sd">    It has the following fields:</span>
-<span class="sd">        - image: the user&#39;s image</span>
-<span class="sd">        - first_name: the user&#39;s name</span>
-<span class="sd">        - last_name: the user&#39;s surname</span>
-<span class="sd">        - website: the user&#39;s website</span>
-<span class="sd">        - email: the user&#39;s email</span>
-<span class="sd">        - biography: the user&#39;s biography</span>
+<span class="sd">    - image: the user&#39;s image</span>
+<span class="sd">    - first_name: the user&#39;s name</span>
+<span class="sd">    - last_name: the user&#39;s surname</span>
+<span class="sd">    - website: the user&#39;s website</span>
+<span class="sd">    - email: the user&#39;s email</span>
+<span class="sd">    - biography: the user&#39;s biography</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">UserPersonalized</span>
@@ -96,10 +98,11 @@
 <div class="viewcode-block" id="UserConfigPrivateData"><a class="viewcode-back" href="../../user_system.html#user_system.forms.UserConfigPrivateData">[docs]</a><span class="k">class</span> <span class="nc">UserConfigPrivateData</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class:`UserConfigPrivateData` is a form that allows the user to change its private data.</span>
+
 <span class="sd">    3 fields are included:</span>
-<span class="sd">        - gender</span>
-<span class="sd">        - country</span>
-<span class="sd">        - language</span>
+<span class="sd">    - gender</span>
+<span class="sd">    - country</span>
+<span class="sd">    - language</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">UserPersonalized</span>
@@ -158,9 +161,10 @@
 <div class="viewcode-block" id="UserConfigPassword"><a class="viewcode-back" href="../../user_system.html#user_system.forms.UserConfigPassword">[docs]</a><span class="k">class</span> <span class="nc">UserConfigPassword</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :class:`UserConfigPassword` is a form that allows the user to change its password.</span>
+
 <span class="sd">    It has the following fields:</span>
-<span class="sd">        - password: the user&#39;s new password</span>
-<span class="sd">        - password_confirm: the user&#39;s new password confirmation</span>
+<span class="sd">    - password: the user&#39;s new password</span>
+<span class="sd">    - password_confirm: the user&#39;s new password confirmation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">password</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> 
                             <span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span>

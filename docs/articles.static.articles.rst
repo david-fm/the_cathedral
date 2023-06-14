@@ -1,6 +1,9 @@
 articles.static.articles package
 ================================
 
+createBlock.js
+--------------
+
 .. js:function:: dropdown(parts)
 
       dropdown is a function that returns a string that represents a dropdown
@@ -141,12 +144,4 @@ articles.static.articles package
       :param j: int
       :type j: int
 
-
-Module contents
----------------
-
-.. automodule:: articles.static.articles
-   :members:
-   :undoc-members:
-   :show-inheritance:
 

@@ -5,7 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
    articles.static
 
@@ -40,14 +40,3 @@ articles.views module
    :undoc-members:
    :show-inheritance:
 
-articles.static module
-----------------------
-   
-
-Module contents
----------------
-
-.. automodule:: articles
-   :members:
-   :undoc-members:
-   :show-inheritance:

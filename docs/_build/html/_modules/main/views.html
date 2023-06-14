@@ -45,6 +45,7 @@
 <span class="sd">    Decorator for the user system.</span>
 <span class="sd">    It checks if the user is logged in and if it is, it redirects to the main page.</span>
 <span class="sd">    Otherwise, it redirects to the login page.</span>
+
 <span class="sd">    :param func: function to be decorated</span>
 <span class="sd">    :type func: function</span>
 <span class="sd">    :param to_render: page to be rendered</span>
@@ -53,6 +54,7 @@
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Wrapper for the decorator.</span>
+
 <span class="sd">        :param request: request</span>
 <span class="sd">        :type request: HttpRequest</span>
 <span class="sd">        :param args: arguments</span>
@@ -132,6 +134,13 @@
 <span class="c1"># Create your views here.</span>
 <div class="viewcode-block" id="index"><a class="viewcode-back" href="../../main.html#main.views.index">[docs]</a><span class="nd">@decorator_index</span>
 <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    View for the index page.</span>
+
+<span class="sd">    :param request: request</span>
+<span class="sd">    :type request: HttpRequest  </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># if a GET (or any other method) we&#39;ll create a blank form</span>
     <span class="n">login_form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">()</span>
     <span class="n">register_form</span> <span class="o">=</span> <span class="n">RegisterForm</span><span class="p">()</span>
@@ -143,6 +152,16 @@
 
 <div class="viewcode-block" id="search"><a class="viewcode-back" href="../../main.html#main.views.search">[docs]</a><span class="nd">@decorator_search</span>
 <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    View for the search page.</span>
+
+<span class="sd">    :param request: request</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: render</span>
+<span class="sd">    :rtype: HttpResponse  </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">login_form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">()</span>
     <span class="n">register_form</span> <span class="o">=</span> <span class="n">RegisterForm</span><span class="p">()</span>
 

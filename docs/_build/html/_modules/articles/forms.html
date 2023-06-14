@@ -38,10 +38,9 @@
 
 <div class="viewcode-block" id="UpdateTextBlock"><a class="viewcode-back" href="../../articles.html#articles.forms.UpdateTextBlock">[docs]</a><span class="k">class</span> <span class="nc">UpdateTextBlock</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :class: &#39;UpdateTextBlock&#39;</span>
+
 <span class="sd">    UpdateTextBlockis a class that represents a form to update the text of a text block.</span>
-<span class="sd">    :class: UpdateTextBlock</span>
-<span class="sd">    </span>
-<span class="sd">   </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">3500</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">empty_value</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">Textarea</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
     <span class="n">block_id</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -53,8 +52,9 @@
 
 <div class="viewcode-block" id="UpdateTitleBlock"><a class="viewcode-back" href="../../articles.html#articles.forms.UpdateTitleBlock">[docs]</a><span class="k">class</span> <span class="nc">UpdateTitleBlock</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :class: &#39;UpdateTitleBlock&#39;</span>
+<span class="sd">    </span>
 <span class="sd">    UpdateTitleBlockis a class that represents a form to update the title of a title block.</span>
-<span class="sd">    :class: UpdateTitleBlock</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block_id</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">HiddenInput</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
@@ -72,8 +72,9 @@
 
 <div class="viewcode-block" id="UpdateImageBlock"><a class="viewcode-back" href="../../articles.html#articles.forms.UpdateImageBlock">[docs]</a><span class="k">class</span> <span class="nc">UpdateImageBlock</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :class: &#39;UpdateImageBlock&#39;</span>
+
 <span class="sd">    UpdateImageBlockis a class that represents a form to update the image of a image block.</span>
-<span class="sd">    :class: UpdateImageBlock</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">block_id</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -81,8 +82,9 @@
 
 <div class="viewcode-block" id="UpdateVideoBlock"><a class="viewcode-back" href="../../articles.html#articles.forms.UpdateVideoBlock">[docs]</a><span class="k">class</span> <span class="nc">UpdateVideoBlock</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :class: &#39;UpdateVideoBlock&#39;</span>
+
 <span class="sd">    UpdateVideoBlockis a class that represents a form to update the video of a video block.</span>
-<span class="sd">    :class: UpdateVideoBlock</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block_id</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">HiddenInput</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
@@ -98,8 +100,9 @@
 
 <div class="viewcode-block" id="UpdateAuthorsBlock"><a class="viewcode-back" href="../../articles.html#articles.forms.UpdateAuthorsBlock">[docs]</a><span class="k">class</span> <span class="nc">UpdateAuthorsBlock</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :class: &#39;UpdateAuthorsBlock&#39;</span>
+
 <span class="sd">    UpdateAuthorsBlockis a class that represents a form to update the authors of a authors block.</span>
-<span class="sd">    :class: UpdateAuthorsBlock</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">block_id</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -108,8 +111,9 @@
 
 <div class="viewcode-block" id="UpdateReferencesBlock"><a class="viewcode-back" href="../../articles.html#articles.forms.UpdateReferencesBlock">[docs]</a><span class="k">class</span> <span class="nc">UpdateReferencesBlock</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :class: &#39;UpdateReferencesBlock&#39;</span>
+
 <span class="sd">    UpdateReferencesBlockis a class that represents a form to update the references of a references block.</span>
-<span class="sd">    :class: UpdateReferencesBlock</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">block_id</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">HiddenInput</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
@@ -144,8 +148,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="UpdateKeywordsBlock"><a class="viewcode-back" href="../../articles.html#articles.forms.UpdateKeywordsBlock">[docs]</a><span class="k">class</span> <span class="nc">UpdateKeywordsBlock</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :class: &#39;UpdateKeywordsBlock&#39;</span>
+
 <span class="sd">    UpdateKeywordsBlockis a class that represents a form to update the keywords of a keywords block.</span>
-<span class="sd">    :class: UpdateKeywordsBlock</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">HiddenInput</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
     <span class="n">keywords</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">empty_value</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>

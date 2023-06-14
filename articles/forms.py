@@ -7,10 +7,9 @@ from .models import BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences
 
 class UpdateTextBlock(forms.Form):
     """
+    :class: 'UpdateTextBlock'
+
     UpdateTextBlockis a class that represents a form to update the text of a text block.
-    :class: UpdateTextBlock
-    
-   
     """
     text = forms.CharField(max_length=3500, required=False, empty_value='', widget=forms.Textarea(), label='')
     block_id = forms.IntegerField(label='', required=False)
@@ -22,8 +21,9 @@ class UpdateTextBlock(forms.Form):
 
 class UpdateTitleBlock(forms.ModelForm):
     """
+    :class: 'UpdateTitleBlock'
+    
     UpdateTitleBlockis a class that represents a form to update the title of a title block.
-    :class: UpdateTitleBlock
     """
     block_id = forms.IntegerField(label='', required=False)
     status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
@@ -41,8 +41,9 @@ class UpdateTitleBlock(forms.ModelForm):
 
 class UpdateImageBlock(forms.Form):
     """
+    :class: 'UpdateImageBlock'
+
     UpdateImageBlockis a class that represents a form to update the image of a image block.
-    :class: UpdateImageBlock
     """
     file = forms.ImageField(label='', required=False)
     block_id = forms.IntegerField(label='', required=False)
@@ -50,8 +51,9 @@ class UpdateImageBlock(forms.Form):
 
 class UpdateVideoBlock(forms.ModelForm):
     """
+    :class: 'UpdateVideoBlock'
+
     UpdateVideoBlockis a class that represents a form to update the video of a video block.
-    :class: UpdateVideoBlock
     """
     block_id = forms.IntegerField(label='', required=False)
     status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
@@ -67,8 +69,9 @@ class UpdateVideoBlock(forms.ModelForm):
 
 class UpdateAuthorsBlock(forms.Form):
     """
+    :class: 'UpdateAuthorsBlock'
+
     UpdateAuthorsBlockis a class that represents a form to update the authors of a authors block.
-    :class: UpdateAuthorsBlock
     """
 
     block_id = forms.IntegerField(label='', required=False)
@@ -77,8 +80,9 @@ class UpdateAuthorsBlock(forms.Form):
 
 class UpdateReferencesBlock(forms.ModelForm):
     """
+    :class: 'UpdateReferencesBlock'
+
     UpdateReferencesBlockis a class that represents a form to update the references of a references block.
-    :class: UpdateReferencesBlock
     """
     block_id = forms.IntegerField(label='', required=False)
     status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
@@ -113,8 +117,9 @@ class UpdateTableBlock(forms.ModelForm):
 """
 class UpdateKeywordsBlock(forms.Form):
     """
+    :class: 'UpdateKeywordsBlock'
+
     UpdateKeywordsBlockis a class that represents a form to update the keywords of a keywords block.
-    :class: UpdateKeywordsBlock
     """
     status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
     keywords = forms.CharField(max_length=255, required=False, empty_value='', label='')

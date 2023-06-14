@@ -41,8 +41,8 @@
 <dt class="sig sig-object py" id="user_system.forms.Publicate">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_system.forms.</span></span><span class="sig-name descname"><span class="pre">Publicate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id='id_%s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_class=&lt;class</span> <span class="pre">'django.forms.utils.ErrorList'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_suffix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_permitted=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_order=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_required_attribute=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderer=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/forms.html#Publicate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.forms.Publicate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.djangoproject.com/en/stable/ref/forms/api/#django.forms.Form" title="(in Django v4.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Form</span></code></a></p>
-<p><a class="reference internal" href="#user_system.forms.Publicate" title="user_system.forms.Publicate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Publicate</span></code></a> is a form that allows the user to publicate a new entry.
-It has a single field, the title of the entry.</p>
+<p><a class="reference internal" href="#user_system.forms.Publicate" title="user_system.forms.Publicate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Publicate</span></code></a> is a form that allows the user to publicate a new entry.</p>
+<p>It has a single field, the title of the entry.</p>
 <p><strong>Form fields:</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">title</span></code>: Title (<a class="reference external" href="https://docs.djangoproject.com/en/stable/ref/forms/fields/#django.forms.CharField" title="(in Django v4.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CharField</span></code></a>)</p></li>
@@ -59,18 +59,14 @@ It has a single field, the title of the entry.</p>
 <dt class="sig sig-object py" id="user_system.forms.UserConfig">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_system.forms.</span></span><span class="sig-name descname"><span class="pre">UserConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id='id_%s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_class=&lt;class</span> <span class="pre">'django.forms.utils.ErrorList'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_suffix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_permitted=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_required_attribute=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderer=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/forms.html#UserConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.forms.UserConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.djangoproject.com/en/stable/topics/forms/modelforms/#django.forms.ModelForm" title="(in Django v4.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelForm</span></code></a></p>
-<p><a class="reference internal" href="#user_system.forms.UserConfig" title="user_system.forms.UserConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserConfig</span></code></a> is a form that allows the user to change its personal data.
-It has the following fields:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>image: the user’s image</p></li>
-<li><p>first_name: the user’s name</p></li>
-<li><p>last_name: the user’s surname</p></li>
-<li><p>website: the user’s website</p></li>
-<li><p>email: the user’s email</p></li>
-<li><p>biography: the user’s biography</p></li>
-</ul>
-</div></blockquote>
+<p><a class="reference internal" href="#user_system.forms.UserConfig" title="user_system.forms.UserConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserConfig</span></code></a> is a form that allows the user to change its personal data.</p>
+<p>It has the following fields:
+- image: the user’s image
+- first_name: the user’s name
+- last_name: the user’s surname
+- website: the user’s website
+- email: the user’s email
+- biography: the user’s biography</p>
 <p><strong>Form fields:</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">image</span></code>: Image (<a class="reference external" href="https://docs.djangoproject.com/en/stable/ref/forms/fields/#django.forms.ImageField" title="(in Django v4.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageField</span></code></a>)</p></li>
@@ -92,14 +88,10 @@ It has the following fields:</p>
 <dt class="sig sig-object py" id="user_system.forms.UserConfigPassword">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_system.forms.</span></span><span class="sig-name descname"><span class="pre">UserConfigPassword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id='id_%s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_class=&lt;class</span> <span class="pre">'django.forms.utils.ErrorList'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_suffix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_permitted=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_order=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_required_attribute=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderer=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/forms.html#UserConfigPassword"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.forms.UserConfigPassword" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.djangoproject.com/en/stable/ref/forms/api/#django.forms.Form" title="(in Django v4.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Form</span></code></a></p>
-<p><a class="reference internal" href="#user_system.forms.UserConfigPassword" title="user_system.forms.UserConfigPassword"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserConfigPassword</span></code></a> is a form that allows the user to change its password.
-It has the following fields:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>password: the user’s new password</p></li>
-<li><p>password_confirm: the user’s new password confirmation</p></li>
-</ul>
-</div></blockquote>
+<p><a class="reference internal" href="#user_system.forms.UserConfigPassword" title="user_system.forms.UserConfigPassword"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserConfigPassword</span></code></a> is a form that allows the user to change its password.</p>
+<p>It has the following fields:
+- password: the user’s new password
+- password_confirm: the user’s new password confirmation</p>
 <p><strong>Form fields:</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">password</span></code>: Password (<a class="reference external" href="https://docs.djangoproject.com/en/stable/ref/forms/fields/#django.forms.CharField" title="(in Django v4.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CharField</span></code></a>)</p></li>
@@ -117,15 +109,11 @@ It has the following fields:</p>
 <dt class="sig sig-object py" id="user_system.forms.UserConfigPrivateData">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">user_system.forms.</span></span><span class="sig-name descname"><span class="pre">UserConfigPrivateData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id='id_%s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_class=&lt;class</span> <span class="pre">'django.forms.utils.ErrorList'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_suffix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_permitted=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_required_attribute=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderer=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/forms.html#UserConfigPrivateData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.forms.UserConfigPrivateData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.djangoproject.com/en/stable/topics/forms/modelforms/#django.forms.ModelForm" title="(in Django v4.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelForm</span></code></a></p>
-<p><a class="reference internal" href="#user_system.forms.UserConfigPrivateData" title="user_system.forms.UserConfigPrivateData"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserConfigPrivateData</span></code></a> is a form that allows the user to change its private data.
-3 fields are included:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>gender</p></li>
-<li><p>country</p></li>
-<li><p>language</p></li>
-</ul>
-</div></blockquote>
+<p><a class="reference internal" href="#user_system.forms.UserConfigPrivateData" title="user_system.forms.UserConfigPrivateData"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserConfigPrivateData</span></code></a> is a form that allows the user to change its private data.</p>
+<p>3 fields are included:
+- gender
+- country
+- language</p>
 <p><strong>Form fields:</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">gender</span></code>: Gender (<a class="reference external" href="https://docs.djangoproject.com/en/stable/ref/forms/fields/#django.forms.CharField" title="(in Django v4.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CharField</span></code></a>)</p></li>
@@ -141,8 +129,14 @@ It has the following fields:</p>
 </dd></dl>
 
 </section>
-<section id="user-system-groups-and-permissions-module">
-<h2>user_system.groups_and_permissions module<a class="headerlink" href="#user-system-groups-and-permissions-module" title="Permalink to this heading">¶</a></h2>
+<section id="module-user_system.groups_and_permissions">
+<span id="user-system-groups-and-permissions-module"></span><h2>user_system.groups_and_permissions module<a class="headerlink" href="#module-user_system.groups_and_permissions" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="user_system.groups_and_permissions.create_user_groups_and_permissions">
+<span class="sig-prename descclassname"><span class="pre">user_system.groups_and_permissions.</span></span><span class="sig-name descname"><span class="pre">create_user_groups_and_permissions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/groups_and_permissions.html#create_user_groups_and_permissions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.groups_and_permissions.create_user_groups_and_permissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the groups and permissions for the users, publishers and checkers</p>
+</dd></dl>
+
 </section>
 <section id="module-user_system.models">
 <span id="user-system-models-module"></span><h2>user_system.models module<a class="headerlink" href="#module-user_system.models" title="Permalink to this heading">¶</a></h2>
@@ -402,21 +396,29 @@ It has the following fields:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="user_system.models.user_directory_path">
 <span class="sig-prename descclassname"><span class="pre">user_system.models.</span></span><span class="sig-name descname"><span class="pre">user_directory_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/models.html#user_directory_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.models.user_directory_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>user_directory_path: This function is used to upload the image of the user to the correct folder.
-:param instance: The instance of the model.
-:type instance: UserPersonalized
-:param filename: The name of the file.
-:type filename: str</p>
+<dd><p>user_directory_path: This function is used to upload the image of the user to the correct folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>instance</strong> (<a class="reference internal" href="#user_system.models.UserPersonalized" title="user_system.models.UserPersonalized"><em>UserPersonalized</em></a>) – The instance of the model.</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the file.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="user_system.models.user_directory_path_User">
 <span class="sig-prename descclassname"><span class="pre">user_system.models.</span></span><span class="sig-name descname"><span class="pre">user_directory_path_User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/models.html#user_directory_path_User"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.models.user_directory_path_User" title="Permalink to this definition">¶</a></dt>
-<dd><p>user_directory_path_User: This function is used to upload the image of the user to the correct folder.
-:param instance: The instance of the model.
-:type instance: UserPersonalized
-:param filename: The name of the file.
-:type filename: str</p>
+<dd><p>user_directory_path_User: This function is used to upload the image of the user to the correct folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>instance</strong> (<a class="reference internal" href="#user_system.models.UserPersonalized" title="user_system.models.UserPersonalized"><em>UserPersonalized</em></a>) – The instance of the model.</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the file.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -425,54 +427,105 @@ It has the following fields:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="user_system.views.my_publications">
 <span class="sig-prename descclassname"><span class="pre">user_system.views.</span></span><span class="sig-name descname"><span class="pre">my_publications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/views.html#my_publications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.views.my_publications" title="Permalink to this definition">¶</a></dt>
-<dd><p>View for the publisher’s publications.
-:param request: request
-:type request: HttpRequest</p>
+<dd><p>View for the publisher’s publications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – request</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>render</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="user_system.views.privacy_and_data">
 <span class="sig-prename descclassname"><span class="pre">user_system.views.</span></span><span class="sig-name descname"><span class="pre">privacy_and_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/views.html#privacy_and_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.views.privacy_and_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>function for the privacy and data page.
-:param request: request
-:type request: HttpRequest</p>
+<dd><p>function for the privacy and data page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – request</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>render</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="user_system.views.user_config">
 <span class="sig-prename descclassname"><span class="pre">user_system.views.</span></span><span class="sig-name descname"><span class="pre">user_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/views.html#user_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.views.user_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>View for the user’s configuration.
-:param request: request
-:type request: HttpRequest</p>
+<dd><p>View for the user’s configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – request</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>render</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="user_system.views.user_config_delete_account">
 <span class="sig-prename descclassname"><span class="pre">user_system.views.</span></span><span class="sig-name descname"><span class="pre">user_config_delete_account</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/views.html#user_config_delete_account"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.views.user_config_delete_account" title="Permalink to this definition">¶</a></dt>
-<dd><p>function for the user’s configuration deleting their account.
-:param request: request
-:type request: HttpRequest</p>
+<dd><p>function for the user’s configuration deleting their account.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – request</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>render</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="user_system.views.user_config_manage_account">
 <span class="sig-prename descclassname"><span class="pre">user_system.views.</span></span><span class="sig-name descname"><span class="pre">user_config_manage_account</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/views.html#user_config_manage_account"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.views.user_config_manage_account" title="Permalink to this definition">¶</a></dt>
-<dd><p>function for the user’s configuration managing their account.
-:param request: request
-:type request: HttpRequest</p>
+<dd><p>function for the user’s configuration managing their account.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – request</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>render</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="user_system.views.user_config_private_data">
 <span class="sig-prename descclassname"><span class="pre">user_system.views.</span></span><span class="sig-name descname"><span class="pre">user_config_private_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/user_system/views.html#user_config_private_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#user_system.views.user_config_private_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>function for the user’s configuration of private data.
-:param request: request
-:type request: HttpRequest</p>
+<dd><p>function for the user’s configuration of private data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – request</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>render</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
 </dd></dl>
 
-</section>
-<section id="module-user_system">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-user_system" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
