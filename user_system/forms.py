@@ -2,6 +2,11 @@ from django import forms
 from .models import UserPersonalized
 
 class Publicate(forms.Form):
+    """
+    :class:`Publicate` is a form that allows the user to publicate a new entry.
+    It has a single field, the title of the entry.
+
+    """
     title = forms.CharField(max_length=255, 
                             widget=forms.TextInput(
                                 attrs={
@@ -12,6 +17,16 @@ class Publicate(forms.Form):
                             label='')
 
 class UserConfig(forms.ModelForm):
+    """ 
+    :class:`UserConfig` is a form that allows the user to change its personal data.
+    It has the following fields:
+        - image: the user's image
+        - first_name: the user's name
+        - last_name: the user's surname
+        - website: the user's website
+        - email: the user's email
+        - biography: the user's biography
+    """
     class Meta:
         model = UserPersonalized
         fields = ['image', 'first_name', 'last_name', 'email', 'website', 'biography']
@@ -48,6 +63,13 @@ class UserConfig(forms.ModelForm):
         }'''
 
 class UserConfigPrivateData(forms.ModelForm):
+    """
+    :class:`UserConfigPrivateData` is a form that allows the user to change its private data.
+    3 fields are included:
+        - gender
+        - country
+        - language
+    """
     class Meta:
         model = UserPersonalized
         fields = ['gender', 'country', 'language']
@@ -103,6 +125,12 @@ class UserConfigPrivateData(forms.ModelForm):
         }
 
 class UserConfigPassword(forms.Form):
+    """
+    :class:`UserConfigPassword` is a form that allows the user to change its password.
+    It has the following fields:
+        - password: the user's new password
+        - password_confirm: the user's new password confirmation
+    """
     password = forms.CharField(max_length=255, 
                             widget=forms.TextInput(
                                 attrs={

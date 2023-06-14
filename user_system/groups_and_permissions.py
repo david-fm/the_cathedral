@@ -27,6 +27,10 @@ custom_permission_3, created = Permission.objects.get_or_create(
 
 
 def create_user_groups_and_permissions():
+    """ 
+    Create the groups and permissions for the users, publishers and checkers
+    
+    """
     users_group, created = Group.objects.get_or_create(name='Users')
     publishers_group, created = Group.objects.get_or_create(name='Publishers')
     checkers_group, created = Group.objects.get_or_create(name='Checkers')

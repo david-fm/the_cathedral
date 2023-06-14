@@ -12,9 +12,25 @@ from user_system.models import UserPersonalized
 @login_required  # Requiere que el usuario inicie sesión
 #@permission_required('articles.is_checker', raise_exception=True)
 def detail(request, article_id):
+    """
+    detail is a function that represents the view of an article.
+    :param request: HttpRequest
+    :type request: HttpRequest
+    :param article_id: int
+    :type article_id: int
+    :return: HttpResponse with the article id
+    :rtype: HttpResponse
+    """
     return HttpResponse("You're looking at article %s." % article_id)
 
 def order_blocks(blocks):
+    """
+    order_blocks is a function that orders the blocks of a publication.
+    :param blocks: list of blocks
+    :type blocks: list
+    :return: ordered list of blocks
+    :rtype: list
+    """
     '''
         Given a list of blocks, order them by their next_block_id
     '''
@@ -37,6 +53,15 @@ def order_blocks(blocks):
 
 @login_required
 def edit_view(request, article_id):
+    """
+    edit_view is a function that represents the view of an article.
+    :param request: HttpRequest
+    :type request: HttpRequest
+    :param article_id: int
+    :type article_id: int
+    :return: 
+    :rtype: 
+    """
     # take all the Block related to the publication and pass them to the template
     blocks = Block.objects.filter(publication=article_id)
     blocks = order_blocks(blocks)
@@ -74,12 +99,24 @@ def edit_view(request, article_id):
     return render(request, 'articles/editor.html', context=context)
 
 def are_formsets_valids(*formsets):
+    """
+    are_formsets_valids is a function that checks if all the formsets are valid.
+    :param formsets: list of formsets
+    :type formsets: list
+    :return: True if all the formsets are valid, False otherwise
+    :rtype: bool
+    """
     for formset in formsets:
         if not formset.is_valid():
             return False
     return True
 
 def print_data_of_error_formsets(*formsets):
+    """
+    print_data_of_error_formsets is a function that prints the data of the formsets that are not valid.
+    :param formsets: list of formsets
+    :type formsets: list
+    """
     for formset in formsets:
         if not formset.is_valid():
             print('error')
@@ -88,6 +125,11 @@ def print_data_of_error_formsets(*formsets):
             print(formset.as_table())
 
 def del_text_block(form):
+    """
+    del_text_block is a function that deletes a text block.
+    :param form: form that contains the data of the block to delete
+    :type form: UpdateTextBlock
+    """
     print('del_text_block')
     print(form.cleaned_data)
     id_block = form.cleaned_data['block_id']
@@ -104,7 +146,14 @@ def del_text_block(form):
         block.delete()
 
 def mod_text_block(form, files):
+    """
+    mod_text_block is a function that modifies a text block.
+    :param form: form that contains the data of the block to modify
+    :type form: UpdateTextBlock
+    :param files: files that contains the data of the block to modify
+    :type files: dict
 
+    """
     print(form.cleaned_data)
     id_block = form.cleaned_data['block_id']
     print(f'mod_text_block {id_block}')
@@ -116,6 +165,14 @@ def mod_text_block(form, files):
     block.blocktext.save()
 
 def create_text_block(publication_id, form):
+    """
+    create_text_block is a function that creates a text block.
+    :param publication_id: id of the publication
+    :type publication_id: int
+    :param form: form that contains the data of the block to create
+    :type form: UpdateTextBlock
+
+    """
     '''Create a new block of type text and insert it after the block with id prev_block_id'''
     prev_block_id = form.cleaned_data['block_id']
     # get publication
@@ -135,6 +192,14 @@ def create_text_block(publication_id, form):
 
     
 def create_title_block(publication_id, form):
+    """
+    create_title_block is a function that creates a title block.
+    :param publication_id: id of the publication
+    :type publication_id: int
+    :param form: form that contains the data of the block to create
+    :type form: UpdateTitleBlock
+
+    """
     '''Create a new block of type title and insert it after the block with id prev_block_id'''
     prev_block_id = form.cleaned_data['block_id']
     print(prev_block_id)
@@ -156,6 +221,12 @@ def create_title_block(publication_id, form):
 
 
 def del_title_block(form):
+    """
+    del_title_block is a function that deletes a title block.
+    :param form: form that contains the data of the block to delete
+    :type form: UpdateTitleBlock
+
+    """
     print(form.cleaned_data)
     id_block = form.cleaned_data['block_id']
     block = Block.objects.get(id=id_block)
@@ -170,7 +241,14 @@ def del_title_block(form):
         block.delete()
 
 def mod_title_block(form, files):
+    """
+    mod_title_block is a function that modifies a title block.
+    :param form: form that contains the data of the block to modify
+    :type form: UpdateTitleBlock
+    :param files: files that contains the data of the block to modify
+    :type files: dict
 
+    """
     print(form.cleaned_data)
     id_block = form.cleaned_data['block_id']
 
@@ -182,6 +260,14 @@ def mod_title_block(form, files):
     block.blocktitle.save()
 
 def create_image_block(publication_id, form):
+    """
+    create_image_block is a function that creates an image block qne insert it after the block with id prev_block_id.
+    :param publication_id: id of the publication
+    :type publication_id: int
+    :param form: form that contains the data of the block to create
+    :type form: UpdateImageBlock
+
+    """
     '''Create a new block of type image and insert it after the block with id prev_block_id'''
     prev_block_id = form.cleaned_data['block_id']
     print(prev_block_id)
@@ -203,6 +289,12 @@ def create_image_block(publication_id, form):
     new_block.save()
 
 def del_image_block(form):
+    """
+    del_image_block is a function that deletes an image block.
+    :param form: form that contains the data of the block to delete
+    :type form: UpdateImageBlock
+
+    """
     print(form.cleaned_data)
     id_block = form.cleaned_data['block_id']
     block = Block.objects.get(id=id_block)
@@ -217,7 +309,13 @@ def del_image_block(form):
         block.delete()
 
 def mod_image_block(form, files):
-    
+    """
+    mod_image_block is a function that modifies an image block.
+    :param form: form that contains the data of the block to modify
+    :type form: UpdateImageBlock
+    :param files: files that contains the data of the block to modify
+    :type files: dict
+    """
     id_block = form.cleaned_data['block_id']
     image = form.cleaned_data['file']
     block = Block.objects.get(id=id_block)
@@ -226,6 +324,14 @@ def mod_image_block(form, files):
     block.blockimage.save()
 
 def create_video_block(publication_id, form):
+    """
+    create_video_block is a function that creates a video block and insert it after the block with id prev_block_id.
+    :param publication_id: id of the publication
+    :type publication_id: int
+    :param form: form that contains the data of the block to create
+    :type form: UpdateVideoBlock
+
+    """
     '''Create a new block of type video and insert it after the block with id prev_block_id'''
     print(form.cleaned_data)
     prev_block_id = form.cleaned_data['block_id']
@@ -245,6 +351,12 @@ def create_video_block(publication_id, form):
     new_block.save()
 
 def del_video_block(form):
+    """
+    del_video_block is a function that deletes a video block.
+    :param form: form that contains the data of the block to delete
+    :type form: UpdateVideoBlock
+
+    """
     print(form.cleaned_data)
     id_block = form.cleaned_data['block_id']
     block = Block.objects.get(id=id_block)
@@ -259,6 +371,13 @@ def del_video_block(form):
         block.delete()
 
 def mod_video_block(form, files):
+    """
+    mod_video_block is a function that modifies a video block.
+    :param form: form that contains the data of the block to modify
+    :type form: UpdateVideoBlock
+    :param files: files that contains the data of the block to modify
+    :type files: dict
+    """
     id_block = form.cleaned_data['block_id']
     video = form.cleaned_data['url']
     video = video.split('/')[-1]
@@ -269,6 +388,14 @@ def mod_video_block(form, files):
     block.blockvideo.save()
 
 def create_authors_block(publication_id, form):
+    """
+    create_authors_block is a function that creates an authors block and insert it after the block with id prev_block_id.
+    :param publication_id: id of the publication
+    :type publication_id: int
+    :param form: form that contains the data of the block to create
+    :type form: UpdateAuthorsBlock
+
+    """
     '''Create a new block of type authors and insert it after the block with id prev_block_id'''
     print(form.cleaned_data)
     prev_block_id = form.cleaned_data['block_id']
@@ -288,6 +415,12 @@ def create_authors_block(publication_id, form):
     new_block.save()
 
 def del_authors_block(form):
+    """
+    del_authors_block is a function that deletes an authors block.
+    :param form: form that contains the data of the block to delete
+    :type form: UpdateAuthorsBlock
+
+    """
     print(form.cleaned_data)
     id_block = form.cleaned_data['block_id']
     block = Block.objects.get(id=id_block)
@@ -302,6 +435,13 @@ def del_authors_block(form):
         block.delete()
 
 def mod_authors_block(form, files):
+    """
+    mod_authors_block is a function that modifies an authors block.
+    :param form: form that contains the data of the block to modify
+    :type form: UpdateAuthorsBlock
+    :param files: files that contains the data of the block to modify
+    :type files: dict
+    """
     id_block = form.cleaned_data['block_id']
     authors = form.cleaned_data['authors']
     authors =  authors.split(",")
@@ -316,6 +456,14 @@ def mod_authors_block(form, files):
     block.blockauthors.save()
 
 def create_references_block(publication_id, form):
+    """
+    create_references_block is a function that creates a references block and insert it after the block with id prev_block_id.
+    :param publication_id: id of the publication
+    :type publication_id: int
+    :param form: form that contains the data of the block to create
+    :type form: UpdateReferencesBlock
+
+    """
     '''Create a new block of type references and insert it after the block with id prev_block_id'''
     print(form.cleaned_data)
     prev_block_id = form.cleaned_data['block_id']
@@ -335,6 +483,12 @@ def create_references_block(publication_id, form):
     new_block.save()
 
 def del_references_block(form):
+    """
+    del_references_block is a function that deletes a references block.
+    :param form: form that contains the data of the block to delete
+    :type form: UpdateReferencesBlock
+
+    """
     print(form.cleaned_data)
     id_block = form.cleaned_data['block_id']
     block = Block.objects.get(id=id_block)
@@ -349,6 +503,13 @@ def del_references_block(form):
         block.delete()
 
 def mod_references_block(form, files):
+    """
+    mod_references_block is a function that modifies a references block.
+    :param form: form that contains the data of the block to modify
+    :type form: UpdateReferencesBlock
+    :param files: files that contains the data of the block to modify
+    :type files: dict
+    """
     id_block = form.cleaned_data['block_id']
     title = form.cleaned_data['title']
     url = form.cleaned_data['url']
@@ -359,6 +520,13 @@ def mod_references_block(form, files):
     block.blockreferences.save()
 
 def mod_keywords_block(publication_id, form):
+    """
+    mod_keywords_block is a function that modifies a keywords block.
+    :param publication_id: id of the publication
+    :type publication_id: int
+    :param form: form that contains the data of the block to modify
+    :type form: UpdateKeywordsBlock
+    """
     keywords = form.cleaned_data['keywords']
     print(keywords)
     # get 
@@ -382,6 +550,14 @@ dict_block_type_to_functions = {
 
 @login_required
 def save(request, article_id):
+    """
+    save is a function that saves the modifications of the article.
+    :param request: request
+    :type request: HttpRequest
+    :param article_id: id of the article
+    :type article_id: int
+    """
+    
     print('save')
     text_formset = formset_factory(UpdateTextBlock)
     text_formset = text_formset(request.POST, prefix='text')

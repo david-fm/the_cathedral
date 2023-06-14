@@ -7,6 +7,11 @@ from django.shortcuts import redirect
 # Create your views here.
 @login_required
 def my_publications(request):
+    """
+    View for the publisher's publications.
+    :param request: request
+    :type request: HttpRequest
+    """
     if request.method == 'POST':
         form = Publicate(request.POST)
         if form.is_valid():
@@ -33,6 +38,11 @@ def my_publications(request):
 
 @login_required
 def user_config(request):
+    """
+    View for the user's configuration.
+    :param request: request
+    :type request: HttpRequest
+    """
     if request.method == 'POST':
         form = UserConfig(request.POST, request.FILES)
         if form.is_valid():
@@ -63,6 +73,11 @@ def user_config(request):
 
 @login_required
 def user_config_private_data(request):
+    """
+    function for the user's configuration of private data.
+    :param request: request
+    :type request: HttpRequest
+    """
     if request.method == 'POST':
         form = UserConfigPrivateData(request.POST)
         if form.is_valid():
@@ -76,6 +91,12 @@ def user_config_private_data(request):
 
 @login_required
 def user_config_manage_account(request):
+    """
+    function for the user's configuration managing their account.
+    :param request: request
+    :type request: HttpRequest
+    """
+
     if request.method == 'POST':
         form = UserConfigPassword(request.POST)
         if form.is_valid():
@@ -87,6 +108,11 @@ def user_config_manage_account(request):
 
 @login_required
 def user_config_delete_account(request):
+    """
+    function for the user's configuration deleting their account.
+    :param request: request
+    :type request: HttpRequest
+    """
     if request.method == 'POST':
         request.user.delete()
         return redirect('main:index')
@@ -94,4 +120,9 @@ def user_config_delete_account(request):
 
 @login_required
 def privacy_and_data(request):
+    """
+    function for the privacy and data page.
+    :param request: request
+    :type request: HttpRequest
+    """
     return render(request, 'user_system/privacy_and_data.html')

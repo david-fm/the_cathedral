@@ -10,7 +10,25 @@ from itertools import chain
 from django.db.models import Q
 
 def user_system_decorator_partial(func, to_render='main/index.html'):
+    """ 
+    Decorator for the user system.
+    It checks if the user is logged in and if it is, it redirects to the main page.
+    Otherwise, it redirects to the login page.
+    :param func: function to be decorated
+    :type func: function
+    :param to_render: page to be rendered
+    :type to_render: string
+    """
     def wrapper(request, *args, **kwargs):
+        """
+        Wrapper for the decorator.
+        :param request: request
+        :type request: HttpRequest
+        :param args: arguments
+        :type args: list
+        :param kwargs: keyword arguments
+        :type kwargs: dict
+        """
         INCORRECT_PASSWORD = 'Incorrect password'
         INCORRECT_FORM = 'Incorrect form'
         print('method: ' + request.method)
