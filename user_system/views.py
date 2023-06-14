@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from articles.models import Publication, BlockText, Block, Keywords, BlockImage
 from .forms import Publicate, UserConfig, UserConfigPrivateData, UserConfigPassword
+from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 
 # Create your views here.
@@ -105,3 +106,29 @@ def user_config_delete_account(request):
 @login_required
 def privacy_and_data(request):
     return render(request, 'user_system/privacy_and_data.html')
+
+
+
+
+@login_required
+#@permission_required('articles.is_checker', raise_exception=True)
+def review_publication(request):
+    if not request.user.has_perm('articles.is_publisher'):
+        return HttpResponseForbidden('You do not have permissions required')
+    
+    return render(request, 'user_system/review_publication.html')
+
+@login_required
+#@permission_required('articles.is_checker', raise_exception=True)
+def reviewing_publication(request):
+    if not request.user.has_perm('articles.is_publisher'):
+        return HttpResponseForbidden('You do not have permissions required')
+    
+    pubs = Publication.objects.all().filter(is_checked=False)
+    pubs.order_by('pub_date')   # older first
+    pubs = pubs[:3]
+    pubs = [(BlockImage.objects.filter(block__publication=publication.id).first(), publication.title) for publication in pubs]
+    
+    return render(request, 'user_system/reviewing_publication.html', {
+            'pubs': pubs
+    })

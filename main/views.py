@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from .forms import RegisterForm, LoginForm
 # Import the User object
 from django.contrib.auth.models import Group
-from articles.models import UserPersonalized, Publication
+from articles.models import UserPersonalized, Publication, BlockImage
 from django.contrib.auth import authenticate, login, logout
 from functools import partial
 from itertools import chain
@@ -46,8 +46,13 @@ def user_system_decorator_partial(func, to_render='main/index.html'):
 
                 if register_form.is_valid():
                     print('Form is valid as a register form')
-                    user = register_form.save()
-                    user.refresh_from_db()
+                    user = UserPersonalized.objects.create_user(
+                        username=register_form.cleaned_data['username'],
+                        password=register_form.cleaned_data['password'],
+                        email=register_form.cleaned_data['email'],
+                    )
+                    user.save()
+
                     #
                     group_name = 'Publishers'
                     group = Group.objects.get(name=group_name)
@@ -86,7 +91,16 @@ def index(request):
     # if a GET (or any other method) we'll create a blank form
     login_form = LoginForm()
     register_form = RegisterForm()
-    return render(request, 'main/index.html', {'login_form': login_form, 'register_form': register_form})
+
+    pubs = Publication.objects.all().filter(is_checked=True)
+    pubs_relevant = sorted(pubs, key=lambda sorted_pub: sorted_pub.rate_relevance(), reverse=True)
+    pubs_newer = pubs.order_by('-pub_date')
+    
+    three_most_relevant= pubs_relevant[:3]
+    three_most_relevant = [(BlockImage.objects.filter(block__publication=publication.id).first(), publication.title, publication.id) for publication in three_most_relevant]
+    sixth_newer = pubs_newer[:6]
+    sixth_newer = [(BlockImage.objects.filter(block__publication=publication.id).first(), publication.title, publication.id) for publication in sixth_newer]
+    return render(request, 'main/index.html', {'login_form': login_form, 'register_form': register_form, 'three_most_relevant': three_most_relevant, 'sixth_newer':sixth_newer})
 
 
 decorator_search = partial(user_system_decorator_partial, to_render='main/search.html')
@@ -121,7 +135,7 @@ def search(request):
             Q(keywords__keyword__icontains=new_result) |
             Q(category__icontains=new_result) |
             Q(publisher__username__icontains=new_result)
-            ).distinct()
+            ).filter(is_checked=True).distinct()
 
     # reset filters and categories if there is another search value
     if result != previous_result:
@@ -190,11 +204,13 @@ def search(request):
     request.session['categories'] = categories
     request.session['result'] = result
 
-
+    
     return render(request, 'main/search.html', {
-        'result': result,
-        'filtered_pubs': filtered_pubs,
-        'login_form': login_form,
-        'register_form': register_form
+            'result': result,
+            'filtered_pubs': filtered_pubs,
+            'login_form': login_form,
+            'register_form': register_form
     })
+    
 # TODO: Make login, logout and register available for all the views
+

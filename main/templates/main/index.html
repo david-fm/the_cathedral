@@ -17,18 +17,18 @@
         <section class="middle">
             <div class="back">
                 <div class="back_flex">
-                    <div class="card">
-                        <a href="#" class="link"><img src="{% static 'main/img/background1.jpg'%} " class="trio"></a>
-                        <p><a href="#" class="link">Titre numéro 1 à remplir lors de la création de l'article</a></p>
+                    {% for pub in three_most_relevant %}
+                    <div class="card" @click="window.location.replace('{% url 'articles:detail' pub.2%}')">
+                        <div href="#" class="link">
+                            {% if  pub.0.file_path.url %}
+                            <img src="{{MEDIA_URL}}{{pub.0.file_path.url}}" class="trio">
+                            {% else %}
+                            <img src="{% static 'main/img/background3.jpg' %}" class="trio">
+                            {% endif %}
+                        </div>
+                        <p class="link">{{ pub.1 }}</p>
                     </div>
-                    <div class="card">
-                        <a href="#" class="link"><img src="{% static 'main/img/background1.jpg'%} " class="trio"></a>
-                        <p><a href="#" class="link">Titre numéro 2 à remplir lors de la création de l'article</a></p>
-                    </div>
-                    <div class="card">
-                        <a href="#" class="link"><img src="{% static 'main/img/background1.jpg'%} " class="trio"></a>
-                        <p><a href="#" class="link">Titre numéro 3 à remplir lors de la création de l'article</a></p>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </section>
@@ -37,30 +37,19 @@
 
            <h2 class="subtitle">Last Articles</h2>
             <div class="six">
-                <a href="#" class="card__parent link">
-                    <div class="img-container"><img src="{% static 'main/img/background3.jpg'%}" ></div>
-                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
+                {% for pub in sixth_newer %}
+                <a href="{% url 'articles:detail' pk=pub.2%}" class="card__parent link">
+                    <div class="img-container">
+                        {% if  pub.0.file_path.url %}
+                        <img src="{{MEDIA_URL}}{{pub.0.file_path.url}}" >
+                        {% else %}
+                        <img src="{% static 'main/img/background3.jpg' %}" >
+                        {% endif %}
+                        
+                    </div>
+                    <p>{{ pub.1 }}</p>
                 </a>
-                <a href="#" class="card__parent link">
-                    <div class="img-container"><img src="{% static 'main/img/background1.jpg'%}" ></div>
-                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
-                </a>
-                <a href="#" class="card__parent link">
-                    <div class="img-container"><img src="{% static 'main/img/background3.jpg'%}" ></div>
-                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
-                </a>
-                <a href="#" class="card__parent link">
-                    <div class="img-container"><img src="{% static 'main/img/background2.jpg'%}" ></div>
-                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
-                </a>
-                <a href="#" class="card__parent link">
-                    <div class="img-container"><img src="{% static 'main/img/background3.jpg'%}" ></div>
-                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
-                </a>
-                <a href="#" class="card__parent link">
-                    <div class="img-container"><img src="{% static 'main/img/background1.jpg'%}" ></div>
-                    <p>Titre article 6,4 à remplir par l'auteur une fois l'article écrit</p>
-                </a>
+                {% endfor %}
             </div>
             <form action="" class="more-posts">
                 <button type="submit">Load More Posts</button>

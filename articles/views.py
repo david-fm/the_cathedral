@@ -1,19 +1,18 @@
+from typing import Any, Dict
 from django.shortcuts import redirect, render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 #from .models import Article
+from django.views.generic.detail import DetailView
+from django.views.generic import View
 from .models import Publication
-from .models import Publication, Font, Block, BlockAuthors, BlockImage, BlockText, BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, Questions, Answer, Keywords
-from .forms import UpdateTextBlock, UpdateTitleBlock, UpdateImageBlock, UpdateVideoBlock, UpdateAuthorsBlock, UpdateReferencesBlock, UpdateQuizBlock, UpdateQuestion, UpdateAnswer,  UpdateKeywordsBlock
-from django.forms import formset_factory
+from .models import Publication, Font, Block, BlockAuthors, BlockImage, BlockText, BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, Questions, Answer, Keywords, Comments
+from .forms import UpdateTextBlock, UpdateTitleBlock, UpdateImageBlock, UpdateVideoBlock, UpdateAuthorsBlock, UpdateReferencesBlock, UpdateQuizBlock, UpdateQuestion, UpdateAnswer,  UpdateKeywordsBlock, UpdateComments
+from django.forms import formset_factory, modelformset_factory
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
-from django.http import HttpResponse, HttpResponseForbidden
-from user_system.models import UserPersonalized
-@login_required  # Requiere que el usuario inicie sesión
-#@permission_required('articles.is_checker', raise_exception=True)
-def detail(request, article_id):
-    return HttpResponse("You're looking at article %s." % article_id)
+from user_system.models import UserPersonalized  # Requiere que el usuario inicie sesión
 
+#@permission_required('articles.is_checker', raise_exception=True)
 def order_blocks(blocks):
     '''
         Given a list of blocks, order them by their next_block_id
@@ -33,6 +32,82 @@ def order_blocks(blocks):
                 break
     ordered_blocks.reverse()
     return ordered_blocks
+
+def print_data_of_error_formsets(*formsets):
+    for formset in formsets:
+        if not formset.is_valid():
+            print('error')
+            print(formset.errors)
+            print('Printing the formset')
+            print(formset.as_table())
+
+class ArticleDetailView(DetailView):
+    model = Publication
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        
+        blocks = Block.objects.filter(publication=self.object)
+        blocks = order_blocks(blocks)
+        keywords = Keywords.objects.filter(publications=self.object)
+        
+        context['blocks'] = blocks
+        context['article_id'] = self.object.id
+        context['keywords'] = keywords
+        return context
+
+def get_ordered_comments(ordered_blocks):
+    '''
+        Given a list of ordered blocks, return a list of comments ordered by the block they belong to
+    '''
+    comments = []
+    for block in ordered_blocks:
+        query = Comments.objects.filter(block=block)
+        if query:
+            comments.append(query[0])
+
+    return comments
+
+
+class ReviewView(DetailView):
+    model = Publication
+    template_name = 'articles/review.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        
+        blocks = Block.objects.filter(publication=self.object)
+        blocks = order_blocks(blocks)
+        keywords = Keywords.objects.get(publications=self.object)
+        comments = get_ordered_comments(blocks)
+        comments_formset = modelformset_factory(Comments, form=UpdateComments, extra=len(comments))
+        
+        #print(comments)
+        comments_formset = comments_formset(initial=comments)
+        print(comments_formset.as_table())
+        
+        context['blocks'] = blocks
+        context['article_id'] = self.object.id
+        context['keywords'] = keywords
+        context['comments_formset'] = comments_formset
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        formset = modelformset_factory(Comments, form=UpdateComments)
+        formset = formset(request.POST)
+
+        if formset.is_valid():
+            formset.save()
+            
+        else:
+            print_data_of_error_formsets(formset)
+        
+        
+        context=super().get_context_data(**kwargs)
+        return render(request, 'articles/review.html', context)
 
 
 @login_required
@@ -91,14 +166,6 @@ def are_formsets_valids(*formsets):
         if not formset.is_valid():
             return False
     return True
-
-def print_data_of_error_formsets(*formsets):
-    for formset in formsets:
-        if not formset.is_valid():
-            print('error')
-            print(formset.errors)
-            print('Printing the formset')
-            print(formset.as_table())
 
 def del_text_block(form):
     print('del_text_block')

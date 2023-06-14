@@ -1,0 +1,304 @@
+header{
+    background: #101c2c;
+    background-repeat: no-repeat;
+    height: 80px;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    /*Meanwhile added*/
+    justify-content: center;
+}
+header ::after{
+    display: table;
+    clear: both;
+    content: '';
+}
+
+.navtop{float: left;}
+.ultop{
+    list-style: none;
+}
+body{
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+}
+
+.menu{
+    border: none;
+    border-radius: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding-top: 4px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    color: #ffffff;
+    width: 80px;
+    background-color: #383c4c;
+    font-family:'Segoe UI';
+    font-weight: 400px;
+    font-size: 10px;
+
+    cursor: pointer;
+}
+
+.area{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-top: 20px;
+
+}
+.blocks-container{
+    margin-top: 30px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+}
+.block-container{
+    width: 100%;
+
+    display: flex;
+    
+}
+.block{
+    position:relative;
+
+    margin-left: 0px;
+    margin-top: 0.5px;
+    margin-bottom: 2px;
+
+    width: 100%;
+    min-height: 35px;
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    display: flex;
+    align-items: center;
+}  
+ 
+
+.text_container{
+    padding: 10px;
+    margin-left: 10px;
+
+    width: 100%;
+    border: none;
+    overflow: auto;
+    outline: none;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    resize: none;
+}
+
+.dropdown{
+    position: absolute;
+    top:0px;
+    left: 35px;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+    height: 300px;
+    overflow-y: scroll;
+    
+    
+    border: 0.5px solid #707070;
+    opacity: 1;
+
+    background-color: #ffffff;
+}
+.dropdown::-webkit-scrollbar {
+    width: 7px;
+
+  }
+.dropdown::-webkit-scrollbar-thumb {
+    border-radius: 0px;
+    background-color: rgba(0, 0, 0, .8);
+  }
+.dropdown-title{
+    font: normal normal normal 12px/14px Segoe UI;
+    letter-spacing: 0px;
+    color: #858585;
+
+    margin-top: 10px;
+}
+.image_div{
+    width: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap:15px;
+}
+.authors-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.references-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.title_container{
+    width: 100%;
+    text-align: center;
+}
+.keywords_container{
+    font-size: 10px;
+    flex-grow: 1;
+    padding-top: 5px;
+}
+.keywords_p{
+    display: flex;
+    width: 100%;
+    gap: 5px;
+    text-align: center;
+    width: 90%;
+
+}
+
+/* Quizzes  */
+.quiz-container{
+    width: 100%;
+    padding: 10px;
+    display: grid;
+    place-items: center;
+
+}
+.quiz-container h3{
+    width: 100%;
+}
+.quiz-questions{
+    width: 100%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+
+    background-color: #101c2c;;
+}
+.quiz-question{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.quiz-question__title{
+    color: #fff;
+
+    
+}
+.quiz-answers{
+    width: 100%;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+
+    background-color: #fff;
+}
+.quiz_answer{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+.quiz-answer input{
+    accent-color: #101c2c;
+}
+.quiz-answer label{
+    flex-grow: 1;
+
+}
+.hidden{
+    display: none;
+}
+.add{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 0.4000000059604645px solid #707070;
+    border-radius: 28px;
+    opacity: 1;
+    width:300px;
+    height: 150px;
+    border: 2px solid #aaaaaa;
+    margin-right: 20px;
+    margin-left: 50px;
+    margin-bottom: 30px;
+}
+
+
+
+.entry{
+    margin-left: 10%;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    padding-bottom: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #D9D9D9;
+    border-radius: 13px;
+    width: 70%;
+    height: 70px;
+    font-size: 20px;
+}
+
+.entry-input{
+    background-color: #D9D9D9;
+    flex: 1;
+    border: 0;
+    outline: none;
+    padding-top: 9px;
+    padding-left: 10px;
+    font-size: 15px;
+    border-radius: 60px;
+    width: 70%;
+    height: 80%;
+}
+
+.entry-input ::placeholder{
+    color: #707070;
+    font-family: 'Segoe UI';
+    font-weight: 400
+}
+.two{
+    background: #D4D4D457 0% 0% no-repeat padding-box;
+    border: 0.20000000298023224px solid #707070;
+    border-radius: 25px;
+    opacity: 1;
+
+    font: normal normal normal 11px/13px Segoe UI;
+    letter-spacing: 0px;
+    color: #FF962D;
+    opacity: 1;
+
+    border: 0;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-right: 20px;
+}
+
+.two:hover{
+    text-decoration: underline;
+}
+.duo{
+    display: flex;
+    justify-content:left;
+    flex-direction:row;
+    width: 100%;
+}

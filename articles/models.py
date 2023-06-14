@@ -31,7 +31,7 @@ class Publication(models.Model):
     publisher = models.ForeignKey(UserPersonalized, on_delete=models.CASCADE, related_name='publications')
     checks = models.ManyToManyField(UserPersonalized, related_name='checks')
     rates = models.ManyToManyField(UserPersonalized, through='Rate', related_name='rates')
-
+    is_checked = models.BooleanField(default=False)
 
     # function to obtain the number of rates of a publication
     def rate_count(self):
@@ -151,3 +151,7 @@ class BlockReferences(models.Model):
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField(max_length=250, null=True, blank=True)
+
+class Comments(models.Model):
+    block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
+    text = models.TextField(max_length=3500)

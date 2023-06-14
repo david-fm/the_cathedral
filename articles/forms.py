@@ -1,5 +1,5 @@
 from django import forms
-from .models import BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, BlockAuthors, Questions, Answer
+from .models import BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, BlockAuthors, Questions, Answer, Comments
 
 
 class UpdateTextBlock(forms.Form):
@@ -126,3 +126,20 @@ class UpdateTableBlock(forms.ModelForm):
 class UpdateKeywordsBlock(forms.Form):
     status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
     keywords = forms.CharField(max_length=255, required=False, empty_value='', label='')
+
+class UpdateComments(forms.ModelForm):
+    class Meta:
+        model = Comments
+        fields = ['text', 'block']
+        labels = {
+            'text': '',
+            'block': '',
+        }
+        widgets = {
+            'text': forms.Textarea(
+                attrs={
+                    'placeholder': 'Insert your comment here...',
+                    'x-data':"{ resize: () => { $el.style.height = '5px'; $el.style.height = $el.scrollHeight + 'px' } }",
+                    'x-init':'resize()',
+                    '@input':'resize();'}),
+        }

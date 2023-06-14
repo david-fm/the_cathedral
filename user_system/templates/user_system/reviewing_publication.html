@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block statics %}
+<link rel="stylesheet" href="{% static 'reviewing_publication.css' %}">
+{% endblock %}
+{% block content %}
+
+    <div class="middle">
+        {% for pub in three_most_relevant %}
+        <p class="up">Estos son los papers que están pendientes de corrección.</p>
+        <div class="box"> 
+            <div class="titles">
+                <a href="link" class="more">
+                    <h2>Lorem ipsum dolor</h2>
+                    <p class="description">{{ pub.1 }}</p>
+                </a>
+            </div>
+            {% if  pub.0.file_path.url %}
+            <img src="{{MEDIA_URL}}{{pub.0.file_path.url}}" class="thumbnail">
+            {% else %}
+            <img src="{% static 'main/img/background3.jpg' %}" class="thumbnail">
+            {% endif %}
+        </div>
+        {% endfor %}
+
+    </div>
+{% endblock %}
+{% block scripts %}{% endblock  %}
