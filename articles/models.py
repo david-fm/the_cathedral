@@ -1,11 +1,8 @@
 from django.db import models
-from django.conf import settings
 from user_system.models import UserPersonalized
 # import MEDIA_ROOT
-from django.conf import settings
 
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db.models import Avg
 
 # Create your models here.
 

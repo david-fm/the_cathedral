@@ -301,19 +301,28 @@ body{
 }
 
 .entry{
-    margin-left: 10%;
+    margin-left: 5%;
     margin-bottom: 10px;
     padding-top: 0px;
     padding-bottom: 0px;
     padding-left: 10px;
     padding-right: 10px;
+    
+    width: 100%;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+}
+.form-container{
+    width: 70%;
     background-color: #a2a2a2;
     border-radius: 13px;
-    width: 70%;
-    height: 35px;
-    font-size: 20px;
 }
-
+.submit-hidden{
+    display: none;
+}
 .entry-input{
     background-color: #a2a2a2;
     flex: 1;
@@ -323,7 +332,17 @@ body{
     padding-left: 10px;
     font-size: 15px;
     border-radius: 60px;
-    width: 70%;
+    width: 90%;
+}
+.entry-category{
+    background-color: #a2a2a2;
+    flex: 1;
+    border: 0;
+    outline: none;
+    padding-top: 9px;
+    padding-left: 10px;
+    font-size: 15px;
+    border-radius: 60px;
 }
 
 ::placeholder{

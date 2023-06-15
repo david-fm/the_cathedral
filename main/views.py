@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from .forms import RegisterForm, LoginForm
 # Import the User object
 from django.contrib.auth.models import Group
-from articles.models import UserPersonalized, Publication, BlockImage
+from articles.models import UserPersonalized, Publication, BlockImage, BlockText
 from django.contrib.auth import authenticate, login, logout
 from functools import partial
 from itertools import chain
@@ -115,19 +115,16 @@ def search(request):
     result = request.GET.get('search')
     category = request.GET.get('category')
 
+    
     # Obtain filter, categories and result from the previous session
-    filters = request.session.get('filters', [])
+    the_filter = request.session.get('filter', "no_filter")
     categories = request.session.get('categories', [])
     previous_result = request.session.get('result')
-
+    
 
     if category:
-        result = "*"+category   # the "*" means we will use to indicate that the seacrh will include all the pubs with the catgeory selected
-
-    if result.startswith('*'):  # if "*"  the filtered pbs will have as base all the pubs with the category
-        filtered_pubs = Publication.objects.all()
-        new_result = result.lstrip('*').replace(' ', '')    # also we eliminate the "*" and " " to obtain only the category to filter
-        filtered_pubs = filtered_pubs.filter(category__icontains=new_result)
+        result = ""   # the "*" means we will use to indicate that the seacrh will include all the pubs with the catgeory selected
+        filtered_pubs = Publication.objects.filter(is_checked=True).filter(category__icontains=category)
     else:
         new_result = result.rstrip()       # if there is " " is eliminated
         filtered_pubs = Publication.objects.filter( #if not "*" the search base will contain the pubs with a similar result in title, keyword, category or publisher
@@ -139,30 +136,23 @@ def search(request):
 
     # reset filters and categories if there is another search value
     if result != previous_result:
-        filters = []
+        page_number = 1
+        the_filter = "no_filter"
         categories = []
+        if category:
+            categories.append(category) 
         result = result + " "   # " " is added to differentiate every new search with the same input
-
-
+    else:
+        page_number = request.GET.get('page_number')
+    print("page_number: ", page_number)
     filter_by = request.GET.get('filter_by')
-    filter_value = request.GET.get('filter_value')
 
-    if filter_by and filter_by != "_":
-    # if  no_filter is selected, filters will be reseted
-        if filter_by == 'no_filter':
-            filters = []
-    # else we add the filter category and value to the list of filters
-        elif filter_value :
-            filters.append((filter_by, filter_value))
+    if filter_by :
+    #add the filter category and value to the list of filters
+        the_filter = filter_by
 
-    selected_categories = request.GET.getlist('filter_by_category')
+    categories = request.GET.getlist('filter_by_category')
 
-    # if no_category is selected, the list o categories will be reseted
-    if selected_categories and "_" not in selected_categories:
-        if "no_category" in selected_categories:
-            categories = []
-        else: # else we add all new categories
-            categories.extend(selected_categories)
 
     # if there are categories, we will obtain a queryset with the publications
     if categories != []:
@@ -172,18 +162,22 @@ def search(request):
         filtered_pubs = filtered_pubs.filter(category_query).distinct()
 
     # if there are filters, we apply all of them
-    if filters != []:
-        for filter_item in filters:
-            filter_by, filter_value = filter_item
+    if the_filter != "no_filter":
+            filter_by = the_filter
             if filter_by == 'title':
-                filtered_pubs = filtered_pubs.filter(title__icontains=filter_value)
+                filtered_pubs = filtered_pubs.filter(title__icontains=new_result)
             elif filter_by == 'keyword':
-                filtered_pubs = filtered_pubs.filter(keywords__keyword__icontains=filter_value)
+                filtered_pubs = filtered_pubs.filter(keywords__keyword__icontains=new_result)
             elif filter_by == 'publisher':
-                filtered_pubs = filtered_pubs.filter(publisher__username__icontains=filter_value)
+                filtered_pubs = filtered_pubs.filter(publisher__username__icontains=new_result)
 
     order_by = request.GET.get('order_by')
-
+    simple_search = Publication.objects.all()
+    ai_counter = simple_search.filter(category__icontains="artificial-intelligence").count()
+    cn_counter  = simple_search.filter(category__icontains="computer-networks").count()
+    os_counter = simple_search.filter(category__icontains="operating-systems").count()
+    c_counter =simple_search.filter(category__icontains="cybersecurity").count()
+    ds_counter = simple_search.filter(category__icontains="data-science").count()
     if not order_by:
         filtered_pubs = filtered_pubs.order_by('-pub_date')    # Default, the order ys by pub_date
     else:
@@ -197,19 +191,47 @@ def search(request):
             filtered_pubs = filtered_pubs.order_by('pub_date')
 
 
+    number_of_results = len(filtered_pubs)
+    final_pubs = [
+        (BlockImage.objects.filter(block__publication=publication.id).first(), 
+         publication.title, 
+         publication.id,
+         BlockText.objects.filter(block__publication=publication.id).first()
+         ) for publication in filtered_pubs]
 
+    number_of_pages = number_of_results // 4
 
+    ai = True if 'artificial-intelligence' in categories else False
+    cn = True if 'computer-networks' in categories else False
+    os = True if 'operating-systems' in categories else False
+    c = True if 'cybersecurity' in categories else False
+    ds = True if 'data-science' in categories else False
     # overwrite the session filters  , categories and result
-    request.session['filters'] = filters
+    request.session['filter'] = the_filter
     request.session['categories'] = categories
     request.session['result'] = result
-
-    
+    request.session['page_number'] = page_number
+    initial = (int(page_number)-1)*4+1 if int(page_number)-1 else 1
     return render(request, 'main/search.html', {
             'result': result,
-            'filtered_pubs': filtered_pubs,
+            'filtered_pubs': filtered_pubs[initial-1:initial+3],
             'login_form': login_form,
-            'register_form': register_form
+            'register_form': register_form,
+            'number_of_results': number_of_results,
+            'final_pubs': final_pubs[initial-1:initial+3],
+            'selected_filter': the_filter,
+            'page_number': page_number,
+            'number_of_pages': number_of_pages,
+            'ai_counter': ai_counter,
+            'cn_counter': cn_counter,
+            'os_counter': os_counter,
+            'c_counter': c_counter,
+            'ds_counter': ds_counter,
+            'cn': cn,
+            'ai': ai,
+            'os': os,
+            'c': c,
+            'ds': ds,
     })
     
 # TODO: Make login, logout and register available for all the views

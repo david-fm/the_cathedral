@@ -39,7 +39,7 @@ function insertAfter(newNode, referenceNode) {
 function updateTextBlockInput(form, block, type, j) {
   let textInput = form.querySelector("#id_" + type + "-" + j + "-text");
   textInput.innerHTML = block.value;
-  console.log(textInput);
+  //console.log(textInput);
 }
 function updateFileBlockInput(form, block, type, j) {
   let fileInput = form.querySelector("#id_" + type + "-" + j + "-file");
@@ -56,7 +56,7 @@ function updateAuthorsBlockInput(form, block, type, j) {
   authorsInput.value = block.value;
 }
 function updateReferencesBlockInput(form, titleBlock, urlsBlock, type, j) {
-  console.log(urlsBlock)
+  //console.log(urlsBlock)
   let titleInput = form.querySelector(
     "#id_" + type + "-" + j + "-title"
   );
@@ -218,7 +218,7 @@ document.addEventListener("alpine:init", () => {
               ids.push(blocks[j].parentElement.id);
             }
           }
-          console.log(status);
+          //console.log(status);
         }
         else{
           var ids = blocks.map((block) => {
@@ -232,7 +232,7 @@ document.addEventListener("alpine:init", () => {
           "#id_" + TYPES_OF_BLOCKS[i] + '-TOTAL_FORMS'
         ).value);
         for (let j = 0; j < numberOfForms; j++) {
-          console.log(status[j]);
+          //console.log(status[j]);
           if ((TYPES_OF_BLOCKS[i] == "references" || TYPES_OF_BLOCKS[i] == "answer") && j != 0) realJ = j*2;
           else realJ = j;
           // TODO CHECK THIS
@@ -262,7 +262,7 @@ document.addEventListener("alpine:init", () => {
                 updateAuthorsBlockInput(form, blocks[j],TYPES_OF_BLOCKS[i], j);
                 break;
               case "references":
-                console.log(blocks)
+                //console.log(blocks)
                 updateReferencesBlockInput(form, blocks[realJ], blocks[realJ+1],TYPES_OF_BLOCKS[i], j);
                 break;
               case "title":
@@ -303,18 +303,18 @@ document.addEventListener("alpine:init", () => {
         updateKeywordsBlockInput(form, keywords,"keywords", 0);
 
       }
-      alert(statusInput);
+      //alert(statusInput);
       // submit the form
       this.$refs.save_form.submit();
     },
     delete_blocks() {
-      console.log("deleting block");
+      //console.log("deleting block");
       let block = this.$el.parentNode;
       if (this.$el.classList.contains("quiz_delete") || this.$el.classList.contains("answer_delete")) {
         block = this.$el.parentNode.parentNode;
       }
       block.setAttribute("status", "D");
-      console.log(block);
+      //console.log(block);
       this.retrieve_blocks();
     },
   }));

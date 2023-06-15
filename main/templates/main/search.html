@@ -1,56 +1,241 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% load static %} {% block statics %}
+<link rel="stylesheet" href="{% static 'main/search.css' %}" />
+{% endblock %} {% block content %}
+<form method="GET" x-data="search" x-ref="form">
+  <p class="research">{{number_of_results}} Result(s) for '{{result}}'</p>
+  <input type="hidden" name="search" value="{{ result }}" />
+  <div class="sort-container small">
+    <div class="sort">
+      <div class="sort__by-container">
+        <div class="by">Sort by</div>
+        <div class="sor-container">
+          <button type="submit" class="sor" name="order_by" value="relevance">
+            Relevance
+          </button>
+          <button type="submit" class="sor" name="order_by" value="new">
+            Newest First
+          </button>
+          <button type="submit" class="sor" name="order_by" value="old">
+            Oldest First
+          </button>
+        </div>
+      </div>
+      <div>
+        <select
+          name="filter_by"
+          class="data"
+          initSelected="{{selected_filter}}"
+          x-init="$el.querySelector('option[value='+$el.getAttribute('initSelected')+']').selected=true"
+          @change="$refs.form.submit()"
+        >
+          <option value="no_filter">No filter</option>
+          <option value="title">Title</option>
+          <option value="keyword">Keyword</option>
+          <option value="publisher">Publisher</option>
+        </select>
+      </div>
+      <div class="page-number">
+        <button class="arrow onleft"></button>
+        <div class="page">Page</div>
 
-{% block content %}
-    <h1>Search Results</h1>
+        <input
+          name="page_number"
+          type="text"
+          class="nb"
+          value="{{page_number}}"
+        />
+        <div class="total">of 12 700</div>
+        <button class="arrow onright"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" 
+    aI={{ai}}
+    cN={{cn}}
+    oS={{os}}
+    c={{c}}
+    dS={{ds}}
+    x-data="{ ai:$el.getAttribute('aI')=='True', cn:$el.getAttribute('cN')=='True', os:$el.getAttribute('oS')=='True', c:$el.getAttribute('c')=='True', ds:$el.getAttribute('dS')=='True' }">
+    <div class="left big">
+      <div class="highlight">
+        <p class="gauche1">Description</p>
+        <p class="droite1">see all</p>
+      </div>
+      <div class="material" @click="ai=!ai" :class="ai ? 'material--active' : ''">
+        <p class="gauche2" >Artificial Intelligence</p>
+        <p class="droite2">{{ai_counter}}</p>
+      </div>
+      <div class="material" @click="cn=!cn" :class="cn ? 'material--active' : ''">
+        <p class="gauche2">Computer Networks</p>
+        <p class="droite2">{{cn_counter}}</p>
+      </div>
+      <div class="material" @click="os=!os" :class="os ? 'material--active' : ''">
+        <p class="gauche2">Operating systems</p>
+        <p class="droite2">{{os_counter}}</p>
+      </div>
+      <div class="material" @click="c=!c" :class="c ? 'material--active' : ''">
+        <p class="gauche2">Cybersecurity</p>
+        <p class="droite2">{{c_counter}}</p>
+      </div>
+      <div class="material" @click="ds=!ds" :class="ds ? 'material--active' : ''">
+        <p class="gauche2">Data Science</p>
+        <p class="droite2">{{ds_counter}}</p>
+      </div>
+      <div>
+        <button type="submit" class="apply" name="apply" value="apply">
+          Apply
+        </button>
+      </div>
+    </div>
+    <select style="display: none" name="filter_by_category" multiple >
+      <option :selected="!(ai||cn||os||c||ds)" value="no_category" onselect="console.log('hola')">
+        No category
+      </option>
+      <option :selected="ai" value="artificial-intelligence" >
+        Artificial Intelligence
+      </option>
+      <option :selected="cn" value="computer-networks">
+        Computer Networks
+      </option>
+      <option :selected="os" value="operating-systems">
+        Operating systems
+      </option>
+      <option :selected="c" value="cybersecurity">Cybersecurity</option>
+      <option :selected="ds" value="data-science">Data Science</option>
+    </select>
+
+    <div class="right">
+      <div class="sort-container big">
+        <div class="sort">
+          <div class="sort__by-container">
+            <div class="by">Sort by</div>
+            <div class="sor-container">
+              <!--
+              <button
+                type="submit"
+                class="sor"
+                name="order_by"
+                value="relevance"
+              >
+                Relevance
+              </button>
+              -->
+              <button type="submit" class="sor" name="order_by" value="new">
+                Newest First
+              </button>
+              <button type="submit" class="sor" name="order_by" value="old">
+                Oldest First
+              </button>
+            </div>
+          </div>
+          <div>
+            <select
+              name="filter_by"
+              class="data"
+              initSelected="{{selected_filter}}"
+              x-init="$el.querySelector('option[value='+$el.getAttribute('initSelected')+']').selected=true"
+              @change="$refs.form.submit()"
+            >
+              <option value="no_filter">No filter</option>
+              <option value="title">Title</option>
+              <option value="keyword">Keyword</option>
+              <option value="publisher">Publisher</option>
+            </select>
+          </div>
+          <div class="page-number">
+            <button type="button" class="arrow onleft" @click="$refs.page_number.value=parseInt($refs.page_number.value)-1; $refs.page_number.dispatchEvent(new Event('change'));"></button>
+            <div class="page">Page</div>
+            <div>
+              <input
+                name="page_number"
+                type="text"
+                value="{{page_number}}"
+                class="nb"
+                x-ref="page_number"
+                @change="$refs.form.submit()"
+              />
+            </div>
+            <div class="total">of {{number_of_pages}}</div>
+            <button type="button" class="arrow onright" @click="$refs.page_number.value=parseInt($refs.page_number.value)+1; $refs.page_number.dispatchEvent(new Event('change'));"></button>
+          </div>
+        </div>
+      </div>
+
+      {% for pub in final_pubs %}
+      <div class="box1">
+        <div class="titles">
+          <a href="{% url 'articles:detail' pub.2%}" class="more">
+            <h2>{{pub.1}}</h2>
+            <p class="description">
+              {% if pub.3 and pub.3.text%}
+                {{pub.3.text}}
+              {% else %}
+                Publication without text
+              {% endif %}
+            </p>
+          </a>
+        </div>
+        <img
+          src="{% if pub.0.file_path %}{{pub.0.file_path.url}}{% else %}img/background1.jpg{% endif %}"
+          class="thumbnail"
+        />
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</form>
+<!--
+<h1>Search Results</h1>
 
 <p>Search: {{ result }}</p>
 
 <form method="GET">
-  <input type="hidden" name="search" value="{{ result }}">
+  <input type="hidden" name="search" value="{{ result }}" />
 
   <select name="filter_by">
-    <option value="_">Filter</option>
     <option value="no_filter">No filter</option>
     <option value="title">Title</option>
     <option value="keyword">Keyword</option>
     <option value="publisher">Publisher</option>
   </select>
 
-  <input type="text" name="filter_value" placeholder="Filter Value">
+  <input type="text" name="filter_value" placeholder="Filter Value" />
 
   <select name="filter_by_category" multiple>
     <option value="_">Category</option>
     <option value="no_category">No category</option>
     <option value="artificial-intelligence">Artificial Intelligence</option>
     <option value="computer-networks">Computer Networks</option>
-    <option value="computer-networks">Operating systems</option>
+    <option value="operating-systems">Operating systems</option>
     <option value="cybersecurity">Cybersecurity</option>
     <option value="data-science">Data Science</option>
   </select>
   <button type="submit">Apply Filters</button>
 </form>
 
-
 <form method="GET">
-  <input type="hidden" name="search" value="{{ result }}">
+  <input type="hidden" name="search" value="{{ result }}" />
   <button type="submit" name="order_by" value="relevance">Relevance</button>
   <button type="submit" name="order_by" value="new">New</button>
   <button type="submit" name="order_by" value="old">Old</button>
 </form>
 
-<br>
+<br />
 {% if filtered_pubs %}
-  <ul>
-    {% for pub in filtered_pubs %}
-      <li>
-        <strong>Title:</strong> {{ pub.title }}<br>
-        <strong>Publication Date:</strong> {{ pub.pub_date }}<br>
-      </li>
-      <br>
-    {% endfor %}
-  </ul>
+<ul>
+  {% for pub in filtered_pubs %}
+  <li>
+    <strong>Title:</strong> {{ pub.title }}<br />
+    <strong>Publication Date:</strong> {{ pub.pub_date }}<br />
+  </li>
+  <br />
+  {% endfor %}
+</ul>
 {% else %}
-  <p>No results found.</p>
-{% endif %}
-
+<p>No results found.</p>
+{% endif %} 
+-->
+{% endblock %} {% block scripts %}
+<script src="{% static 'main/search.js' %}"></script>
 {% endblock %}

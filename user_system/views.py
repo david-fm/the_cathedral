@@ -13,7 +13,8 @@ def my_publications(request):
         if form.is_valid():
             # process the data in form.cleaned_data as required
             title = form.cleaned_data['title']
-            post = Publication(title=title, publisher=request.user)
+            category = form.cleaned_data['category']
+            post = Publication(title=title, publisher=request.user, category=category)
             post.save()
             # 
             # ...

@@ -1,0 +1,344 @@
+.row{
+    display: flex;
+    align-items:flex-start;
+    flex-direction: row;
+    padding: 0 50px;
+    justify-content: center;
+}
+
+.left{
+    width: 25%;
+}
+
+.highlight{
+    background-color: #a7a7a7;
+    border: 1px solid #707070;
+    opacity: 1;
+    margin: 0px;
+    width: 100%;
+    padding-left: 2%;
+
+    display: flex;
+    justify-content:left;
+    flex-direction:row;
+}
+
+.gauche1{
+    font-family: 'Segoe UI';
+    font-size: 15px;
+    font-weight: 600;
+    margin: 7px;
+}
+
+.droite1{
+    font-family: 'Segoe UI';
+    font-size: 15px;
+    font-weight: 600;
+    margin: 7px;
+    margin-right: 10px;
+    margin-left: auto;
+}
+
+
+.material{
+    background-color: #f3f3f3;
+    border: 1px solid #707070;
+    opacity: 1;
+    margin: 0px;
+    width: 100%;
+    padding-left: 2%;
+
+    display: flex;
+    justify-content:left;
+    flex-direction:row;
+}
+.material--active{
+    background-color: #616161;
+    color: white;
+}
+.apply{
+    background-color: #a7a7a7;
+    border: 1px solid #707070;
+    border-top: 0;
+    border-radius: 0;
+    padding: 2px;
+}
+.gauche2{
+    font-family: 'Segoe UI';
+    font-size: 15px;
+    line-height: 25px;
+    font-weight: 400;
+    margin: 2px;
+}
+
+.droite2{
+    font-family: 'Segoe UI';
+    font-size: 15px;
+    font-weight: 400;
+    margin: 2px;
+    margin-right: 10px;
+    margin-left: auto;
+}
+
+
+
+.right{
+    margin-left: 50px;
+    width: 75%
+}
+.sort-container{
+    width: 100%;
+    padding: 10px 40px 20px 40px;
+}
+
+
+.sort{
+    display: flex;
+    justify-content:left;
+    flex-direction:row;
+
+    width: 100%;
+    height: 60px;
+    background: #C3C2C2 0% 0% no-repeat padding-box;
+    opacity: 1;
+    margin-bottom: 30px;
+    line-height: 60px;
+}
+.sort__by-container{
+    flex-grow: 1;
+    display: flex;
+    justify-content:space-between;
+}
+.by{
+    font-size: 25px;
+    font-weight: 600;
+    font-family: 'Segoe UI';
+    margin-left: 50px;
+}
+.sor-container{
+    flex-grow: 1;
+    display: flex;
+    justify-content:end;
+    align-items: center;
+    padding-right: 20px;
+    gap: 20px;
+
+}
+.sor{
+    border: 1px solid #707070;
+    border-radius: 13px;
+    background-color: transparent;
+    font: normal normal 300 20px/25px Segoe UI;
+    letter-spacing: 0px;
+    color: #3B3B3B;
+    height: fit-content;
+
+    padding: 5px 10px;
+}
+
+
+.data{
+    border: none;
+    border-left: 1px solid #b1b1b1;
+    border-right:  1px solid #b1b1b1;
+    height: 100%;
+    padding-left: 8px;
+    padding-right: 8px;
+
+    background: #C3C2C2;
+    text-align: left;
+    font: normal normal 600 20px/25px Segoe UI;
+    letter-spacing: 0px;
+    color: #3B3B3B;
+    opacity: 1;
+    outline: 0px;
+    max-width: 200px;
+}
+.page-number{
+    display: flex;
+    padding: 0 15px;
+}
+.arrow{
+    height: 8px;
+    background-color: transparent;
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+}
+  
+.onright{
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    margin-top: 26px;
+    margin-left: 8px;
+}
+
+.onleft{
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+    margin-top: 26px;
+    margin-right: 8px;
+}
+
+.onright:hover{
+    height: 8px;
+    background-color: transparent;
+    border: solid rgb(101, 101, 101);
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    margin-top: 26px;
+    margin-left: 8px;
+}
+
+.onleft:hover{
+    height: 8px;
+    background-color: transparent;
+    border: solid rgb(101, 101, 101);
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+    margin-left: 20px;
+    margin-top: 26px;
+    margin-right: 8px;
+}
+
+.nb{
+    background: #FFFFFF8A 0% 0% no-repeat padding-box;
+    border: 0.30000001192092896px solid #707070;
+    border-radius: 2px;
+    opacity: 1;
+    margin-left: 6px;
+    margin-right: 6px;
+    max-width: 50px;
+    text-align: center;
+}
+
+.nb::placeholder{
+    color: #3B3B3B;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.box1{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #707070;
+    opacity: 1;
+    display: flex;
+    justify-content:left;
+    flex-direction:row;
+    margin-bottom: 40px;
+}
+
+.titles{
+    width: 90%;
+    display: flex;
+    align-items:flex-start;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+h2{
+    margin: 0px;
+    margin-left: 50px;
+    margin-top: 15px;
+    text-align: left;
+    font: normal normal bold 30px/37px Segoe UI;
+    letter-spacing: 0px;
+    color: #707070;
+    opacity: 1;
+}
+
+.description{
+    margin: 0px;
+    margin-left: 50px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    text-align: left;
+    font: normal normal 600 25px/31px Segoe UI;
+    letter-spacing: 0px;
+    color: #0F192D;
+    opacity: 1;
+}
+
+.more{
+    text-decoration: none;
+}
+
+.thumbnail{
+    max-width: 20%;
+    margin-left: 10px;
+    margin-right:25px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+.big{
+    display: none;
+}
+.research{
+    font-size: 30px;
+    font-weight: 600;
+    font-family: 'Segoe UI';
+    color: #3B3B3B;
+    text-align: left;
+    letter-spacing: 0px;
+    color: #3B3B3B;
+    opacity: 1;
+    padding-top: 40px ;
+    padding-left: 40px;
+
+}
+@media only screen and (min-width: 1300px) {
+    .sort-container{
+        padding: 0;
+    }
+    .small{
+        display: none;
+    }
+    .big{
+        display: block;
+    }
+    .row{
+        justify-content: normal;
+        padding: 10px 50px;
+    }
+    .research{
+        font-size: 30px;
+        font-weight: 600;
+        font-family: 'Segoe UI';
+        color: #3B3B3B;
+        text-align: left;
+        letter-spacing: 0px;
+        color: #3B3B3B;
+        opacity: 1;
+        
+        padding-left: calc(25% + 60px);
+
+    }
+}

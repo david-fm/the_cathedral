@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Publication, Font,UserPersonalized, BlockAuthors, BlockImage, BlockText, BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, Questions, Answer, Keywords, Block, Rate, Comments
+from .models import Publication, Font, BlockAuthors, BlockImage, BlockText, BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, Questions, Answer, Keywords, Block, Rate, Comments
 
 admin.site.register(Publication)
 admin.site.register(Font)
@@ -18,7 +18,6 @@ admin.site.register(BlockTable)
 admin.site.register(Questions)
 admin.site.register(Answer)
 admin.site.register(Keywords)
-admin.site.register(UserPersonalized)
 admin.site.register(Block)
 admin.site.register(Rate)
 admin.site.register(Comments)

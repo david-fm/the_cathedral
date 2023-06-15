@@ -52,7 +52,7 @@ class ArticleDetailView(DetailView):
         
         blocks = Block.objects.filter(publication=self.object)
         blocks = order_blocks(blocks)
-        keywords = Keywords.objects.filter(publications=self.object)
+        keywords = Keywords.objects.get(publications=self.object)
         
         context['blocks'] = blocks
         context['article_id'] = self.object.id

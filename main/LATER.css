@@ -1,0 +1,62 @@
+.top{
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top: 88px;
+}
+
+
+
+.middle1{
+    display: flex;
+    justify-content:left;
+    flex-direction:row;
+}
+
+.author{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    opacity: 1;
+    color: #7f7f7f;
+    padding: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+    width: 65%;
+}
+
+h3{
+    border-bottom: 2px solid rgb(203, 203, 203);
+}
+
+.orange{
+    display: inline;
+    color: orange;
+}
+
+.buttons{
+    display: flex;
+    justify-content:left;
+    flex-direction:column;
+    width: 500px;
+}
+
+.Download{
+    justify-content: right;
+    background: #FFFFFF6B 0% 0% no-repeat padding-box;
+    border: 0.30000001192092896px solid #707070;
+    opacity: 1;
+    margin-left: 50px;
+    font-size: 20px;
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+.Donate{
+    background: #F9C2112B 0% 0% no-repeat padding-box;
+    border: 0.30000001192092896px solid #707070;
+    opacity: 1;
+    margin-left: 50px;
+    margin-top: 5%;
+    font-size: 20px;
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
