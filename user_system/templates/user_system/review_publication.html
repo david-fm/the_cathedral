@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block statics %}
-<link rel="stylesheet" href="{% static 'review_publication.css' %}">
+<link rel="stylesheet" href="{% static 'user_system/review_publication.css' %}">
 {% endblock %}
 
 
@@ -12,8 +12,12 @@
             <h2>Dear (user), do you wish to correct any paper ?</h2>
 
             <div class = "duo">
-                <a href="{% url 'user_system:reviewing_publication' %}" class="bton">Correct Paper</a>
-                <a class="bton">Go to my publications</a>
+                {% if available %}
+                    <a href="{% url 'user_system:reviewing_publication' %}" class="bton">Correct Paper</a>
+                {% else %}
+                    <a href="{% url 'user_system:do_you_want_available' %}" class="bton">Correct Paper</a>
+                {% endif %}
+                    <a href="{% url 'user_system:my_publications' %}" class="bton">Go to my publications</a>
             </div>
         </div>
     </div>

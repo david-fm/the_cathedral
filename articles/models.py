@@ -1,5 +1,6 @@
 from django.db import models
 from user_system.models import UserPersonalized
+
 # import MEDIA_ROOT
 
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -26,9 +27,15 @@ class Publication(models.Model):
     pdf_version = models.FileField(upload_to=user_directory_path, null=True, blank=True)
     html_version = models.FileField(upload_to=user_directory_path, null=True, blank=True)
     publisher = models.ForeignKey(UserPersonalized, on_delete=models.CASCADE, related_name='publications')
-    checks = models.ManyToManyField(UserPersonalized, related_name='checks')
+    checks = models.ManyToManyField(UserPersonalized, related_name='checks', limit_choices_to={
+        'available': True,
+        'groups__permissions__codename': 'is_checker',
+    })
     rates = models.ManyToManyField(UserPersonalized, through='Rate', related_name='rates')
     is_checked = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
+    is_editable = models.BooleanField(default=True)
+    is_published = models.BooleanField(default=False)
 
     # function to obtain the number of rates of a publication
     def rate_count(self):

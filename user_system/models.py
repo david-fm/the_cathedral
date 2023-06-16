@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
 # Create your models here.
 
 def user_directory_path(instance, filename):
@@ -18,4 +17,6 @@ class UserPersonalized(AbstractUser):
     gender = models.CharField(max_length=50, null=True, blank=True)
     country = models.CharField(max_length=100, null=True, blank=True)
     language = models.CharField(max_length=50, null=True, blank=True)
-# Create your models here.
+    available = models.BooleanField(default=False)
+
+    # Create your models here.

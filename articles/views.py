@@ -1,6 +1,7 @@
-from typing import Any, Dict
+from typing import Any
+from django import http
 from django.shortcuts import redirect, render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 #from .models import Article
 from django.views.generic.detail import DetailView
 from django.views.generic import View
@@ -12,6 +13,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from user_system.models import UserPersonalized  # Requiere que el usuario inicie sesión
 from django.views.decorators.csrf import csrf_protect
+from django.http import Http404
+from user_system.models import UserPersonalized
+from django.contrib.auth.models import Group
 
 
 #@permission_required('articles.is_checker', raise_exception=True)
@@ -48,22 +52,47 @@ class ArticleDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        pub = self.object
 
-        
-        blocks = Block.objects.filter(publication=self.object)
+        blocks = Block.objects.filter(publication=pub)
         blocks = order_blocks(blocks)
-        keywords = Keywords.objects.get(publications=self.object)
+        keywords = Keywords.objects.get(publications=pub)
         
         context['blocks'] = blocks
         context['article_id'] = self.object.id
         context['keywords'] = keywords
         return context
+    # Forbid the access if you are not the author
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('main:index')
+        # if the user is not the author of the article, then return 404
+        article = Publication.objects.get(id=self.kwargs['pk'])
+        if article.publisher != request.user:
+            return HttpResponseForbidden("Sorry, you are not the author of this article.")
+
+        
+        if not article.is_checked and request.user != article.publisher:
+            raise HttpResponseForbidden("Sorry, this publication is not available for the users.")
+        
+        return super().dispatch(request, *args, **kwargs)
 
 class ReviewView(DetailView):
     model = Publication
     template_name = 'articles/review.html'
 
-
+    
+    def dispatch(self, request, *args, **kwargs):
+        print('hola')
+        if not request.user.is_authenticated:
+            return redirect('main:index')
+        # if the user is not in the checker list of the article, then return http forbidden
+        print(Publication.objects.get(id=self.kwargs['pk']).checks.all(), request.user)
+        if not request.user in Publication.objects.get(id=self.kwargs['pk']).checks.all():
+            return HttpResponseForbidden("Sorry, you are not the author of this article.")
+        if not request.user.has_perm('user_system.is_checker'):
+            return HttpResponseForbidden('You do not have permissions required')
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -90,9 +119,82 @@ class ReviewView(DetailView):
         #context=super().get_context_data(**kwargs)
         return HttpResponse('')
 
+class RejectAcceptArticleView(View):
+    # Forbid the access if you are not the checker of the article
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('main:index')
+        # if the user is not in the checker list of the article, then return http forbidden
+        if not request.user in Publication.objects.get(id=self.kwargs['pk']).checks.all():
+            return HttpResponseForbidden("Sorry, you are not the checker of this article.")
+        if not request.user.has_perm('user_system.is_checker'):
+            return HttpResponseForbidden('You do not have permissions required')
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        # get the article
+        article_id = self.kwargs['pk']
+        article = Publication.objects.get(id=article_id)
+        # get the action
+        action = request.POST.get('action')
+        if action == 'accept':
+            article.is_checked = True
+            article.is_rejected = False
+            article.is_published = False
+            article.is_editable = False
+            article.save()
+            publisher = article.publisher
+            # if the publisher has published more than 2 articles add it to the Checker group
+            if Publication.objects.filter(publisher=publisher, is_published=True).count() >= 2:
+                checker_group = Group.objects.get(name='Checker')
+                publisher.groups.add(checker_group)
+        elif action == 'reject':
+            article.is_rejected = True
+            article.is_published = False
+            article.is_editable = True
+            article.is_checked = False
+            article.save()
+        return redirect('user_system:reviewing_publication')
+
+class PublishArticleView(View):
+    # Forbid the access if you are not the publisher of the article
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('main:index')
+        # if the user is not in the checker list of the article, then return http forbidden
+        if not request.user == Publication.objects.get(id=self.kwargs['pk']).publisher:
+            return HttpResponseForbidden("Sorry, you are not the author of this article.")
+        if not request.user.has_perm('user_system.is_publisher'):
+            return HttpResponseForbidden('You do not have permissions required')
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        # get the article
+        article_id = request.POST.get('article_id')
+        article = Publication.objects.get(id=article_id)
+        # get the action
+        action = request.POST.get('action')
+        if action == 'publish':
+            article.is_published = True
+            article.is_editable = False
+            article.is_checked = False
+            article.is_rejected = False
+            article.save()
+        print('hola')
+        return redirect('user_system:my_publications')
 
 @login_required
 def edit_view(request, article_id):
+    
+    # if it is not the author, return forbidden
+    if request.user != Publication.objects.get(id=article_id).publisher:
+        return HttpResponseForbidden("Sorry, you are not the author of this article.")
+    # if the article is not editable, redirect to detail view
+    if not Publication.objects.get(id=article_id).is_editable:
+        return redirect('articles:detail', article_id)
+    # By default comments wont be shown
+    show_comments = False
+    # if publication is rejected, show comments
+    if Publication.objects.get(id=article_id).is_rejected:
+        show_comments = True
     # take all the Block related to the publication and pass them to the template
     blocks = Block.objects.filter(publication=article_id)
     blocks = order_blocks(blocks)
@@ -139,7 +241,7 @@ def edit_view(request, article_id):
     keywords_formset = UpdateKeywordsBlockSet(prefix='keywords')
 
 
-    context = {'article_id': article_id, 'blocks': blocks, 'keywords':keywords,'text_formset': text_formset, 'title_formset': title_formset, 'image_formset':image_formset, 'video_formset':video_formset, 'authors_formset':authors_formset, 'references_formset':references_formset, 'quizzes_formset':quizzes_formset, 'question_formset':question_formset, 'answer_formset':answer_formset, 'keywords_formset':keywords_formset}
+    context = {'article_id': article_id, 'blocks': blocks, 'keywords':keywords,'text_formset': text_formset, 'title_formset': title_formset, 'image_formset':image_formset, 'video_formset':video_formset, 'authors_formset':authors_formset, 'references_formset':references_formset, 'quizzes_formset':quizzes_formset, 'question_formset':question_formset, 'answer_formset':answer_formset, 'keywords_formset':keywords_formset, 'show_comments':show_comments}
     return render(request, 'articles/editor.html', context=context)
 
 def are_formsets_valids(*formsets):

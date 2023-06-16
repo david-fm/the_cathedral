@@ -382,3 +382,37 @@ input[type=number] {
 .block_type:hover{
     background-color: rgb(231, 231, 231);;
 }
+.show-comment-container{
+    width:30px;
+    height: 30px;
+    cursor: pointer;
+}
+.add{
+    border: 0.5px solid #707070;
+    border-radius: 12px;
+    opacity: 1;
+    width:300px;
+    height: fit-content;
+    padding: 10px 15px;
+    border: 2px solid #aaaaaa;
+    margin-right: 20px;
+    margin-left: 50px;
+    margin-bottom: 30px;
+}
+.entry{
+    
+    border-radius: 13px;
+    width: 100%;
+    height: 100%;
+    font-size: 20px;
+}
+
+.entry-input{
+    
+    
+    font-size: 15px;
+    border-radius: 5px;
+
+    width: 100%;
+    padding: 5px;
+}

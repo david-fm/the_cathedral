@@ -20,10 +20,14 @@
         <div>
             <nav class="navtop">
                 <ul class="ultop">
-                    <button type="button" class="menu" @click="retrieve_blocks">Accept</button>
-                    <button type="button" class="menu" @click="retrieve_blocks">Reject</button>
+                    <button type="button" class="menu" @click="$refs.actionInput.value='accept'; $refs.publishForm.submit()">Accept</button>
+                    <button type="button" class="menu" @click="$refs.actionInput.value='reject'; $refs.publishForm.submit()">Reject</button>
                 </ul>
             </nav>
+            <form action="{% url 'articles:reject_accept_article' article_id %}" method="POST" id="form" x-ref="publishForm" style="display: none;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="" x-ref="actionInput">
+            </form>
         </div>
     </header>
    
@@ -74,7 +78,7 @@
                                 {% if block.blocktitle.title %}
                                 {{block.blocktitle.title}}
                                 {% endif %}
-                            </h1>
+                            </h2>
                         {% elif block.blockquiz %}
                             <div class="quiz-container">
                                 <h3  class="quiz_container quizzes_block_content" >
@@ -99,7 +103,7 @@
 
                                                 <input type="radio" name="quiz" class="answer_container answer_block_content" >
 
-                                                <label for="quiz{{forloop.counter}}"  class="answer_container answer_block_content">
+                                                <label for="quiz{{ forloop.counter }}"  class="answer_container answer_block_content">
                                                     {% if answer.answer %}
                                                     {{answer.answer}}
                                                     {% endif %}
@@ -130,9 +134,6 @@
                                     x-init="resize()"
                                     @input="resize(); modified=true;" {% if not block.comments.text %}placeholder="Write here a comment..."{%else%}initialText="{{block.comments.text}}"{% endif %}>{%if block.comments.text%}{{block.comments.text}}{% endif %}</textarea>
                                 <input type="hidden" name="block_id" value="{{block.id}}">
-                                <div class="duo">
-                                        <button type="submit" class="two" x-ref="submit{{block.id}}" >Delete</button>
-                                </div>
                             </form>
                         </div>
                     </div>

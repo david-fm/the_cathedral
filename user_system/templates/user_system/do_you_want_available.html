@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block statics %}
+<link rel="stylesheet" href="{% static 'user_system/do_you_want_available.css' %}">
+{% endblock %}
+
+
+{% block content %}
+    <div class="position">
+        <div class="box">
+            <h2>Dear (user), if you wish to correct any paper, you should be available to checking. <br> Do you want to become available?</h2>
+
+            <form method="POST" action="{% url 'user_system:do_you_want_available' %}">
+                {% csrf_token %}
+                <div class="duo">
+                    <button type="submit" name="available" value="yes" class="bton">Yes</button>
+                    <button type="submit" name="available" value="no" class="bton">No</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
