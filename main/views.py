@@ -172,12 +172,12 @@ def search(request):
                 filtered_pubs = filtered_pubs.filter(publisher__username__icontains=new_result)
 
     order_by = request.GET.get('order_by')
-    simple_search = Publication.objects.all()
-    ai_counter = simple_search.filter(category__icontains="artificial-intelligence").count()
-    cn_counter  = simple_search.filter(category__icontains="computer-networks").count()
-    os_counter = simple_search.filter(category__icontains="operating-systems").count()
-    c_counter =simple_search.filter(category__icontains="cybersecurity").count()
-    ds_counter = simple_search.filter(category__icontains="data-science").count()
+    #simple_search = Publication.objects.all()
+    ai_counter = filtered_pubs.filter(category__icontains="artificial-intelligence").count()
+    cn_counter  = filtered_pubs.filter(category__icontains="computer-networks").count()
+    os_counter = filtered_pubs.filter(category__icontains="operating-systems").count()
+    c_counter =filtered_pubs.filter(category__icontains="cybersecurity").count()
+    ds_counter = filtered_pubs.filter(category__icontains="data-science").count()
     if not order_by:
         filtered_pubs = filtered_pubs.order_by('-pub_date')    # Default, the order ys by pub_date
     else:

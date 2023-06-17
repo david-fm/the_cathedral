@@ -175,10 +175,28 @@ body{
     flex-grow: 1;
     width: 50%;
 
-    display:grid;
-    place-items: center;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
-
+.status{
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+}
+.checked{
+    color: #00ff00;
+}
+.rejected{
+    color: #ff0000;
+}
+.pending{
+    color: #00e1ff;
+}
+.check-pending{
+    color: #ff8400;
+}
 .thumbnail{
     height: 100%;
 

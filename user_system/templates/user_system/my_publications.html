@@ -68,6 +68,23 @@
                     {% else %}
                     <img src="{% static 'user_system/img/background1.jpg' %}" class="thumbnail">
                     {% endif %}
+                    {% if publication.is_checked %}
+                    <div class="status">
+                        <p class="checked">Checked</p>
+                    </div>
+                    {% elif publication.is_rejected%}
+                    <div class="status">
+                        <p class="rejected">Rejected</p>
+                    </div>
+                    {% elif publication.is_published %}
+                    <div class="status">
+                        <p class="check-pending">Waiting for checker</p>
+                    </div>
+                    {% else %}
+                    <div class="status">
+                        <p class="pending">Pending</p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
