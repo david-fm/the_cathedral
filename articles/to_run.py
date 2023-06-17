@@ -29,3 +29,4 @@ for pub in pubs_no_checkers:
         continue
     random_checker = random.choice(checkers)
     pub.checks.add(random_checker)
+    available_checkers = available_checkers.exclude(pk=random_checker.pk)
