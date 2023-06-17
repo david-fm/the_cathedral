@@ -134,6 +134,7 @@
                                     x-init="resize()"
                                     @input="resize(); modified=true;" {% if not block.comments.text %}placeholder="Write here a comment..."{%else%}initialText="{{block.comments.text}}"{% endif %}>{%if block.comments.text%}{{block.comments.text}}{% endif %}</textarea>
                                 <input type="hidden" name="block_id" value="{{block.id}}">
+                                <input type="submit" name="submit{{block.id}}" style="display:none">
                             </form>
                         </div>
                     </div>
