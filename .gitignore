@@ -9,4 +9,5 @@ files/*
 
 
 media/*
+static/*
 db_settings.py
