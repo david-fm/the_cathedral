@@ -5,6 +5,9 @@ class RegisterForm(forms.ModelForm):
     class Meta:
         model = UserPersonalized  ######
         fields = ['username', 'password', 'email']
+        widgets = {
+            'password': forms.PasswordInput(),
+        }
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'username'}))
