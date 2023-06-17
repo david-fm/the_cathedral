@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cathedral</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'normalize.css' %} ">
+    <link rel="stylesheet" href="{% static '/articles/review.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body x-data="editComments">
+    <script src="{% static 'articles/editComments.js' %}"></script>
+    <header>
+        <div>
+            <nav class="navtop">
+                <ul class="ultop">
+                    <button type="button" class="menu" @click="$refs.actionInput.value='accept'; $refs.publishForm.submit()">Accept</button>
+                    <button type="button" class="menu" @click="$refs.actionInput.value='reject'; $refs.publishForm.submit()">Reject</button>
+                </ul>
+            </nav>
+            <form action="{% url 'articles:reject_accept_article' article_id %}" method="POST" id="form" x-ref="publishForm" style="display: none;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="" x-ref="actionInput">
+            </form>
+        </div>
+    </header>
+   
+    <main>
+        <div class="area" method="POST" action="">
+            {% csrf_token %}    
+            <p  class="keywords_p"><span>Keywords:</span><span  class="keywords_container keywords_block_content">{{keywords.keyword}}</span></p>
+            <div class="blocks-container">
+                
+
+                {% for block in blocks %}
+                <div class="block-container">
+                    <div class="block" id="{{block.id}}" >
+                        {% if block.blocktext %}
+                        <textarea class="text_container text_block_content">{% if block.blocktext.text %}{{block.blocktext.text}}{% endif%}</textarea>
+                        {% elif block.blockimage %}
+                            <div class="image_div" >
+                                <img class="image_container block_content" src="{{ MEDIA_URL }}{{block.blockimage.file_path.url}}" alt="image">
+                            </div>
+                        {% elif block.blockvideo %}
+                            {% if block.blockvideo.url %}
+                            <div class="image_div">
+                                <iframe width="420" height="315" src="{{block.blockvideo.url}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                            </div>
+                            {% endif %}
+                        {% elif block.blockauthors%}
+                            {% if  block.blockauthors.authors %}
+                            <div class="authors-container">
+                                {% for author in block.blockauthors.authors.all %}
+                                    <p>{{author.username}}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        {% elif block.blockreferences %}
+                            
+                            <div class="references-container">
+                                <h3 class="references_container references_block_content" >
+                                    {% if block.blockreferences.title %}
+                                    {{block.blockreferences.title}}
+                                    {% endif %}
+                                </h3>
+                                {% if block.blockreferences.url %}
+                                <a href="{{block.blockreferences.url}}" class="references_container references_block_content" >Link to article</a>
+                                {% endif %}
+                            </div>
+                        {% elif block.blocktitle %}
+                            <h2 class="title_container title_block_content" >
+                                {% if block.blocktitle.title %}
+                                {{block.blocktitle.title}}
+                                {% endif %}
+                            </h2>
+                        {% elif block.blockquiz %}
+                            <div class="quiz-container">
+                                <h3  class="quiz_container quizzes_block_content" >
+                                    {% if block.blockquiz.name %}
+                                    {{block.blockquiz.name}}
+                                    {% endif %}
+                                </h3>
+                                <div class="quiz-questions">
+                                    {% for  question in  block.blockquiz.questions_set.all %}
+                                    <div class="quiz-question" id="{{question.id}}">
+                                        
+                                        <p  class="quiz-question__title question_container question_block_content">
+                                        {% if question.question %}
+                                            {{question.question}}
+                                        {% endif %}
+                                        </p>
+                                        
+                                        <div class="quiz-answers">
+
+                                            {% for answer in question.answer_set.all %}
+                                            <div class="quiz-answer" id ="{{answer.id}}">
+
+                                                <input type="radio" name="quiz" class="answer_container answer_block_content" >
+
+                                                <label for="quiz{{ forloop.counter }}"  class="answer_container answer_block_content">
+                                                    {% if answer.answer %}
+                                                    {{answer.answer}}
+                                                    {% endif %}
+                                                </label>
+                                            </div>
+                                            {% endfor %}
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <!--textarea is important to mantain the \n-->
+                    </div>
+                    
+                    
+                    <div class="comment" x-data="{showComment:false}">
+                        <div class="show-comment-container" @click="showComment=true" x-show="!showComment">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Communication / Chat_Remove"> <path id="Vector" d="M9 11H15M7.12357 18.7012L5.59961 19.9203C4.76744 20.5861 4.35115 20.9191 4.00098 20.9195C3.69644 20.9198 3.40845 20.7813 3.21846 20.5433C3 20.2696 3 19.7369 3 18.6712V7.2002C3 6.08009 3 5.51962 3.21799 5.0918C3.40973 4.71547 3.71547 4.40973 4.0918 4.21799C4.51962 4 5.08009 4 6.2002 4H17.8002C18.9203 4 19.4796 4 19.9074 4.21799C20.2837 4.40973 20.5905 4.71547 20.7822 5.0918C21 5.5192 21 6.07899 21 7.19691V14.8036C21 15.9215 21 16.4805 20.7822 16.9079C20.5905 17.2842 20.2843 17.5905 19.908 17.7822C19.4806 18 18.921 18 17.8031 18H9.12207C8.70603 18 8.49877 18 8.2998 18.0408C8.12328 18.0771 7.95216 18.1368 7.79168 18.2188C7.61281 18.3101 7.45249 18.4384 7.13478 18.6926L7.12357 18.7012Z" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path> </g> </g></svg>
+                        </div>
+                        <div class="add" x-show="showComment" @mousedown.outside=" showComment=!showComment; $refs.submit{{block.id}}.click()">
+                            <form action="" x-ref="commentForm{{block.id}}" @submit.prevent="sendComment" class="entry">
+                                {% csrf_token %}
+                                <textarea class="entry-input" name="text" x-data="{ resize: () => { $el.style.height = '27px'; $el.style.height = parseInt($el.scrollHeight)+parseInt($el.style.height) + 'px' } }"
+                                    x-init="resize()"
+                                    @input="resize(); modified=true;" {% if not block.comments.text %}placeholder="Write here a comment..."{%else%}initialText="{{block.comments.text}}"{% endif %}>{%if block.comments.text%}{{block.comments.text}}{% endif %}</textarea>
+                                <input type="hidden" name="block_id" value="{{block.id}}">
+                                <input type="submit" x-ref="submit{{block.id}}" style="display:none">
+                            </form>
+                        </div>
+                    </div>
+                    
+                </div>
+                {% endfor %}
+            </div>
+            
+        </div>
+
+    </main>
+    
+</body>
+
+</html>

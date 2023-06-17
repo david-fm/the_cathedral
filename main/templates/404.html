@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block statics %}
+<link rel="stylesheet" href="{% static '404.css' %}">
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="position">
+        <div class = "box">
+            <h2>Page not found</h2>
+            <p>Sorry, the page you requested is unavailable. The link you requested might be broken, or no longer exist. <br><br>
+                Cathedral is providing researchers with access to millions of scientific documents. <br><br>
+                Why not start at our <a href="{% url 'main:index' %}">homepage </a>?
+            </p>
+        </div>
+
+    </div>
+{% endblock %}

@@ -11,11 +11,28 @@ class Publicate(forms.Form):
     title = forms.CharField(max_length=255, 
                             widget=forms.TextInput(
                                 attrs={
-                                    'placeholder': 'New entry',
+                                    'placeholder': 'Title of new publication',
                                     'class':'entry-input',
                                     '@keyup.enter':'refs.new_publication.submit()'}
                             ), 
-                            label='')
+                            label='',
+                            required=True)
+    category = forms.CharField(max_length=255,
+                                widget=forms.Select(
+                                    attrs={
+                                        'class':'entry-category',},
+                                    choices=(
+                                        ('', 'Select a category'),
+                                        ('artificial-intelligence', 'Artificial Intelligence'),
+                                        ('data-science', 'Data Science'),
+                                        ('cybersecurity', 'Cybersecurity'),
+                                        ('operating-systems', 'Operating Systems'),
+                                    )
+                                ),
+                                label='',
+                                required=True)
+
+    
 
 class UserConfig(forms.ModelForm):
     """ 

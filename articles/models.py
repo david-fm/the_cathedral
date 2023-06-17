@@ -2,13 +2,11 @@
 This module contains the models of the articles app.
 """
 from django.db import models
-from django.conf import settings
 from user_system.models import UserPersonalized
+
 # import MEDIA_ROOT
-from django.conf import settings
 
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db.models import Avg
 
 # Create your models here.
 
@@ -54,9 +52,15 @@ class Publication(models.Model):
     pdf_version = models.FileField(upload_to=user_directory_path, null=True, blank=True)
     html_version = models.FileField(upload_to=user_directory_path, null=True, blank=True)
     publisher = models.ForeignKey(UserPersonalized, on_delete=models.CASCADE, related_name='publications')
-    checks = models.ManyToManyField(UserPersonalized, related_name='checks')
+    checks = models.ManyToManyField(UserPersonalized, related_name='checks', limit_choices_to={
+        'available': True,
+        'groups__permissions__codename': 'is_checker',
+    })
     rates = models.ManyToManyField(UserPersonalized, through='Rate', related_name='rates')
-
+    is_checked = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
+    is_editable = models.BooleanField(default=True)
+    is_published = models.BooleanField(default=False)
 
     # function to obtain the number of rates of a publication
     def rate_count(self):
@@ -134,6 +138,8 @@ class Block(models.Model):
 
 
 
+
+
 class Font(models.Model):
     """
     :class: Font
@@ -198,7 +204,7 @@ class BlockQuiz(models.Model):
     BlockQuiz is the class that represents a quiz of a block in the system.
     """
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
-    name = models.TextField(max_length=250)
+    name = models.TextField(max_length=250, blank=True, null=True)
     is_formal = models.BooleanField(default=False)
 
 
@@ -208,7 +214,8 @@ class Questions(models.Model):
 
     Questions is the class that represents a question of a quiz in the system.
     """
-    question = models.TextField(max_length=350)
+    
+    question = models.TextField(max_length=350, blank=True)
     quiz_block = models.ForeignKey(BlockQuiz, on_delete=models.CASCADE, null=False)
 
 
@@ -218,7 +225,7 @@ class Answer(models.Model):
 
     Answer is the class that represents an answer of a question in the system.
     """
-    answer = models.TextField(max_length=255)
+    answer = models.TextField(max_length=255, blank=True)
     is_correct = models.BooleanField(default=False)
 
     question = models.ForeignKey(Questions, on_delete=models.CASCADE, null=False)
@@ -269,3 +276,7 @@ class BlockReferences(models.Model):
     block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField(max_length=250, null=True, blank=True)
+
+class Comments(models.Model):
+    block = models.OneToOneField(Block, on_delete=models.CASCADE, primary_key=True)
+    text = models.TextField(max_length=3500)

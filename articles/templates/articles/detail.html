@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{%load static%}
+{% block statics %}
+<link rel="stylesheet" href="{% static 'articles/detail.css' %}">
+{% endblock  %}
+
+
+{% block content %}
+        <div class="area">
+            <!--
+            <div class="top">
+
+                
+                <div class="middle1">
+                    <div class="author"> 
+                        <h3>Authors : <span class="orange">HOLACARACOLA</span></h3>
+                        
+                        {% if user.is_authenticated %}
+                        {% endif %}
+                        <div class="rate-container">
+                            <p>Article rating:</p>
+                                    <div class="rating">
+                                        <input type="radio" name="rating" id="rating-5">
+                                        <label for="rating-5"></label>
+                                        <input type="radio" name="rating" id="rating-4">
+                                        <label for="rating-4"></label>
+                                        <input type="radio" name="rating" id="rating-3">
+                                        <label for="rating-3"></label>
+                                        <input type="radio" name="rating" id="rating-2">
+                                        <label for="rating-2"></label>
+                                        <input type="radio" name="rating" id="rating-1">
+                                        <label for="rating-1"></label>
+                                    </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>-->
+            <p class="keywords_p"><span>Keywords:</span><span  class="keywords_container keywords_block_content">{{keywords.keyword}}</span></p>
+            <div class="blocks-container">
+                
+
+                {% for block in blocks %}
+                <div class="block" id="{{block.id}}" >
+                    {% if block.blocktext %}
+                    <textarea class="text_container text_block_content">{% if block.blocktext.text %}{{block.blocktext.text}}{% endif%}</textarea>
+                    {% elif block.blockimage %}
+                        <div class="image_div" >
+                            <img class="image_container block_content" src="{{ MEDIA_URL }}{{block.blockimage.file_path.url}}" alt="image">
+                        </div>
+                    {% elif block.blockvideo %}
+                        {% if block.blockvideo.url %}
+                        <div class="image_div">
+                            <iframe width="420" height="315" src="{{block.blockvideo.url}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        </div>
+                        {% endif %}
+                    {% elif block.blockauthors%}
+                        {% if  block.blockauthors.authors %}
+                        <div class="authors-container">
+                            {% for author in block.blockauthors.authors.all %}
+                                <p>{{author.username}}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    {% elif block.blockreferences %}
+                        
+                        <div class="references-container">
+                            <h3 class="references_container references_block_content" >
+                                {% if block.blockreferences.title %}
+                                {{block.blockreferences.title}}
+                                {% endif %}
+                            </h3>
+                            {% if block.blockreferences.url %}
+                            <a href="{{block.blockreferences.url}}" class="references_container references_block_content" >Link to article</a>
+                            {% endif %}
+                        </div>
+                    {% elif block.blocktitle %}
+                        <h2 class="title_container title_block_content" >
+                            {% if block.blocktitle.title %}
+                            {{block.blocktitle.title}}
+                            {% endif %}
+                        </h1>
+                    {% elif block.blockquiz %}
+                        <div class="quiz-container">
+                            <h3  class="quiz_container quizzes_block_content" >
+                                {% if block.blockquiz.name %}
+                                {{block.blockquiz.name}}
+                                {% endif %}
+                            </h3>
+                            <div class="quiz-questions">
+                                {% for  question in  block.blockquiz.questions_set.all %}
+                                <div class="quiz-question" id="{{question.id}}">
+                                    
+                                    <p  class="quiz-question__title question_container question_block_content">
+                                    {% if question.question %}
+                                        {{question.question}}
+                                    {% endif %}
+                                    </p>
+                                    
+                                    <div class="quiz-answers">
+
+                                        {% for answer in question.answer_set.all %}
+                                        <div class="quiz-answer" id ="{{answer.id}}">
+
+                                            <input type="radio" name="quiz" class="answer_container answer_block_content" >
+
+                                            <label for="quiz{{forloop.counter}}"  class="answer_container answer_block_content">
+                                                {% if answer.answer %}
+                                                {{answer.answer}}
+                                                {% endif %}
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                        
+                                    </div>
+                                </div>
+                                
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <!--textarea is important to mantain the \n-->
+                </div>
+                {% endfor %}
+            </div>
+            
+        </div>
+
+{% endblock %}

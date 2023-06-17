@@ -2,15 +2,18 @@ from django import forms
 from django.contrib.auth.models import User
 from user_system.models import UserPersonalized
 class RegisterForm(forms.ModelForm):
+
     """
     :class: RegisterForm
 
     RegisterForm is class that represents a form that allows the user to register in the system.
     """
-    password = forms.CharField(widget=forms.PasswordInput())
     class Meta:
         model = UserPersonalized  ######
         fields = ['username', 'password', 'email']
+        widgets = {
+            'password': forms.PasswordInput(),
+        }
 
 class LoginForm(forms.Form):
     """

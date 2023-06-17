@@ -2,7 +2,7 @@
     This module contains the forms used in the articles edition.
 """
 from django import forms
-from .models import BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, BlockAuthors
+from .models import BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, BlockAuthors, Questions, Answer, Comments
 
 
 class UpdateTextBlock(forms.Form):
@@ -97,6 +97,48 @@ class UpdateReferencesBlock(forms.ModelForm):
             'url': forms.TextInput(attrs={'placeholder': 'URL'}),
         }
 
+class UpdateQuizBlock(forms.ModelForm):
+    block_id = forms.IntegerField(label='', required=False)
+    status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
+    class Meta:
+        model = BlockQuiz
+        fields = ['name']
+        labels = {
+            'name': '',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'NAME'}),
+        }
+
+class UpdateQuestion(forms.ModelForm):
+    block_id = forms.IntegerField(label='', required=False)
+    status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
+    class Meta:
+        model = Questions
+        fields = ['question']
+        labels = {
+            'question': '',
+        }
+        widgets = {
+            'question': forms.TextInput(attrs={'placeholder': 'QUESTION'}),
+        }
+
+class UpdateAnswer(forms.ModelForm):
+    block_id = forms.IntegerField(label='', required=False)
+    status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
+    class Meta:
+        model = Answer
+        fields = ['answer', 'is_correct']
+        labels = {
+            'answer': '',
+            'is_correct': '',
+        }
+        widgets = {
+            'answer': forms.TextInput(attrs={'placeholder': 'ANSWER'}),
+            'is_correct': forms.CheckboxInput(),
+            
+        }
+
 """
 class UpdateTableBlock(forms.ModelForm):
     block_id = forms.IntegerField(label='', required=False)
@@ -123,3 +165,20 @@ class UpdateKeywordsBlock(forms.Form):
     """
     status = forms.CharField(max_length=1, widget=forms.HiddenInput(), label='')
     keywords = forms.CharField(max_length=255, required=False, empty_value='', label='')
+
+class UpdateComments(forms.ModelForm):
+    class Meta:
+        model = Comments
+        fields = ['text', 'block']
+        labels = {
+            'text': '',
+            'block': '',
+        }
+        widgets = {
+            'text': forms.Textarea(
+                attrs={
+                    'placeholder': 'Insert your comment here...',
+                    'x-data':"{ resize: () => { $el.style.height = '5px'; $el.style.height = $el.scrollHeight + 'px' } }",
+                    'x-init':'resize()',
+                    '@input':'resize();'}),
+        }

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block statics %}
+<link rel="stylesheet" href="{% static 'user_system/reviewing_publication.css' %}">
+{% endblock %}
+{% block content %}
+
+
+    <div class="middle">
+        <p class="up">Publications to review :</p>
+
+        {% for pub in pubs %}
+
+        <div class="box">
+            <div class="titles">
+                <a href="{% url 'articles:review' pub.3%}" class="more">
+                    <h2>{{pub.1}}</h2>
+                    <p class="description">{{ pub.2.text }}</p>
+                </a>
+            </div>
+
+            <img src="{{ pub.0.file_path.url }}" class="thumbnail">
+
+        </div>
+        {% endfor %}
+
+    </div>
+{% endblock  %}

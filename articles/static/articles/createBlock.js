@@ -7,7 +7,7 @@
 */
 // from .models import , BlockAuthors, BlockImage, BlockText, BlockTitle, BlockDoi, BlockVideo, BlockQuiz, BlockReferences, BlockTable, Questions, Answer, Keywords
 //const TYPES_OF_BLOCKS = ['authors', 'image', 'text', 'title', 'doi', 'video', 'quiz', 'references', 'table', 'keywords']
-const TYPES_OF_BLOCKS = ["image", "text", "video", "authors", "references", "title"];
+const TYPES_OF_BLOCKS = ["image", "text", "video", "authors", "references", "title", "quizzes", "question", "answer"];
 dropdown = (parts) => {
   /*
     .. js:function: dropdown
@@ -98,6 +98,7 @@ function updateTextBlockInput(form, block, type, j) {
   */
   let textInput = form.querySelector("#id_" + type + "-" + j + "-text");
   textInput.innerHTML = block.value;
+  //console.log(textInput);
 }
 function updateFileBlockInput(form, block, type, j) {
   /*
@@ -168,7 +169,7 @@ function updateReferencesBlockInput(form, titleBlock, urlsBlock, type, j) {
     "#id_" + type + "-" + j + "-url"
   );
   titleInput.value = titleBlock.innerHTML;
-  urlsInput.value = urlsBlock.innerHTML;
+  urlsInput.value = urlsBlock.innerText;
 }
 function updateTitleBlockInput(form, block, type, j) {
   /*
@@ -202,10 +203,24 @@ function updateKeywordsBlockInput(form, block, type, j) {
   */
   let keywordsInput = form.querySelector("#id_" + type + "-" + j + "-keywords");
   keywordsInput.value = block.innerText;
-  console.log("#id_" + type + "-" + j + "-status");
   let statusInput = form.querySelector("#id_" + type + "-" + j + "-status");
   statusInput.value = "M";
 }
+function updateQuizzesBlockInput(form, block, type, j) {
+  let questionInput = form.querySelector("#id_" + type + "-" + j + "-name");
+  questionInput.value = block.innerText;
+}
+function updateQuestionBlockInput(form, block, type, j) {
+  let questionInput = form.querySelector("#id_" + type + "-" + j + "-question");
+  questionInput.value = block.innerText;
+}
+function updateAnswerBlockInput(form, radialBlock, answerBlock, type, j) {
+  let radialInput = form.querySelector("#id_" + type + "-" + j + "-is_correct");
+  let answerInput = form.querySelector("#id_" + type + "-" + j + "-answer");
+  radialInput.checked = radialBlock.checked;
+  answerInput.value = answerBlock.innerText;
+}
+
 document.addEventListener("alpine:init", () => {
   /* 
     .. js:function: alpine:init
@@ -244,6 +259,12 @@ document.addEventListener("alpine:init", () => {
           "https://picsum.photos/200/300",
           "title"
         ) +
+        block_type(
+          "Quiz",
+          "Just start writing with plain text",
+          "https://picsum.photos/200/300",
+          "quizzes"
+        ) +
         dropdown_title("Media") +
         block_type(
           "Image",
@@ -275,20 +296,12 @@ document.addEventListener("alpine:init", () => {
           "Just start writing with plain text",
           "https://picsum.photos/200/300",
           "references"
-        ) +
-        block_type(
-          "Instagram",
-          "Just start writing with plain text",
-          "https://picsum.photos/200/300",
-          "instagram"
         );
       block.innerHTML += dropdown(parts);
     },
     create_block() {
-      console.log("creating block");
       let block = this.$el.parentNode.parentNode;
       let forms = this.$refs.save_form;
-      console.log("#id_" + this.type + "-TOTAL_FORMS");
       let totalForms = forms.querySelector("#id_" + this.type + "-TOTAL_FORMS");
       let lastFormIdx = parseInt(totalForms.value) - 1;
       let statusInput = forms.querySelector(
@@ -298,9 +311,7 @@ document.addEventListener("alpine:init", () => {
         "#id_" + this.type + "-" + lastFormIdx + "-block_id"
       );
       
-
       statusInput.value = "C";
-      console.log(statusInput);
       blockIdInput.value = block.id;
       this.retrieve_blocks();
     },
@@ -313,15 +324,19 @@ document.addEventListener("alpine:init", () => {
           document.querySelectorAll("." + TYPES_OF_BLOCKS[i] + "_block_content")
         );
 
-        let ids = blocks.map((block) => {
-          return block.parentElement.id;
-        });
-        let status = blocks.map((block) => {
-          return block.parentElement.getAttribute("status");
-        });
-        if (TYPES_OF_BLOCKS[i] == "references") {
-          status = [];
-          ids = [];
+        
+        if (TYPES_OF_BLOCKS[i] == "image" || TYPES_OF_BLOCKS[i] == "video" || TYPES_OF_BLOCKS[i] == "quizzes") {
+        
+          var ids = blocks.map((block) => {
+            return block.parentElement.parentElement.id;
+          });
+          var status = blocks.map((block) => {
+            return block.parentElement.parentElement.getAttribute("status");
+          });
+        }
+        else if (TYPES_OF_BLOCKS[i] == "references") {
+          var ids = [];
+          var status = [];
           for (let j = 0; j < blocks.length; j++) {
             if (j % 2 == 0) {
               status.push(blocks[j].parentElement.parentElement.getAttribute("status"));
@@ -329,11 +344,31 @@ document.addEventListener("alpine:init", () => {
             }
           }
         }
+        else if (TYPES_OF_BLOCKS[i] == "answer"){
+          var ids = [];
+          var status = [];
+          for (let j = 0; j < blocks.length; j++) {
+            if (j % 2 == 0) {
+              status.push(blocks[j].parentElement.getAttribute("status"));
+              ids.push(blocks[j].parentElement.id);
+            }
+          }
+          //console.log(status);
+        }
+        else{
+          var ids = blocks.map((block) => {
+            return block.parentElement.id;
+          });
+          var status = blocks.map((block) => {
+            return block.parentElement.getAttribute("status");
+          });
+        }
         let numberOfForms = parseInt(form.querySelector(
           "#id_" + TYPES_OF_BLOCKS[i] + '-TOTAL_FORMS'
         ).value);
         for (let j = 0; j < numberOfForms; j++) {
-          if (TYPES_OF_BLOCKS[i] == "references" && j != 0) realJ = j*2;
+          //console.log(status[j]);
+          if ((TYPES_OF_BLOCKS[i] == "references" || TYPES_OF_BLOCKS[i] == "answer") && j != 0) realJ = j*2;
           else realJ = j;
           // TODO CHECK THIS
           let blockIdInput = form.querySelector(
@@ -342,12 +377,9 @@ document.addEventListener("alpine:init", () => {
           let statusInput = form.querySelector(
             "#id_" + TYPES_OF_BLOCKS[i] + "-" + j + "-status"
           );
-          console.log(statusInput)
-          console.log(status)
           if(typeof(status[j]) !== "undefined")
           {
-            console.log(status[j]);
-            statusInput.value = status[realJ];
+            statusInput.value = status[j];
           }
           if(statusInput.value == 'M'){
             blockIdInput.value = ids[j];
@@ -365,10 +397,20 @@ document.addEventListener("alpine:init", () => {
                 updateAuthorsBlockInput(form, blocks[j],TYPES_OF_BLOCKS[i], j);
                 break;
               case "references":
+                //console.log(blocks)
                 updateReferencesBlockInput(form, blocks[realJ], blocks[realJ+1],TYPES_OF_BLOCKS[i], j);
                 break;
               case "title":
                 updateTitleBlockInput(form, blocks[j],TYPES_OF_BLOCKS[i], j);
+                break;
+              case "quizzes":
+                updateQuizzesBlockInput(form, blocks[j],TYPES_OF_BLOCKS[i], j);
+                break;
+              case "question":
+                updateQuestionBlockInput(form, blocks[j],TYPES_OF_BLOCKS[i], j);
+                break;
+              case "answer":
+                updateAnswerBlockInput(form, blocks[realJ], blocks[realJ+1],TYPES_OF_BLOCKS[i], j);
                 break;
             }
           }
@@ -386,26 +428,28 @@ document.addEventListener("alpine:init", () => {
         if (statusInput[i].value == "" || statusInput[i].value == "undefined") {
           statusInput[i].value = "U";
         }
-        console.log(statusInput[i].value);
       }
       
 
      
       let keywords = document.querySelector(".keywords_block_content");
       let keywordsParent = keywords.parentElement;
-      console.log(keywordsParent);
       if (keywordsParent.getAttribute('status') == "M") {
         updateKeywordsBlockInput(form, keywords,"keywords", 0);
 
       }
-      alert(statusInput);
+      //alert(statusInput);
       // submit the form
       this.$refs.save_form.submit();
     },
     delete_blocks() {
-      console.log("deleting block");
+      //console.log("deleting block");
       let block = this.$el.parentNode;
+      if (this.$el.classList.contains("quiz_delete") || this.$el.classList.contains("answer_delete")) {
+        block = this.$el.parentNode.parentNode;
+      }
       block.setAttribute("status", "D");
+      //console.log(block);
       this.retrieve_blocks();
     },
   }));

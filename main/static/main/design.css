@@ -62,21 +62,30 @@
     align-items: center;
     flex-direction: column;
     justify-content: center;
+    gap: 10px;
 
     text-align: center;
+    cursor: pointer;
+
+    height: 250px;
 }
 .card p{
     width: 80%;
+    text-decoration: none;
+    color: black;
+    height: 20%;
 }
-.trio{
-    width: 80%;
-    align-items: center;
-}
-
 .link{
     text-decoration: none;
     color: black;
+    height: 90%;
 }
+.trio{
+    max-height: 100%;
+    object-fit: contain;
+}
+
+
 
 
 .bottom{
@@ -100,15 +109,26 @@
     justify-content: center;
     align-items: center;
 
-    height: fit-content;
+    height: 220px;
     padding: 20px;
 
     background-color: #fff;
 }
-
-.card__parent img{
+.img-container{
+    height: 80%;
+    flex-grow: 3;
+    flex-shrink: 1;
+}
+.img-container img{
+    height: 100%;
+    object-fit: contain;
     margin-bottom: 5px;
     aspect-ratio: 16/9;
+}
+.card__parent p{
+    height: 20%;
+    flex-grow: 1;
+    flex-shrink: 1;
 }
 .six{
     display: grid;

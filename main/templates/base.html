@@ -24,8 +24,15 @@
 {% endif %}
     <header {% if user.is_authenticated %}x-data="{ show_uopt:false }"{% endif %} >
         <div class="header_container">
-            <h1 @click="$refs.home.click()">Cathedral</h1>
-
+            <h1 >Cathedral</h1>
+            <svg class="logo" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 239 50.5" @click="$refs.home.click()">
+                <g id="LOGO" transform="translate(-95 -215)">
+                  <text id="Cathedral" transform="translate(95 215)" fill="#e5e5e5" font-size="40" font-family="Helvetica"><tspan x="0" y="31">Cathedral</tspan></text>
+                  <line id="Línea_1" data-name="Línea 1" x2="29" transform="translate(98.5 264.5)" fill="none" stroke="#fca311" stroke-width="2"/>
+                  <path id="Trazado_2" data-name="Trazado 2" d="M129,0H0" transform="translate(133.5 264.5)" fill="none" stroke="#fff" stroke-width="2"/>
+                </g>
+            </svg>
+              
             <nav >
                 <ul>
                     <li><a href="{% url 'main:index' %}" x-ref="home">Home</a></li>
@@ -49,7 +56,7 @@
                         {% else %}
                             <img src="{% static 'img/user_default.png'%}" class="user_img" >
                         {% endif %}
-                        <svg class="user-options-button" xmlns="http://www.w3.org/2000/svg" width="21.385" height="17.986" viewBox="0 0 21.385 17.986" @click="show_uopt=!show_uopt" @mousedown.outside="show_uopt=false">
+                        <svg class="user-options-button" xmlns="http://www.w3.org/2000/svg" width="21.385" height="17.986" viewBox="0 0 21.385 17.986" @click="show_uopt=!show_uopt" >
                             <g id="TRIÁNGULO" transform="translate(-4480.434 -272.971)">
                               <path d="M0,0,8.391,12.306" transform="translate(4482.5 274.5)" fill="none" stroke="#fff" stroke-width="5"/>
                               <line id="Línea_14" data-name="Línea 14" x2="8.391" y2="11.39" transform="translate(4482.5 274.5)" fill="none" stroke="#fff" stroke-width="5"/>
@@ -74,7 +81,7 @@
             </nav>
         </div>
         {% if user.is_authenticated %}
-        <div class="user-options" x-show="show_uopt" x-transition.duration.700ms :class="show_uopt ? 'uopt-down': 'uopt-up'">
+        <div class="user-options" x-show="show_uopt" x-transition.duration.700ms :class="show_uopt ? 'uopt-down': 'uopt-up'" @mousedown.outside="show_uopt=false">
             <aside class="user-options__container">
                 <section class="user-options__top">
                     {% if user.image %}
@@ -91,13 +98,12 @@
                 <section class="user-options__account">
                     <h2>Your account</h2>
                     <a href="{% url 'user_system:my_publications' %}">My publications</a>
-                    <a href="">Review publications</a>
+                    <a href="{% url 'user_system:review_publication' %}">Review publications</a>
                     <a href="{% url 'user_system:user_config' %}">Profile</a>
                 </section>
                 <section class="user-options__options">
                     <h2>More options</h2>
                     <a href="{% url 'user_system:privacy_and_data' %}">Privacy policy</a>
-                    <a href="">Be an evaluator</a>
                     <p @click="$refs.logout_form.submit()">Logout</p>
                 </section>
             </aside>
@@ -110,7 +116,7 @@
         {% block content %}{% endblock %}
     </main>
     {% if user.is_authenticated %}
-    <form action="main:index" method="post" id="logout_form" x-ref="logout_form" >
+    <form action="{% url 'main:index' %}" method="post" id="logout_form" x-ref="logout_form" >
         {% csrf_token %}
         <input type="hidden" name="submit_logout" value="Log in">
     </form>
