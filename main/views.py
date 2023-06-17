@@ -33,7 +33,7 @@ def user_system_decorator_partial(func, to_render='main/index.html'):
                         login(request, user)
                         print('User is valid, active and authenticated')
                         # redirect to a new URL:
-                        return render(request, to_render)
+                        return func(request, *args, **kwargs)
                     # redirect to a new URL:
                 register_form = RegisterForm()
                 print('Login Form is not valid')
@@ -61,7 +61,7 @@ def user_system_decorator_partial(func, to_render='main/index.html'):
                     login(request, user)
 
                     # redirect to a new URL:
-                    return render(request, to_render)  # TODO: Redirect to the appropriate page
+                    return func(request, *args, **kwargs)  # TODO: Redirect to the appropriate page
 
                 login_form = LoginForm()
                 print('Register Form is not valid')
@@ -73,9 +73,7 @@ def user_system_decorator_partial(func, to_render='main/index.html'):
                 logout(request)
                 login_form = LoginForm()
                 register_form = RegisterForm()
-                return render(request, to_render,
-                              {'login_form': login_form,
-                               'register_form': register_form})
+                return func(request, *args, **kwargs)
 
         return func(request, *args, **kwargs)
 
