@@ -1,4 +1,4 @@
-from .models import Publication
+from articles.models import Publication
 from user_system.models import UserPersonalized
 import random
 
