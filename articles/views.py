@@ -90,7 +90,9 @@ class ReviewView(DetailView):
         print(Publication.objects.get(id=self.kwargs['pk']).checks.all(), request.user)
         if not request.user in Publication.objects.get(id=self.kwargs['pk']).checks.all():
             return HttpResponseForbidden("Sorry, you are not the author of this article.")
-        if not request.user.has_perm('user_system.is_checker'):
+        # user belongs to the group of checkers
+        group = Group.objects.get(name='Checkers')
+        if not group in request.user.groups.all():
             return HttpResponseForbidden('You do not have permissions required')
         return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
@@ -127,7 +129,8 @@ class RejectAcceptArticleView(View):
         # if the user is not in the checker list of the article, then return http forbidden
         if not request.user in Publication.objects.get(id=self.kwargs['pk']).checks.all():
             return HttpResponseForbidden("Sorry, you are not the checker of this article.")
-        if not request.user.has_perm('user_system.is_checker'):
+        group = Group.objects.get(name='Checkers')
+        if not group in request.user.groups.all():
             return HttpResponseForbidden('You do not have permissions required')
         return super().dispatch(request, *args, **kwargs)
     def post(self, request, *args, **kwargs):
@@ -163,7 +166,8 @@ class PublishArticleView(View):
         # if the user is not in the checker list of the article, then return http forbidden
         if not request.user == Publication.objects.get(id=self.kwargs['pk']).publisher:
             return HttpResponseForbidden("Sorry, you are not the author of this article.")
-        if not request.user.has_perm('user_system.is_publisher'):
+        group = Group.objects.get(name='Publishers')
+        if not group in request.user.groups.all():
             return HttpResponseForbidden('You do not have permissions required')
         return super().dispatch(request, *args, **kwargs)
     def post(self, request, *args, **kwargs):
