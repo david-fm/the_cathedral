@@ -63,8 +63,10 @@ function updateReferencesBlockInput(form, titleBlock, urlsBlock, type, j) {
   let urlsInput = form.querySelector(
     "#id_" + type + "-" + j + "-url"
   );
-  titleInput.value = titleBlock.textInput;
-  urlsInput.value = urlsBlock.textInput;
+  console.log(urlsBlock);
+  alert()
+  titleInput.value = titleBlock.innerHTML;
+  urlsInput.value = urlsBlock.innerText;
 }
 function updateTitleBlockInput(form, block, type, j) {
   let titleInput = form.querySelector("#id_" + type + "-" + j + "-title");

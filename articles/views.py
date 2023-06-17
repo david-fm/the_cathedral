@@ -166,8 +166,9 @@ class PublishArticleView(View):
         # if the user is not in the checker list of the article, then return http forbidden
         if not request.user == Publication.objects.get(id=self.kwargs['pk']).publisher:
             return HttpResponseForbidden("Sorry, you are not the author of this article.")
-        group = Group.objects.get(name='Publishers')
-        if not group in request.user.groups.all():
+        publisher = Group.objects.get(name='Publishers')
+        checker = Group.objects.get(name='Checkers')
+        if not publisher in request.user.groups.all() and not checker in request.user.groups.all():
             return HttpResponseForbidden('You do not have permissions required')
         return super().dispatch(request, *args, **kwargs)
     def post(self, request, *args, **kwargs):
