@@ -68,7 +68,7 @@ class ArticleDetailView(DetailView):
             return redirect('main:index')
         # if the user is not the author of the article, then return 404
         article = Publication.objects.get(id=self.kwargs['pk'])
-        if article.publisher != request.user:
+        if article.publisher != request.user and not article.is_checked:
             return HttpResponseForbidden("Sorry, you are not the author of this article.")
 
         
