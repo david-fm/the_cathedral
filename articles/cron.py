@@ -40,5 +40,7 @@ class MyCronJob(CronJobBase):
         print(available_checkers)
         for pub in pubs_no_checkers:
             checkers = available_checkers.exclude(pk=pub.publisher.id) # exclude pubs of the checker
+            if len(checkers) == 0:
+                continue
             random_checker = random.choice(checkers)
             pub.checks.add(random_checker)
