@@ -3,7 +3,15 @@ from user_system.models import UserPersonalized
 import random
 
 def checking_publication(checker):
-            
+    """
+
+        Checks if a checker is checking a publication that is not rejected or accepted
+
+        :param checker: The checker
+        :type checker: UserPersonalized
+        :return: True if the checker is checking a publication that is not rejected or accepted, None otherwise
+        :rtype: bool
+    """ 
     checked_publications = Publication.objects.filter(checks=checker)
             
     for pub in checked_publications:

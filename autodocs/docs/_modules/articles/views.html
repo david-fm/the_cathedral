@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>articles.views &#8212; The Cathedral  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for articles.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">http</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">JsonResponse</span><span class="p">,</span> <span class="n">HttpResponseForbidden</span>
+<span class="c1">#from .models import Article</span>
+<span class="kn">from</span> <span class="nn">django.views.generic.detail</span> <span class="kn">import</span> <span class="n">DetailView</span>
+<span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="kn">import</span> <span class="n">View</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Publication</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Publication</span><span class="p">,</span> <span class="n">Font</span><span class="p">,</span> <span class="n">Block</span><span class="p">,</span> <span class="n">BlockAuthors</span><span class="p">,</span> <span class="n">BlockImage</span><span class="p">,</span> <span class="n">BlockText</span><span class="p">,</span> <span class="n">BlockTitle</span><span class="p">,</span> <span class="n">BlockDoi</span><span class="p">,</span> <span class="n">BlockVideo</span><span class="p">,</span> <span class="n">BlockQuiz</span><span class="p">,</span> <span class="n">BlockReferences</span><span class="p">,</span> <span class="n">BlockTable</span><span class="p">,</span> <span class="n">Questions</span><span class="p">,</span> <span class="n">Answer</span><span class="p">,</span> <span class="n">Keywords</span><span class="p">,</span> <span class="n">Comments</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="kn">import</span> <span class="n">UpdateTextBlock</span><span class="p">,</span> <span class="n">UpdateTitleBlock</span><span class="p">,</span> <span class="n">UpdateImageBlock</span><span class="p">,</span> <span class="n">UpdateVideoBlock</span><span class="p">,</span> <span class="n">UpdateAuthorsBlock</span><span class="p">,</span> <span class="n">UpdateReferencesBlock</span><span class="p">,</span> <span class="n">UpdateQuizBlock</span><span class="p">,</span> <span class="n">UpdateQuestion</span><span class="p">,</span> <span class="n">UpdateAnswer</span><span class="p">,</span>  <span class="n">UpdateKeywordsBlock</span><span class="p">,</span> <span class="n">UpdateComments</span>
+<span class="kn">from</span> <span class="nn">django.forms</span> <span class="kn">import</span> <span class="n">formset_factory</span><span class="p">,</span> <span class="n">modelformset_factory</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="kn">import</span> <span class="n">login_required</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="kn">import</span> <span class="n">permission_required</span>
+<span class="kn">from</span> <span class="nn">user_system.models</span> <span class="kn">import</span> <span class="n">UserPersonalized</span>  <span class="c1"># Requiere que el usuario inicie sesión</span>
+<span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_protect</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">Http404</span>
+<span class="kn">from</span> <span class="nn">user_system.models</span> <span class="kn">import</span> <span class="n">UserPersonalized</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">Group</span>
+
+
+<span class="c1">#@permission_required(&#39;articles.is_checker&#39;, raise_exception=True)</span>
+<div class="viewcode-block" id="order_blocks"><a class="viewcode-back" href="../../articles.html#articles.views.order_blocks">[docs]</a><span class="k">def</span> <span class="nf">order_blocks</span><span class="p">(</span><span class="n">blocks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    order_blocks is a function that orders the blocks of a publication.</span>
+<span class="sd">    :param blocks: list of blocks</span>
+<span class="sd">    :type blocks: list</span>
+<span class="sd">    :return: ordered list of blocks</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Given a list of blocks, order them by their next_block_id</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">ordered_blocks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># find the last block</span>
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">next_block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ordered_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="k">break</span>
+    
+    <span class="c1"># find the previous block</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">ordered_blocks</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">blocks</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">==</span> <span class="n">ordered_blocks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">ordered_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+                <span class="k">break</span>
+    <span class="n">ordered_blocks</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ordered_blocks</span></div>
+
+<div class="viewcode-block" id="print_data_of_error_formsets"><a class="viewcode-back" href="../../articles.html#articles.views.print_data_of_error_formsets">[docs]</a><span class="k">def</span> <span class="nf">print_data_of_error_formsets</span><span class="p">(</span><span class="o">*</span><span class="n">formsets</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    print_data_of_error_formsets is a function that prints the data of the formsets that are not valid.</span>
+<span class="sd">    :param formsets: list of formsets</span>
+<span class="sd">    :type formsets: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">formset</span> <span class="ow">in</span> <span class="n">formsets</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">formset</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">formset</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Printing the formset&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">formset</span><span class="o">.</span><span class="n">as_table</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="ArticleDetailView"><a class="viewcode-back" href="../../articles.html#articles.views.ArticleDetailView">[docs]</a><span class="k">class</span> <span class="nc">ArticleDetailView</span><span class="p">(</span><span class="n">DetailView</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    detail is a function that represents the view of an article.</span>
+<span class="sd">    :param request: HttpRequest</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :param article_id: int</span>
+<span class="sd">    :type article_id: int</span>
+<span class="sd">    :return: HttpResponse with the article id</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Publication</span>
+
+<div class="viewcode-block" id="ArticleDetailView.get_context_data"><a class="viewcode-back" href="../../articles.html#articles.views.ArticleDetailView.get_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">pub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span>
+
+        <span class="n">blocks</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">publication</span><span class="o">=</span><span class="n">pub</span><span class="p">)</span>
+        <span class="n">blocks</span> <span class="o">=</span> <span class="n">order_blocks</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="n">Keywords</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">publications</span><span class="o">=</span><span class="n">pub</span><span class="p">)</span>
+        
+        <span class="n">context</span><span class="p">[</span><span class="s1">&#39;blocks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">blocks</span>
+        <span class="n">context</span><span class="p">[</span><span class="s1">&#39;article_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">context</span><span class="p">[</span><span class="s1">&#39;keywords&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">keywords</span>
+        <span class="k">return</span> <span class="n">context</span></div>
+    <span class="c1"># Forbid the access if you are not the author</span>
+<div class="viewcode-block" id="ArticleDetailView.dispatch"><a class="viewcode-back" href="../../articles.html#articles.views.ArticleDetailView.dispatch">[docs]</a>    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;main:index&#39;</span><span class="p">)</span>
+        <span class="c1"># if the user is not the author of the article, then return 404</span>
+        <span class="n">article</span> <span class="o">=</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">article</span><span class="o">.</span><span class="n">publisher</span> <span class="o">!=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">article</span><span class="o">.</span><span class="n">is_checked</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponseForbidden</span><span class="p">(</span><span class="s2">&quot;Sorry, you are not the author of this article.&quot;</span><span class="p">)</span>
+
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">article</span><span class="o">.</span><span class="n">is_checked</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="o">!=</span> <span class="n">article</span><span class="o">.</span><span class="n">publisher</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HttpResponseForbidden</span><span class="p">(</span><span class="s2">&quot;Sorry, this publication is not available for the users.&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="ReviewView"><a class="viewcode-back" href="../../articles.html#articles.views.ReviewView">[docs]</a><span class="k">class</span> <span class="nc">ReviewView</span><span class="p">(</span><span class="n">DetailView</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Publication</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;articles/review.html&#39;</span>
+
+    
+<div class="viewcode-block" id="ReviewView.dispatch"><a class="viewcode-back" href="../../articles.html#articles.views.ReviewView.dispatch">[docs]</a>    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;hola&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;main:index&#39;</span><span class="p">)</span>
+        <span class="c1"># if the user is not in the checker list of the article, then return http forbidden</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">checks</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="ow">in</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">checks</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">HttpResponseForbidden</span><span class="p">(</span><span class="s2">&quot;Sorry, you are not the author of this article.&quot;</span><span class="p">)</span>
+        <span class="c1"># user belongs to the group of checkers</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">Group</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Checkers&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">HttpResponseForbidden</span><span class="p">(</span><span class="s1">&#39;You do not have permissions required&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+<div class="viewcode-block" id="ReviewView.get_context_data"><a class="viewcode-back" href="../../articles.html#articles.views.ReviewView.get_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        
+        <span class="n">blocks</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">publication</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+        <span class="n">blocks</span> <span class="o">=</span> <span class="n">order_blocks</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="n">Keywords</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">publications</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+        
+        <span class="n">context</span><span class="p">[</span><span class="s1">&#39;blocks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">blocks</span>
+        <span class="n">context</span><span class="p">[</span><span class="s1">&#39;article_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">context</span><span class="p">[</span><span class="s1">&#39;keywords&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">keywords</span>
+        <span class="k">return</span> <span class="n">context</span></div>
+<div class="viewcode-block" id="ReviewView.post"><a class="viewcode-back" href="../../articles.html#articles.views.ReviewView.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># get the block</span>
+        <span class="n">block_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;block_id&#39;</span><span class="p">)</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">block_id</span><span class="p">)</span>
+        <span class="c1"># get the text</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+        <span class="c1"># modify the comment</span>
+        <span class="n">comment</span> <span class="o">=</span> <span class="n">Comments</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">comment</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="n">comment</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        
+        <span class="c1">#context=super().get_context_data(**kwargs)</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="RejectAcceptArticleView"><a class="viewcode-back" href="../../articles.html#articles.views.RejectAcceptArticleView">[docs]</a><span class="k">class</span> <span class="nc">RejectAcceptArticleView</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+    <span class="c1"># Forbid the access if you are not the checker of the article</span>
+<div class="viewcode-block" id="RejectAcceptArticleView.dispatch"><a class="viewcode-back" href="../../articles.html#articles.views.RejectAcceptArticleView.dispatch">[docs]</a>    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;main:index&#39;</span><span class="p">)</span>
+        <span class="c1"># if the user is not in the checker list of the article, then return http forbidden</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="ow">in</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">checks</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">HttpResponseForbidden</span><span class="p">(</span><span class="s2">&quot;Sorry, you are not the checker of this article.&quot;</span><span class="p">)</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">Group</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Checkers&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">HttpResponseForbidden</span><span class="p">(</span><span class="s1">&#39;You do not have permissions required&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+<div class="viewcode-block" id="RejectAcceptArticleView.post"><a class="viewcode-back" href="../../articles.html#articles.views.RejectAcceptArticleView.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># get the article</span>
+        <span class="n">article_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span>
+        <span class="n">article</span> <span class="o">=</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">article_id</span><span class="p">)</span>
+        <span class="c1"># get the action</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;accept&#39;</span><span class="p">:</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_checked</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_rejected</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_published</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_editable</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">publisher</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">publisher</span>
+            <span class="c1"># if the publisher has published more than 2 articles add it to the Checker group</span>
+            <span class="k">if</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">publisher</span><span class="o">=</span><span class="n">publisher</span><span class="p">,</span> <span class="n">is_published</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">checker_group</span> <span class="o">=</span> <span class="n">Group</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Checker&#39;</span><span class="p">)</span>
+                <span class="n">publisher</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">checker_group</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;reject&#39;</span><span class="p">:</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_rejected</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_published</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_editable</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_checked</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;user_system:reviewing_publication&#39;</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="PublishArticleView"><a class="viewcode-back" href="../../articles.html#articles.views.PublishArticleView">[docs]</a><span class="k">class</span> <span class="nc">PublishArticleView</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+    <span class="c1"># Forbid the access if you are not the publisher of the article</span>
+<div class="viewcode-block" id="PublishArticleView.dispatch"><a class="viewcode-back" href="../../articles.html#articles.views.PublishArticleView.dispatch">[docs]</a>    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;main:index&#39;</span><span class="p">)</span>
+        <span class="c1"># if the user is not in the checker list of the article, then return http forbidden</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="o">==</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">publisher</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponseForbidden</span><span class="p">(</span><span class="s2">&quot;Sorry, you are not the author of this article.&quot;</span><span class="p">)</span>
+        <span class="n">publisher</span> <span class="o">=</span> <span class="n">Group</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Publishers&#39;</span><span class="p">)</span>
+        <span class="n">checker</span> <span class="o">=</span> <span class="n">Group</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Checkers&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">publisher</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">checker</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">HttpResponseForbidden</span><span class="p">(</span><span class="s1">&#39;You do not have permissions required&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+<div class="viewcode-block" id="PublishArticleView.post"><a class="viewcode-back" href="../../articles.html#articles.views.PublishArticleView.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># get the article</span>
+        <span class="n">article_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;article_id&#39;</span><span class="p">)</span>
+        <span class="n">article</span> <span class="o">=</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">article_id</span><span class="p">)</span>
+        <span class="c1"># get the action</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;publish&#39;</span><span class="p">:</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_published</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_editable</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_checked</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">is_rejected</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;hola&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;user_system:my_publications&#39;</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="edit_view"><a class="viewcode-back" href="../../articles.html#articles.views.edit_view">[docs]</a><span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">edit_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">article_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    edit_view is a function that represents the view of an article.</span>
+<span class="sd">    :param request: HttpRequest</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :param article_id: int</span>
+<span class="sd">    :type article_id: int</span>
+<span class="sd">    :return: </span>
+<span class="sd">    :rtype: </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># if it is not the author, return forbidden</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="o">!=</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">article_id</span><span class="p">)</span><span class="o">.</span><span class="n">publisher</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponseForbidden</span><span class="p">(</span><span class="s2">&quot;Sorry, you are not the author of this article.&quot;</span><span class="p">)</span>
+    <span class="c1"># if the article is not editable, redirect to detail view</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">article_id</span><span class="p">)</span><span class="o">.</span><span class="n">is_editable</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;articles:detail&#39;</span><span class="p">,</span> <span class="n">article_id</span><span class="p">)</span>
+    <span class="c1"># By default comments wont be shown</span>
+    <span class="n">show_comments</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1"># if publication is rejected, show comments</span>
+    <span class="k">if</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">article_id</span><span class="p">)</span><span class="o">.</span><span class="n">is_rejected</span><span class="p">:</span>
+        <span class="n">show_comments</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># take all the Block related to the publication and pass them to the template</span>
+    <span class="n">blocks</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">publication</span><span class="o">=</span><span class="n">article_id</span><span class="p">)</span>
+    <span class="n">blocks</span> <span class="o">=</span> <span class="n">order_blocks</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+    <span class="n">keywords</span> <span class="o">=</span> <span class="n">Keywords</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">publications</span><span class="o">=</span><span class="n">article_id</span><span class="p">)</span>
+    <span class="c1"># get which how many blocks of each type there are</span>
+    <span class="n">num_titles</span> <span class="o">=</span> <span class="n">BlockTitle</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">block__in</span><span class="o">=</span><span class="n">blocks</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">num_texts</span> <span class="o">=</span> <span class="n">BlockText</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">block__in</span><span class="o">=</span><span class="n">blocks</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">num_images</span> <span class="o">=</span> <span class="n">BlockImage</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">block__in</span><span class="o">=</span><span class="n">blocks</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">num_dois</span> <span class="o">=</span> <span class="n">BlockDoi</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">block__in</span><span class="o">=</span><span class="n">blocks</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">num_videos</span> <span class="o">=</span> <span class="n">BlockVideo</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">block__in</span><span class="o">=</span><span class="n">blocks</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">block_quizzes</span> <span class="o">=</span> <span class="n">BlockQuiz</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">block__in</span><span class="o">=</span><span class="n">blocks</span><span class="p">)</span>
+    <span class="n">num_quizzes</span> <span class="o">=</span> <span class="n">block_quizzes</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    
+    <span class="n">questions</span> <span class="o">=</span> <span class="n">Questions</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">quiz_block__in</span><span class="o">=</span><span class="n">block_quizzes</span><span class="p">)</span>
+    <span class="n">num_questions</span> <span class="o">=</span> <span class="n">questions</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">answers</span> <span class="o">=</span> <span class="n">Answer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">question__in</span><span class="o">=</span><span class="n">questions</span><span class="p">)</span>
+    <span class="n">num_answers</span> <span class="o">=</span> <span class="n">answers</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+    <span class="n">num_references</span> <span class="o">=</span> <span class="n">BlockReferences</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">block__in</span><span class="o">=</span><span class="n">blocks</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">num_tables</span> <span class="o">=</span> <span class="n">BlockTable</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">block__in</span><span class="o">=</span><span class="n">blocks</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">num_authors</span> <span class="o">=</span> <span class="n">BlockAuthors</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">block__in</span><span class="o">=</span><span class="n">blocks</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="c1"># TODO Implement keywords</span>
+    <span class="c1"># create a formset for each type of block</span>
+
+    <span class="n">UpdateImageBlockSet</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateImageBlock</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">num_images</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">UpdateTextBlockSet</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateTextBlock</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">num_texts</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">UpdateTitleBlockSet</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateTitleBlock</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">num_titles</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">UpdateVideoBlockSet</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateVideoBlock</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">num_videos</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">UpdateAuthorsBlockSet</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateAuthorsBlock</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">num_authors</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">UpdateReferencesBlockSet</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateReferencesBlock</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">num_references</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">UpdateQuizBlockSet</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateQuizBlock</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">num_quizzes</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">UpdateQuestionSet</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateQuestion</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">num_questions</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">UpdateAnswerSet</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateAnswer</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">num_answers</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">UpdateKeywordsBlockSet</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateKeywordsBlock</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">text_formset</span> <span class="o">=</span> <span class="n">UpdateTextBlockSet</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+    <span class="n">title_formset</span> <span class="o">=</span> <span class="n">UpdateTitleBlockSet</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+    <span class="n">image_formset</span> <span class="o">=</span> <span class="n">UpdateImageBlockSet</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;image&#39;</span><span class="p">)</span>
+    <span class="n">video_formset</span> <span class="o">=</span> <span class="n">UpdateVideoBlockSet</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;video&#39;</span><span class="p">)</span>
+    <span class="n">authors_formset</span> <span class="o">=</span> <span class="n">UpdateAuthorsBlockSet</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;authors&#39;</span><span class="p">)</span>
+    <span class="n">references_formset</span> <span class="o">=</span> <span class="n">UpdateReferencesBlockSet</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;references&#39;</span><span class="p">)</span>
+    <span class="n">quizzes_formset</span> <span class="o">=</span> <span class="n">UpdateQuizBlockSet</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;quizzes&#39;</span><span class="p">)</span>
+    <span class="n">question_formset</span> <span class="o">=</span> <span class="n">UpdateQuestionSet</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;question&#39;</span><span class="p">)</span>
+    <span class="n">answer_formset</span> <span class="o">=</span> <span class="n">UpdateAnswerSet</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;answer&#39;</span><span class="p">)</span>
+    <span class="n">keywords_formset</span> <span class="o">=</span> <span class="n">UpdateKeywordsBlockSet</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;keywords&#39;</span><span class="p">)</span>
+
+
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;article_id&#39;</span><span class="p">:</span> <span class="n">article_id</span><span class="p">,</span> <span class="s1">&#39;blocks&#39;</span><span class="p">:</span> <span class="n">blocks</span><span class="p">,</span> <span class="s1">&#39;keywords&#39;</span><span class="p">:</span><span class="n">keywords</span><span class="p">,</span><span class="s1">&#39;text_formset&#39;</span><span class="p">:</span> <span class="n">text_formset</span><span class="p">,</span> <span class="s1">&#39;title_formset&#39;</span><span class="p">:</span> <span class="n">title_formset</span><span class="p">,</span> <span class="s1">&#39;image_formset&#39;</span><span class="p">:</span><span class="n">image_formset</span><span class="p">,</span> <span class="s1">&#39;video_formset&#39;</span><span class="p">:</span><span class="n">video_formset</span><span class="p">,</span> <span class="s1">&#39;authors_formset&#39;</span><span class="p">:</span><span class="n">authors_formset</span><span class="p">,</span> <span class="s1">&#39;references_formset&#39;</span><span class="p">:</span><span class="n">references_formset</span><span class="p">,</span> <span class="s1">&#39;quizzes_formset&#39;</span><span class="p">:</span><span class="n">quizzes_formset</span><span class="p">,</span> <span class="s1">&#39;question_formset&#39;</span><span class="p">:</span><span class="n">question_formset</span><span class="p">,</span> <span class="s1">&#39;answer_formset&#39;</span><span class="p">:</span><span class="n">answer_formset</span><span class="p">,</span> <span class="s1">&#39;keywords_formset&#39;</span><span class="p">:</span><span class="n">keywords_formset</span><span class="p">,</span> <span class="s1">&#39;show_comments&#39;</span><span class="p">:</span><span class="n">show_comments</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;articles/editor.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="are_formsets_valids"><a class="viewcode-back" href="../../articles.html#articles.views.are_formsets_valids">[docs]</a><span class="k">def</span> <span class="nf">are_formsets_valids</span><span class="p">(</span><span class="o">*</span><span class="n">formsets</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    are_formsets_valids is a function that checks if all the formsets are valid.</span>
+<span class="sd">    :param formsets: list of formsets</span>
+<span class="sd">    :type formsets: list</span>
+<span class="sd">    :return: True if all the formsets are valid, False otherwise</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">formset</span> <span class="ow">in</span> <span class="n">formsets</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">formset</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="del_text_block"><a class="viewcode-back" href="../../articles.html#articles.views.del_text_block">[docs]</a><span class="k">def</span> <span class="nf">del_text_block</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    del_text_block is a function that deletes a text block.</span>
+<span class="sd">    :param form: form that contains the data of the block to delete</span>
+<span class="sd">    :type form: UpdateTextBlock</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;del_text_block&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">text_block</span> <span class="o">=</span> <span class="n">BlockText</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">next_block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">next_block</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">text_block</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="mod_text_block"><a class="viewcode-back" href="../../articles.html#articles.views.mod_text_block">[docs]</a><span class="k">def</span> <span class="nf">mod_text_block</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    mod_text_block is a function that modifies a text block.</span>
+<span class="sd">    :param form: form that contains the data of the block to modify</span>
+<span class="sd">    :type form: UpdateTextBlock</span>
+<span class="sd">    :param files: files that contains the data of the block to modify</span>
+<span class="sd">    :type files: dict</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mod_text_block </span><span class="si">{</span><span class="n">id_block</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blocktext</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blocktext</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="create_text_block"><a class="viewcode-back" href="../../articles.html#articles.views.create_text_block">[docs]</a><span class="k">def</span> <span class="nf">create_text_block</span><span class="p">(</span><span class="n">publication_id</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    create_text_block is a function that creates a text block.</span>
+<span class="sd">    :param publication_id: id of the publication</span>
+<span class="sd">    :type publication_id: int</span>
+<span class="sd">    :param form: form that contains the data of the block to create</span>
+<span class="sd">    :type form: UpdateTextBlock</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create a new block of type text and insert it after the block with id prev_block_id&#39;&#39;&#39;</span>
+    <span class="n">prev_block_id</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="c1"># get publication</span>
+    <span class="n">publication</span> <span class="o">=</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">publication_id</span><span class="p">)</span>
+    <span class="c1"># Create the new block</span>
+    <span class="n">new_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">publication</span><span class="o">=</span><span class="n">publication</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Create the new text block</span>
+    <span class="n">new_text_block</span> <span class="o">=</span> <span class="n">BlockText</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">new_block</span><span class="p">)</span>
+    <span class="n">new_text_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Update the previous block</span>
+    <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">prev_block_id</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">new_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="create_title_block"><a class="viewcode-back" href="../../articles.html#articles.views.create_title_block">[docs]</a><span class="k">def</span> <span class="nf">create_title_block</span><span class="p">(</span><span class="n">publication_id</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    create_title_block is a function that creates a title block.</span>
+<span class="sd">    :param publication_id: id of the publication</span>
+<span class="sd">    :type publication_id: int</span>
+<span class="sd">    :param form: form that contains the data of the block to create</span>
+<span class="sd">    :type form: UpdateTitleBlock</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create a new block of type title and insert it after the block with id prev_block_id&#39;&#39;&#39;</span>
+    <span class="n">prev_block_id</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">prev_block_id</span><span class="p">)</span>
+    <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">prev_block_id</span><span class="p">)</span>
+    <span class="c1"># get publication</span>
+    <span class="n">publication</span> <span class="o">=</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">publication_id</span><span class="p">)</span>
+    <span class="c1"># Create the new block</span>
+    <span class="n">new_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">publication</span><span class="o">=</span><span class="n">publication</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Create the new title block</span>
+    <span class="n">new_title_block</span> <span class="o">=</span> <span class="n">BlockTitle</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">new_block</span><span class="p">)</span>
+    <span class="n">new_title_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Update the previous block</span>
+    <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">prev_block_id</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">new_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="del_title_block"><a class="viewcode-back" href="../../articles.html#articles.views.del_title_block">[docs]</a><span class="k">def</span> <span class="nf">del_title_block</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    del_title_block is a function that deletes a title block.</span>
+<span class="sd">    :param form: form that contains the data of the block to delete</span>
+<span class="sd">    :type form: UpdateTitleBlock</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blocktitle</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">next_block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">next_block</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="mod_title_block"><a class="viewcode-back" href="../../articles.html#articles.views.mod_title_block">[docs]</a><span class="k">def</span> <span class="nf">mod_title_block</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    mod_title_block is a function that modifies a title block.</span>
+<span class="sd">    :param form: form that contains the data of the block to modify</span>
+<span class="sd">    :type form: UpdateTitleBlock</span>
+<span class="sd">    :param files: files that contains the data of the block to modify</span>
+<span class="sd">    :type files: dict</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blocktitle</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blocktitle</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="create_image_block"><a class="viewcode-back" href="../../articles.html#articles.views.create_image_block">[docs]</a><span class="k">def</span> <span class="nf">create_image_block</span><span class="p">(</span><span class="n">publication_id</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    create_image_block is a function that creates an image block qne insert it after the block with id prev_block_id.</span>
+<span class="sd">    :param publication_id: id of the publication</span>
+<span class="sd">    :type publication_id: int</span>
+<span class="sd">    :param form: form that contains the data of the block to create</span>
+<span class="sd">    :type form: UpdateImageBlock</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create a new block of type image and insert it after the block with id prev_block_id&#39;&#39;&#39;</span>
+    <span class="n">prev_block_id</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">prev_block_id</span><span class="p">)</span>
+    <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">prev_block_id</span><span class="p">)</span>
+    <span class="c1"># get publication</span>
+    <span class="n">publication</span> <span class="o">=</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">publication_id</span><span class="p">)</span>
+    <span class="c1"># Create the new block</span>
+    <span class="n">new_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">publication</span><span class="o">=</span><span class="n">publication</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Create the new image block</span>
+    <span class="n">new_image_block</span> <span class="o">=</span> <span class="n">BlockImage</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">new_block</span><span class="p">)</span>
+    <span class="n">new_image_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Update the previous block</span>
+    
+    
+    <span class="n">new_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">new_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="del_image_block"><a class="viewcode-back" href="../../articles.html#articles.views.del_image_block">[docs]</a><span class="k">def</span> <span class="nf">del_image_block</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    del_image_block is a function that deletes an image block.</span>
+<span class="sd">    :param form: form that contains the data of the block to delete</span>
+<span class="sd">    :type form: UpdateImageBlock</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockimage</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">next_block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">next_block</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="mod_image_block"><a class="viewcode-back" href="../../articles.html#articles.views.mod_image_block">[docs]</a><span class="k">def</span> <span class="nf">mod_image_block</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    mod_image_block is a function that modifies an image block.</span>
+<span class="sd">    :param form: form that contains the data of the block to modify</span>
+<span class="sd">    :type form: UpdateImageBlock</span>
+<span class="sd">    :param files: files that contains the data of the block to modify</span>
+<span class="sd">    :type files: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockimage</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">image</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockimage</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="create_video_block"><a class="viewcode-back" href="../../articles.html#articles.views.create_video_block">[docs]</a><span class="k">def</span> <span class="nf">create_video_block</span><span class="p">(</span><span class="n">publication_id</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    create_video_block is a function that creates a video block and insert it after the block with id prev_block_id.</span>
+<span class="sd">    :param publication_id: id of the publication</span>
+<span class="sd">    :type publication_id: int</span>
+<span class="sd">    :param form: form that contains the data of the block to create</span>
+<span class="sd">    :type form: UpdateVideoBlock</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create a new block of type video and insert it after the block with id prev_block_id&#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">prev_block_id</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="c1"># get publication</span>
+    <span class="n">publication</span> <span class="o">=</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">publication_id</span><span class="p">)</span>
+    <span class="c1"># Create the new block</span>
+    <span class="n">new_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">publication</span><span class="o">=</span><span class="n">publication</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Create the new video block</span>
+    <span class="n">new_video_block</span> <span class="o">=</span> <span class="n">BlockVideo</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">new_block</span><span class="p">)</span>
+    <span class="n">new_video_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Update the previous block</span>
+    <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">prev_block_id</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">new_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="del_video_block"><a class="viewcode-back" href="../../articles.html#articles.views.del_video_block">[docs]</a><span class="k">def</span> <span class="nf">del_video_block</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    del_video_block is a function that deletes a video block.</span>
+<span class="sd">    :param form: form that contains the data of the block to delete</span>
+<span class="sd">    :type form: UpdateVideoBlock</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockvideo</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">next_block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">next_block</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="mod_video_block"><a class="viewcode-back" href="../../articles.html#articles.views.mod_video_block">[docs]</a><span class="k">def</span> <span class="nf">mod_video_block</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    mod_video_block is a function that modifies a video block.</span>
+<span class="sd">    :param form: form that contains the data of the block to modify</span>
+<span class="sd">    :type form: UpdateVideoBlock</span>
+<span class="sd">    :param files: files that contains the data of the block to modify</span>
+<span class="sd">    :type files: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">video</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+    <span class="n">video</span> <span class="o">=</span> <span class="n">video</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">video</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.youtube.com/embed/</span><span class="si">{</span><span class="n">video</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockvideo</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">video</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockvideo</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="create_authors_block"><a class="viewcode-back" href="../../articles.html#articles.views.create_authors_block">[docs]</a><span class="k">def</span> <span class="nf">create_authors_block</span><span class="p">(</span><span class="n">publication_id</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    create_authors_block is a function that creates an authors block and insert it after the block with id prev_block_id.</span>
+<span class="sd">    :param publication_id: id of the publication</span>
+<span class="sd">    :type publication_id: int</span>
+<span class="sd">    :param form: form that contains the data of the block to create</span>
+<span class="sd">    :type form: UpdateAuthorsBlock</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create a new block of type authors and insert it after the block with id prev_block_id&#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">prev_block_id</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="c1"># get publication</span>
+    <span class="n">publication</span> <span class="o">=</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">publication_id</span><span class="p">)</span>
+    <span class="c1"># Create the new block</span>
+    <span class="n">new_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">publication</span><span class="o">=</span><span class="n">publication</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Create the new authors block</span>
+    <span class="n">new_authors_block</span> <span class="o">=</span> <span class="n">BlockAuthors</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">new_block</span><span class="p">)</span>
+    <span class="n">new_authors_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Update the previous block</span>
+    <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">prev_block_id</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">new_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="del_authors_block"><a class="viewcode-back" href="../../articles.html#articles.views.del_authors_block">[docs]</a><span class="k">def</span> <span class="nf">del_authors_block</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    del_authors_block is a function that deletes an authors block.</span>
+<span class="sd">    :param form: form that contains the data of the block to delete</span>
+<span class="sd">    :type form: UpdateAuthorsBlock</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockauthors</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">next_block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">next_block</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="mod_authors_block"><a class="viewcode-back" href="../../articles.html#articles.views.mod_authors_block">[docs]</a><span class="k">def</span> <span class="nf">mod_authors_block</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    mod_authors_block is a function that modifies an authors block.</span>
+<span class="sd">    :param form: form that contains the data of the block to modify</span>
+<span class="sd">    :type form: UpdateAuthorsBlock</span>
+<span class="sd">    :param files: files that contains the data of the block to modify</span>
+<span class="sd">    :type files: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">authors</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;authors&#39;</span><span class="p">]</span>
+    <span class="n">authors</span> <span class="o">=</span>  <span class="n">authors</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">authors</span> <span class="o">=</span> <span class="p">[</span><span class="n">author</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="n">authors</span><span class="p">]</span>
+    <span class="n">referenced_users</span> <span class="o">=</span> <span class="n">UserPersonalized</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username__in</span><span class="o">=</span><span class="n">authors</span><span class="p">)</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockauthors</span><span class="o">.</span><span class="n">authors</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="n">referenced_users</span><span class="p">:</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">blockauthors</span><span class="o">.</span><span class="n">authors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">author</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockauthors</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="create_references_block"><a class="viewcode-back" href="../../articles.html#articles.views.create_references_block">[docs]</a><span class="k">def</span> <span class="nf">create_references_block</span><span class="p">(</span><span class="n">publication_id</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    create_references_block is a function that creates a references block and insert it after the block with id prev_block_id.</span>
+<span class="sd">    :param publication_id: id of the publication</span>
+<span class="sd">    :type publication_id: int</span>
+<span class="sd">    :param form: form that contains the data of the block to create</span>
+<span class="sd">    :type form: UpdateReferencesBlock</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create a new block of type references and insert it after the block with id prev_block_id&#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">prev_block_id</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="c1"># get publication</span>
+    <span class="n">publication</span> <span class="o">=</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">publication_id</span><span class="p">)</span>
+    <span class="c1"># Create the new block</span>
+    <span class="n">new_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">publication</span><span class="o">=</span><span class="n">publication</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Create the new references block</span>
+    <span class="n">new_references_block</span> <span class="o">=</span> <span class="n">BlockReferences</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">new_block</span><span class="p">)</span>
+    <span class="n">new_references_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Update the previous block</span>
+    <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">prev_block_id</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">new_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="del_references_block"><a class="viewcode-back" href="../../articles.html#articles.views.del_references_block">[docs]</a><span class="k">def</span> <span class="nf">del_references_block</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    del_references_block is a function that deletes a references block.</span>
+<span class="sd">    :param form: form that contains the data of the block to delete</span>
+<span class="sd">    :type form: UpdateReferencesBlock</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockreferences</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">next_block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">next_block</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="mod_references_block"><a class="viewcode-back" href="../../articles.html#articles.views.mod_references_block">[docs]</a><span class="k">def</span> <span class="nf">mod_references_block</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    mod_references_block is a function that modifies a references block.</span>
+<span class="sd">    :param form: form that contains the data of the block to modify</span>
+<span class="sd">    :type form: UpdateReferencesBlock</span>
+<span class="sd">    :param files: files that contains the data of the block to modify</span>
+<span class="sd">    :type files: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockreferences</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">url</span> <span class="o">!=</span> <span class="s1">&#39;Link to article&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">blockreferences</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockreferences</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="mod_keywords_block"><a class="viewcode-back" href="../../articles.html#articles.views.mod_keywords_block">[docs]</a><span class="k">def</span> <span class="nf">mod_keywords_block</span><span class="p">(</span><span class="n">publication_id</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    mod_keywords_block is a function that modifies a keywords block.</span>
+<span class="sd">    :param publication_id: id of the publication</span>
+<span class="sd">    :type publication_id: int</span>
+<span class="sd">    :param form: form that contains the data of the block to modify</span>
+<span class="sd">    :type form: UpdateKeywordsBlock</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keywords</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;keywords&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">keywords</span><span class="p">)</span>
+    <span class="c1"># get </span>
+    <span class="n">actual_keywords</span> <span class="o">=</span> <span class="n">Keywords</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">publications</span><span class="o">=</span><span class="n">publication_id</span><span class="p">)</span>
+    <span class="n">actual_keywords</span><span class="o">.</span><span class="n">keyword</span> <span class="o">=</span> <span class="n">keywords</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">actual_keywords</span><span class="o">.</span><span class="n">keyword</span><span class="p">)</span>
+    <span class="n">actual_keywords</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="create_quiz_block"><a class="viewcode-back" href="../../articles.html#articles.views.create_quiz_block">[docs]</a><span class="k">def</span> <span class="nf">create_quiz_block</span><span class="p">(</span><span class="n">publication_id</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create a new block of type quiz and insert it after the block with id prev_block_id&#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">prev_block_id</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="c1"># get publication</span>
+    <span class="n">publication</span> <span class="o">=</span> <span class="n">Publication</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">publication_id</span><span class="p">)</span>
+    <span class="c1"># Create the new block</span>
+    <span class="n">new_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">publication</span><span class="o">=</span><span class="n">publication</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># Create the new quizzes block</span>
+    <span class="n">new_quiz_block</span> <span class="o">=</span> <span class="n">BlockQuiz</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">new_block</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Write the name of the quiz&quot;</span><span class="p">)</span>
+    <span class="n">new_quiz_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">Questions</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">quiz_block</span> <span class="o">=</span> <span class="n">new_quiz_block</span><span class="p">,</span> <span class="n">question</span><span class="o">=</span><span class="s2">&quot;Write here a question&quot;</span><span class="p">)</span>
+    <span class="n">question</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">Answer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">,</span> <span class="n">answer</span><span class="o">=</span><span class="s2">&quot;Write here an answer&quot;</span><span class="p">)</span>
+    <span class="n">answer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    
+    <span class="c1"># Update the previous block</span>
+    <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">prev_block_id</span><span class="p">)</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">new_block</span>
+    <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="del_quiz_block"><a class="viewcode-back" href="../../articles.html#articles.views.del_quiz_block">[docs]</a><span class="k">def</span> <span class="nf">del_quiz_block</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockquiz</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    <span class="c1"># TODO: Delate all questions and asnwer from the block</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">prev_block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">next_block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">next_block</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">next_block</span>
+        <span class="n">prev_block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="mod_quiz_block"><a class="viewcode-back" href="../../articles.html#articles.views.mod_quiz_block">[docs]</a><span class="k">def</span> <span class="nf">mod_quiz_block</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_block</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_block</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockquiz</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">blockquiz</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="create_question"><a class="viewcode-back" href="../../articles.html#articles.views.create_question">[docs]</a><span class="k">def</span> <span class="nf">create_question</span><span class="p">(</span><span class="n">publication_id</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create a new question and insert it in the quiz&#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    
+    <span class="c1"># get Quiz block</span>
+
+    <span class="n">id_question</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">question</span> <span class="o">=</span> <span class="n">Questions</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_question</span><span class="p">)</span>
+
+    <span class="n">quiz_block</span> <span class="o">=</span> <span class="n">question</span><span class="o">.</span><span class="n">quiz_block</span>
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">Questions</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">quiz_block</span><span class="o">=</span><span class="n">quiz_block</span><span class="p">)</span>
+    <span class="n">question</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">Answer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">,</span> <span class="n">answer</span><span class="o">=</span><span class="s2">&quot;Write here an answer&quot;</span><span class="p">)</span>
+    <span class="n">answer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+    
+
+<div class="viewcode-block" id="del_question"><a class="viewcode-back" href="../../articles.html#articles.views.del_question">[docs]</a><span class="k">def</span> <span class="nf">del_question</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    
+    <span class="n">id_question</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    
+    <span class="n">question</span> <span class="o">=</span> <span class="n">Questions</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_question</span><span class="p">)</span>
+   
+    <span class="n">question</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+   
+
+<div class="viewcode-block" id="mod_question"><a class="viewcode-back" href="../../articles.html#articles.views.mod_question">[docs]</a><span class="k">def</span> <span class="nf">mod_question</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_question</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">Questions</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_question</span><span class="p">)</span>
+
+    <span class="n">question_text</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;question&#39;</span><span class="p">]</span>
+
+    <span class="n">question</span><span class="o">.</span><span class="n">question</span> <span class="o">=</span> <span class="n">question_text</span>
+    <span class="n">question</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="create_answer"><a class="viewcode-back" href="../../articles.html#articles.views.create_answer">[docs]</a><span class="k">def</span> <span class="nf">create_answer</span><span class="p">(</span><span class="n">publication_id</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create a new answer and insert it in the quiz&#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    
+    <span class="c1"># get Answer</span>
+    <span class="n">id_answer</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">Answer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_answer</span><span class="p">)</span>
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">answer</span><span class="o">.</span><span class="n">question</span>
+
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">Answer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">)</span>
+    
+    <span class="n">answer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="del_answer"><a class="viewcode-back" href="../../articles.html#articles.views.del_answer">[docs]</a><span class="k">def</span> <span class="nf">del_answer</span><span class="p">(</span><span class="n">form</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    
+    <span class="n">id_answer</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+    
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">Answer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_answer</span><span class="p">)</span>
+   
+    <span class="n">answer</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+   
+
+<div class="viewcode-block" id="mod_answer"><a class="viewcode-back" href="../../articles.html#articles.views.mod_answer">[docs]</a><span class="k">def</span> <span class="nf">mod_answer</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+    <span class="n">id_answer</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;block_id&#39;</span><span class="p">]</span>
+
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">Answer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_answer</span><span class="p">)</span>
+
+    <span class="n">answer_text</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;answer&#39;</span><span class="p">]</span>
+    <span class="n">is_correct</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;is_correct&#39;</span><span class="p">]</span>
+
+    <span class="n">answer</span><span class="o">.</span><span class="n">answer</span> <span class="o">=</span> <span class="n">answer_text</span>
+    <span class="n">answer</span><span class="o">.</span><span class="n">is_correct</span> <span class="o">=</span> <span class="n">is_correct</span>
+    <span class="n">answer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+    
+<span class="n">dict_block_type_to_functions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;create&#39;</span><span class="p">:</span> <span class="n">create_text_block</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">:</span> <span class="n">del_text_block</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">:</span> <span class="n">mod_text_block</span><span class="p">},</span>
+    <span class="s1">&#39;Ti&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;create&#39;</span><span class="p">:</span> <span class="n">create_title_block</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">:</span> <span class="n">del_title_block</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">:</span><span class="n">mod_title_block</span><span class="p">},</span>
+    <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;create&#39;</span><span class="p">:</span> <span class="n">create_image_block</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">:</span> <span class="n">del_image_block</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">:</span> <span class="n">mod_image_block</span><span class="p">},</span>
+    <span class="c1">#&#39;D&#39;: {&#39;create&#39;: create_doi_block, &#39;delete&#39;: del_doi_block, &#39;modify&#39;: mod_doi_block},</span>
+    <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;create&#39;</span><span class="p">:</span> <span class="n">create_video_block</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">:</span> <span class="n">del_video_block</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">:</span> <span class="n">mod_video_block</span><span class="p">},</span>
+    <span class="s1">&#39;Q&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;create&#39;</span><span class="p">:</span> <span class="n">create_quiz_block</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">:</span> <span class="n">del_quiz_block</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">:</span> <span class="n">mod_quiz_block</span><span class="p">},</span>
+    <span class="s1">&#39;Qq&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;create&#39;</span><span class="p">:</span> <span class="n">create_question</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">:</span> <span class="n">del_question</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">:</span> <span class="n">mod_question</span><span class="p">},</span>
+    <span class="s1">&#39;Qa&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;create&#39;</span><span class="p">:</span> <span class="n">create_answer</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">:</span> <span class="n">del_answer</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">:</span> <span class="n">mod_answer</span><span class="p">},</span>
+    <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;create&#39;</span><span class="p">:</span> <span class="n">create_references_block</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">:</span> <span class="n">del_references_block</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">:</span> <span class="n">mod_references_block</span><span class="p">},</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;create&#39;</span><span class="p">:</span> <span class="n">create_authors_block</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">:</span> <span class="n">del_authors_block</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">:</span> <span class="n">mod_authors_block</span><span class="p">},</span>
+    <span class="c1">#&#39;B&#39;: {&#39;create&#39;: create_table_block, &#39;delete&#39;: del_table_block, &#39;modify&#39;: mod_table_block},</span>
+<span class="p">}</span>
+
+<div class="viewcode-block" id="save"><a class="viewcode-back" href="../../articles.html#articles.views.save">[docs]</a><span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">article_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    save is a function that saves the modifications of the article.</span>
+<span class="sd">    :param request: request</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :param article_id: id of the article</span>
+<span class="sd">    :type article_id: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;save&#39;</span><span class="p">)</span>
+    <span class="n">text_formset</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateTextBlock</span><span class="p">)</span>
+    <span class="n">text_formset</span> <span class="o">=</span> <span class="n">text_formset</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+    <span class="n">image_formset</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateImageBlock</span><span class="p">)</span>
+    <span class="n">title_formset</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateTitleBlock</span><span class="p">)</span>
+    <span class="n">title_formset</span> <span class="o">=</span> <span class="n">title_formset</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+    <span class="n">image_formset</span> <span class="o">=</span> <span class="n">image_formset</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">FILES</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;image&#39;</span><span class="p">)</span>
+    <span class="n">video_formset</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateVideoBlock</span><span class="p">)</span>
+    <span class="n">video_formset</span> <span class="o">=</span> <span class="n">video_formset</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;video&#39;</span><span class="p">)</span>
+    <span class="n">authors_formset</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateAuthorsBlock</span><span class="p">)</span>
+    <span class="n">authors_formset</span> <span class="o">=</span> <span class="n">authors_formset</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;authors&#39;</span><span class="p">)</span>
+    <span class="n">references_formset</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateReferencesBlock</span><span class="p">)</span>
+    <span class="n">references_formset</span> <span class="o">=</span> <span class="n">references_formset</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;references&#39;</span><span class="p">)</span>
+    <span class="n">quizzes_formset</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateQuizBlock</span><span class="p">)</span>
+    <span class="n">quizzes_formset</span> <span class="o">=</span> <span class="n">quizzes_formset</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;quizzes&#39;</span><span class="p">)</span>
+
+    <span class="n">question_formset</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateQuestion</span><span class="p">)</span>
+    <span class="n">question_formset</span> <span class="o">=</span> <span class="n">question_formset</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;question&#39;</span><span class="p">)</span>
+    <span class="n">answer_formset</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateAnswer</span><span class="p">)</span>
+    <span class="n">answer_formset</span> <span class="o">=</span> <span class="n">answer_formset</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;answer&#39;</span><span class="p">)</span>
+
+    <span class="n">keywords_formset</span> <span class="o">=</span> <span class="n">formset_factory</span><span class="p">(</span><span class="n">UpdateKeywordsBlock</span><span class="p">)</span>
+    <span class="n">keywords_form</span> <span class="o">=</span> <span class="n">keywords_formset</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;keywords&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">keywords_form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;keywords valid&#39;</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">keywords_form</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;modifying keywords&#39;</span><span class="p">)</span>
+            <span class="n">mod_keywords_block</span><span class="p">(</span><span class="n">article_id</span><span class="p">,</span> <span class="n">keywords_form</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;keywords invalid&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">keywords_form</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">keywords_form</span><span class="o">.</span><span class="n">as_table</span><span class="p">())</span>
+
+    <span class="c1"># print forms as html</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    print(authors_formset.as_table())</span>
+<span class="sd">    print(text_formset.as_table())</span>
+<span class="sd">    print(image_formset.as_table())</span>
+<span class="sd">    print(video_formset.as_table())</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">are_formsets_valids</span><span class="p">(</span><span class="n">text_formset</span><span class="p">,</span> <span class="n">image_formset</span><span class="p">,</span> <span class="n">video_formset</span><span class="p">,</span> <span class="n">authors_formset</span><span class="p">,</span> <span class="n">references_formset</span><span class="p">,</span> <span class="n">title_formset</span><span class="p">,</span> <span class="n">quizzes_formset</span><span class="p">,</span> <span class="n">question_formset</span><span class="p">,</span> <span class="n">answer_formset</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;valid&#39;</span><span class="p">)</span>
+        <span class="n">list_of_forms_and_types</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">text_formset</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">image_formset</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">video_formset</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">authors_formset</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">references_formset</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">title_formset</span><span class="p">,</span> <span class="s1">&#39;Ti&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">quizzes_formset</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">question_formset</span><span class="p">,</span> <span class="s1">&#39;Qq&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">answer_formset</span><span class="p">,</span> <span class="s1">&#39;Qa&#39;</span><span class="p">),</span>
+            <span class="c1">#...</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">formset</span><span class="p">,</span> <span class="n">block_type</span> <span class="ow">in</span> <span class="n">list_of_forms_and_types</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;block_type&#39;</span><span class="p">,</span> <span class="n">block_type</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">form</span> <span class="ow">in</span> <span class="n">formset</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span>
+                    <span class="c1"># delete the block</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">)</span>
+                    <span class="n">dict_block_type_to_functions</span><span class="p">[</span><span class="n">block_type</span><span class="p">][</span><span class="s1">&#39;delete&#39;</span><span class="p">](</span><span class="n">form</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span>
+                    <span class="c1"># create a new block</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;create&#39;</span><span class="p">)</span>
+                    <span class="n">dict_block_type_to_functions</span><span class="p">[</span><span class="n">block_type</span><span class="p">][</span><span class="s1">&#39;create&#39;</span><span class="p">](</span><span class="n">article_id</span><span class="p">,</span> <span class="n">form</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span><span class="p">:</span>
+                    <span class="c1"># modify the block</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;modify&#39;</span><span class="p">)</span>
+                    <span class="n">dict_block_type_to_functions</span><span class="p">[</span><span class="n">block_type</span><span class="p">][</span><span class="s1">&#39;modify&#39;</span><span class="p">](</span><span class="n">form</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">FILES</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">print_data_of_error_formsets</span><span class="p">(</span><span class="n">text_formset</span><span class="p">,</span> <span class="n">image_formset</span><span class="p">,</span> <span class="n">video_formset</span><span class="p">,</span> <span class="n">authors_formset</span><span class="p">,</span> <span class="n">references_formset</span><span class="p">,</span> <span class="n">title_formset</span><span class="p">,</span> <span class="n">quizzes_formset</span><span class="p">,</span> <span class="n">question_formset</span><span class="p">,</span> <span class="n">answer_formset</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;articles:edit&#39;</span><span class="p">,</span> <span class="n">article_id</span><span class="o">=</span><span class="n">article_id</span><span class="p">)</span></div>
+
+
+
+
+
+
+<span class="c1"># TODO Make that create_block also saves the data of the form</span>
+<span class="c1"># Search may have in mind</span>
+<span class="c1"># - blocks to be created</span>
+<span class="c1"># - blocks to be deleted</span>
+<span class="c1"># - blocks to be saved</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">The Cathedral</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">the_cathedral</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, group 4.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

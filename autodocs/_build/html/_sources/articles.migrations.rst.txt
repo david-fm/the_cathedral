@@ -1,0 +1,45 @@
+articles.migrations package
+===========================
+
+Submodules
+----------
+
+articles.migrations.0001\_initial module
+----------------------------------------
+
+.. automodule:: articles.migrations.0001_initial
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+articles.migrations.0002\_alter\_publication\_checks module
+-----------------------------------------------------------
+
+.. automodule:: articles.migrations.0002_alter_publication_checks
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+articles.migrations.0003\_publication\_is\_editable\_publication\_is\_rejected module
+-------------------------------------------------------------------------------------
+
+.. automodule:: articles.migrations.0003_publication_is_editable_publication_is_rejected
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+articles.migrations.0004\_publication\_is\_published module
+-----------------------------------------------------------
+
+.. automodule:: articles.migrations.0004_publication_is_published
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: articles.migrations
+   :members:
+   :undoc-members:
+   :show-inheritance:

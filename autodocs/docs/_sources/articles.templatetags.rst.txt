@@ -1,0 +1,21 @@
+articles.templatetags package
+=============================
+
+Submodules
+----------
+
+articles.templatetags.index\_tags module
+----------------------------------------
+
+.. automodule:: articles.templatetags.index_tags
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: articles.templatetags
+   :members:
+   :undoc-members:
+   :show-inheritance:

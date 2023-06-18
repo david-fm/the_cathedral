@@ -28,6 +28,7 @@ var block_type = (title, subtitle, img, type) => {
   /*
     .. js:function: block_type
       block_type is a function that returns a string that represents a block_type
+
       :param title: string
       :type title: string
       :param subtitle: string
